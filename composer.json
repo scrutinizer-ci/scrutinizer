@@ -1,0 +1,7 @@
+{
+    "name": "scrutinizer/scrutinizer",
+    "description": "A library for gathering code analysis results",
+    "require": {
+        "php": ">=5.3.2"        
+    }
+}
