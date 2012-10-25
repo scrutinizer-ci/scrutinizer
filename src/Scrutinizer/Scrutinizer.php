@@ -2,6 +2,8 @@
 
 namespace Scrutinizer;
 
+use Scrutinizer\Util\PathUtils;
+
 use Scrutinizer\Analyzer\Javascript\JsLintAnalyzer;
 use Scrutinizer\Config\ConfigBuilder;
 use Scrutinizer\Model\File;
@@ -9,6 +11,14 @@ use Scrutinizer\Model\Project;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
 
+/**
+ * The Scrutinizer.
+ *
+ * Ties together analyzers, configuration, and can be used to easily scrutinize
+ * a project directory.
+ *
+ * @author Johannes M. Schmitt <schmittjoh@gmail.com>
+ */
 class Scrutinizer
 {
     private $analyzers = array();
@@ -40,29 +50,19 @@ class Scrutinizer
         }
         $config = $this->getConfiguration()->process($rawConfig);
 
-        $matches = function(array $patterns, $path) {
-            foreach ($patterns as $pattern) {
-                if (fnmatch($pattern, $path)) {
-                    return true;
-                }
-            }
-
-            return false;
-        };
-
         $files = array();
         foreach (Finder::create()->files()->in($dir) as $file) {
             $relPath = substr($file->getRealPath(), $dirLength + 1);
 
-            if ($config['filter']['paths'] && ! $matches($config['filter']['paths'], $relPath)) {
+            if ($config['filter']['paths'] && ! PathUtils::matches($relPath, $config['filter']['paths'])) {
                 continue;
             }
 
-            if ($config['filter']['excluded_paths'] && $matches($config['filter']['excluded_paths'], $relPath)) {
+            if ($config['filter']['excluded_paths'] && PathUtils::matches($relPath, $config['filter']['excluded_paths'])) {
                 continue;
             }
 
-            $files[] = new File($relPath, file_get_contents($file->getRealPath()));
+            $files[$relPath] = new File($relPath, file_get_contents($file->getRealPath()));
         }
 
         $project = new Project($files, $config);

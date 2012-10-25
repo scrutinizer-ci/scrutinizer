@@ -1,0 +1,30 @@
+filter:
+    filter: []
+    excluded_paths: []
+
+js_lint:
+    enabled: true # <- automatically added
+    use_native_configs: true
+    # global config here
+    config: # <- automatically added
+        # path-dependent config here
+        options: 
+            # asdf
+
+    path_configs: # <- automatically added
+        any-name:
+            paths: [tests/*] # <- automatically added
+            enabled: false # <- automatically added
+            options: 
+              # config
+
+js_hint:
+    filter:
+        paths: []
+        excluded_paths: []
+    enabled: true
+    use_native_config: false
+    config:
+        pre: foo
+        bar: baz
+

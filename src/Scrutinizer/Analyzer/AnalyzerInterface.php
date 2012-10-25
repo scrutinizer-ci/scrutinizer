@@ -21,9 +21,18 @@ interface AnalyzerInterface
     function scrutinize(Project $project);
 
     /**
-     * Returns the configuration tree of this analyzer.
+     * Returns the config builder which lays out the config structure.
      *
-     * @return ConfigBuilder
+     * This is comparable to Symfony2's default TreeBuilder except that the
+     * ConfigBuilder does add a unified way to enable and disable analyzers.
+     * You can learn more about how to define the config structure at the URL
+     * provided below.
+     *
+     * @see symfony.com/doc/current/components/config/definition.html
+     *
+     * @param ConfigBuilder $builder
+     *
+     * @return void
      */
-    function getConfigBuilder();
+    function buildConfig(ConfigBuilder $builder);
 }

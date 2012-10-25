@@ -5,26 +5,32 @@ namespace Scrutinizer\Analyzer;
 use Scrutinizer\Model\File;
 use Scrutinizer\Model\Project;
 
+/**
+ * Convenience class for file traversals.
+ *
+ * This performs some additional checks in addition to simply traversing over
+ * an array of files.
+ *
+ * @author Johannes M. Schmitt <schmittjoh@gmail.com>
+ */
 class FileTraversal
 {
     private $project;
-    private $callback;
+    private $analyzer;
+    private $method;
 
     private $extensions = array();
 
-    public static function create(Project $project, $callback)
+    public static function create(Project $project, AnalyzerInterface $analyzer, $method)
     {
-        return new self($project, $callback);
+        return new self($project, $analyzer, $method);
     }
 
-    public function __construct(Project $project, $callback)
+    public function __construct(Project $project, AnalyzerInterface $analyzer, $method)
     {
-        if ( ! is_callable($callback)) {
-            throw new \InvalidArgumentException('$callback must be a valid callable.');
-        }
-
         $this->project = $project;
-        $this->callback = $callback;
+        $this->analyzer = $analyzer;
+        $this->method = $method;
     }
 
     public function setExtensions(array $extensions)
@@ -36,6 +42,12 @@ class FileTraversal
 
     public function traverse()
     {
+        $name = $this->analyzer->getConfigBuilder()->buildTree()->getName();
+
+        if ( ! $this->project->getGlobalConfig($name.'.enabled')) {
+            return;
+        }
+
         foreach ($this->project->getFiles() as $file) {
             assert($file instanceof File);
 
@@ -43,12 +55,11 @@ class FileTraversal
                 continue;
             }
 
-            $config = $this->project->getConfigForPath($file->getPath());
-            if ( ! $config['enabled']) {
+            if ( ! $this->project->getPathConfig($file, $name.'.enabled', true)) {
                 continue;
             }
 
-            call_user_func($this->callback, $file, $config);
+            $this->analyzer->{$this->method}($this->project, $file);
         }
     }
 }
