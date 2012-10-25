@@ -6,7 +6,6 @@ use Symfony\Component\Config\Definition\PrototypedArrayNode;
 use Symfony\Component\Config\Definition\BooleanNode;
 use Symfony\Component\Config\Definition\ArrayNode;
 use Symfony\Component\Config\Definition\Builder\NodeParentInterface;
-use JMS\CodeReview\Analysis\Config\NodeBuilder;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
@@ -43,7 +42,12 @@ class AnalyzerBuilder extends ArrayNodeDefinition
 
     public function perFileConfig($nodeType = 'array')
     {
-        return $this->perFileConfigDef = $this->getNodeBuilder()->node('config', $nodeType);
+        if (null === $this->perFileConfigDef) {
+            $builder = new NodeBuilder();
+            $this->perFileConfigDef = $builder->node('config', $nodeType);
+        }
+
+        return $this->perFileConfigDef;
     }
 
     protected function createNode()
