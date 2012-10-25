@@ -14,8 +14,7 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * The Scrutinizer.
  *
- * Ties together analyzers, configuration, and can be used to easily scrutinize
- * a project directory.
+ * Ties together analyzers, and can be used to easily scrutinize a project directory.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */

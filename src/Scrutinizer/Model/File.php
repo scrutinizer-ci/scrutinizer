@@ -38,6 +38,11 @@ class File
         $this->comments[$line][] = $comment;
     }
 
+    public function hasComments()
+    {
+        return !! $this->comments;
+    }
+
     public function getComments()
     {
         return $this->comments;
