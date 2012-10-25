@@ -3,9 +3,8 @@
 namespace Scrutinizer\Config;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 
-class ConfigBuilder
+class ConfigBuilder extends TreeBuilder
 {
     private $root;
 
@@ -18,9 +17,8 @@ class ConfigBuilder
 
     public function root($name)
     {
-        $builder = new NodeBuilder();
+        $this->root = parent::root($name, 'array', new NodeBuilder());
 
-        $this->root = $builder->arrayNode($name);
         $this->root
             ->treatNullLike(array('enabled' => true))
             ->treatTrueLike(array('enabled' => true))
@@ -33,8 +31,8 @@ class ConfigBuilder
         return $this->root;
     }
 
-    public function build()
+    public function getRoot()
     {
-        return $this->root->getNode(true);
+        return $this->root;
     }
 }

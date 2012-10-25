@@ -2,9 +2,12 @@
 
 namespace Scrutinizer;
 
+use Scrutinizer\Analyzer\Javascript\JsLintAnalyzer;
 use Scrutinizer\Config\ConfigBuilder;
 use Scrutinizer\Model\File;
-use Scrutinizer\Analyzer\JsLintAnalyzer;
+use Scrutinizer\Model\Project;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Yaml\Yaml;
 
 class Scrutinizer
 {
@@ -20,67 +23,53 @@ class Scrutinizer
         $this->analyzers[] = $analyzer;
     }
 
-    public function getConfig()
+    public function getConfiguration()
     {
-        return ConfigBuilder::create('scrutinizer')
-            ->children()
-                ->arrayNode('filter')
-                    ->children()
-                        ->arrayNode('paths')
-                            ->prototype('scalar')->end()
-                        ->end()
-                        ->arrayNode('excluded_paths')
-                            ->prototype('scalar')->end()
-                        ->end()
-                    ->end()
-                ->end()
-                ->arrayNode('default_config')->end()
-                ->arrayNode('path_configs')->end()
-            ->end()
-            ->build()
-        ;
+        return new Configuration($this->analyzers);
     }
 
-    public function scrutinize($dir, array $config)
+    public function scrutinize($dir, array $rawConfig = array())
     {
         if ( ! is_dir($dir)) {
             throw new \InvalidArgumentException(sprintf('The directory "%s" does not exist.', $dir));
         }
         $dirLength = strlen(realpath($dir));
 
-        $paths = isset($config['filter']['paths']) ? (array) $config['filter']['paths'] : array();
-        $excludedPaths = isset($config['filter']['excluded_paths']) ? (array) $config['filter']['excluded_paths'] : array();
+        if ( ! $rawConfig && is_file($dir.'/.scrutinizer.yml')) {
+            $rawConfig = Yaml::parse(file_get_contents($dir.'/.scrutinizer.yml'));
+        }
+        $config = $this->getConfiguration()->process($rawConfig);
+
+        $matches = function(array $patterns, $path) {
+            foreach ($patterns as $pattern) {
+                if (fnmatch($pattern, $path)) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
 
         $files = array();
-        foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir)) as $file) {
+        foreach (Finder::create()->files()->in($dir) as $file) {
             $relPath = substr($file->getRealPath(), $dirLength + 1);
 
-            if ($paths && ! $this->existsMatch($paths, $relPath)) {
+            if ($config['filter']['paths'] && ! $matches($config['filter']['paths'], $relPath)) {
                 continue;
             }
 
-            if ($excludedPaths && $this->existsMatch($excludedPath, $relPath)) {
+            if ($config['filter']['excluded_paths'] && $matches($config['filter']['excluded_paths'], $relPath)) {
                 continue;
             }
 
             $files[] = new File($relPath, file_get_contents($file->getRealPath()));
         }
 
+        $project = new Project($files, $config);
         foreach ($this->analyzers as $analyzer) {
             $analyzer->scrutinize($project);
         }
 
         return $project;
-    }
-
-    private function existsMatch(array $patterns, $path)
-    {
-        foreach ($patterns as $pattern) {
-            if (fnmatch($pattern, $path)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

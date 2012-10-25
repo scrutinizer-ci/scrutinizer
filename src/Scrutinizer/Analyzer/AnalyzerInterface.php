@@ -1,9 +1,14 @@
 <?php
 
-namespace Analyzer;
+namespace Scrutinizer\Analyzer;
 
-use Symfony\Component\Config\Definition\NodeInterface;
+use Scrutinizer\Config\ConfigBuilder;
 
+/**
+ * Interface for analyzers.
+ *
+ * @author Johannes M. Schmitt <schmittjoh@gmail.com>
+ */
 interface AnalyzerInterface
 {
     /**
@@ -18,9 +23,7 @@ interface AnalyzerInterface
     /**
      * Returns the configuration tree of this analyzer.
      *
-     * If this analyzer is not configurable, null may be returned.
-     *
-     * @return NodeInterface|null
+     * @return ConfigBuilder
      */
-    function getConfigTree();
+    function getConfigBuilder();
 }
