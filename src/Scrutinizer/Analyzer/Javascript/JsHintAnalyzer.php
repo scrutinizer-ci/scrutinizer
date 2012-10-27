@@ -2,6 +2,7 @@
 
 namespace Scrutinizer\Analyzer\Javascript;
 
+use Scrutinizer\Util\NameGenerator;
 use Scrutinizer\Analyzer\FileTraversal;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -21,6 +22,13 @@ use Scrutinizer\Model\File;
  */
 class JsHintAnalyzer implements AnalyzerInterface
 {
+    private $names;
+
+    public function __construct()
+    {
+        $this->names = new NameGenerator();
+    }
+
     public function scrutinize(Project $project)
     {
         FileTraversal::create($project, $this, 'analyze')
@@ -91,8 +99,19 @@ class JsHintAnalyzer implements AnalyzerInterface
 
             $attrs = $error->attributes();
             $message = (string) $attrs->message;
+            $params = array();
 
-            $file->addComment((integer) $attrs->line, new Comment((string) $attrs->source, $message));
+            // We are trying to extract variable parts from the message. Currently,
+            // this algorithm is simply extracting everything wrapped in quotes.
+            if (preg_match_all('#("[^"]+"|\'[^\']+\')#', $message, $matches)) {
+                $this->names->reset();
+
+                foreach ($matches[1] as $value) {
+                    $params[$this->names->next()] = substr($value, 1, -1);
+                }
+            }
+
+            $file->addComment((integer) $attrs->line, new Comment((string) $attrs->source, $message, $params));
         }
     }
 
