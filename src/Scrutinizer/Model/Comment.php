@@ -29,4 +29,14 @@ class Comment
     {
         return $this->params;
     }
+
+    public function __toString()
+    {
+        $replaceMap = array();
+        foreach ($this->params as $k => $v) {
+            $replaceMap['%'.$k.'%'] = $v;
+        }
+
+        return strtr($this->message, $replaceMap);
+    }
 }

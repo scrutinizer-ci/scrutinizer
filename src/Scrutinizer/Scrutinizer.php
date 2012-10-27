@@ -2,9 +2,8 @@
 
 namespace Scrutinizer;
 
+use Scrutinizer\Analyzer\Javascript\JsHintAnalyzer;
 use Scrutinizer\Util\PathUtils;
-
-use Scrutinizer\Analyzer\Javascript\JsLintAnalyzer;
 use Scrutinizer\Config\ConfigBuilder;
 use Scrutinizer\Model\File;
 use Scrutinizer\Model\Project;
@@ -24,7 +23,7 @@ class Scrutinizer
 
     public function __construct()
     {
-        $this->registerAnalyzer(new JsLintAnalyzer());
+        $this->registerAnalyzer(new JsHintAnalyzer());
     }
 
     public function registerAnalyzer($analyzer)
@@ -70,5 +69,17 @@ class Scrutinizer
         }
 
         return $project;
+    }
+
+    public function scrutinizeFiles(array $files, array $rawConfig = array())
+    {
+        $config = $this->getConfiguration()->process($rawConfig);
+
+        $project = new Project($files, $config);
+        foreach ($this->analyzers as $analyzer) {
+            $analyzer->scrutinize($project);
+        }
+
+        return $config;
     }
 }

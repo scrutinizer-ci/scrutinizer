@@ -1,0 +1,18 @@
+function f,d() { }
+
+-- FILENAME --
+syntax_error.js
+
+-- CONFIG --
+js_hint:
+    use_native_config: false
+
+-- COMMENTS --
+Line 1: Expected '(' and instead saw ','.
+Line 1: Expected ')' to match ',' from line 1 and instead saw '('.
+Line 1: Expected '{' and instead saw ')'.
+Line 1: Expected an identifier and instead saw ')'.
+Line 1: Expected an assignment or function call and instead saw an expression.
+Line 1: Missing semicolon.
+Line 1: Unused variable: 'f'
+Line 1: Unused variable: 'd'

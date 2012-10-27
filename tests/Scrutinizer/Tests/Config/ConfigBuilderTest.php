@@ -7,12 +7,11 @@ use Scrutinizer\Config\ConfigBuilder;
 
 class ConfigBuilderTest extends \PHPUnit_Framework_TestCase
 {
-    private $builder;
-
     public function testCreateAnalzerConfig()
     {
-        $this->builder
-            ->analyzer('foo', 'Does Foo')
+        $builder = new ConfigBuilder('foo');
+        $builder
+            ->info('Does Foo')
             ->globalConfig()
                 ->booleanNode('switch_foo')->defaultFalse()->end()
             ->end()
@@ -22,7 +21,7 @@ class ConfigBuilderTest extends \PHPUnit_Framework_TestCase
                 ->end()
             ->end()
         ;
-        $tree = $this->builder->getRoot()->getNode(true);
+        $tree = $builder->getNode(true);
 
         $processor = new Processor();
         $processed = $processor->process($tree, array($cfg = array(
@@ -44,10 +43,5 @@ class ConfigBuilderTest extends \PHPUnit_Framework_TestCase
         $cfg['filter'] = array('paths' => array(), 'excluded_paths' => array());
 
         $this->assertEquals($cfg, $processed);
-    }
-
-    protected function setUp()
-    {
-        $this->builder = new ConfigBuilder();
     }
 }

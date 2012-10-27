@@ -2,6 +2,7 @@
 
 namespace Scrutinizer\Analyzer;
 
+use Scrutinizer\Model\Project;
 use Scrutinizer\Config\ConfigBuilder;
 
 /**
@@ -35,4 +36,13 @@ interface AnalyzerInterface
      * @return void
      */
     function buildConfig(ConfigBuilder $builder);
+
+    /**
+     * The name of this analyzer.
+     *
+     * Should be a lower-case string with "_" as separators.
+     *
+     * @return string
+     */
+    function getName();
 }

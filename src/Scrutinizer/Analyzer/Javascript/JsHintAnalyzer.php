@@ -2,6 +2,7 @@
 
 namespace Scrutinizer\Analyzer\Javascript;
 
+use Scrutinizer\Analyzer\FileTraversal;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 use Scrutinizer\Analyzer\AnalyzerInterface;
@@ -18,7 +19,7 @@ use Scrutinizer\Model\File;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class JsLintAnalyzer implements AnalyzerInterface
+class JsHintAnalyzer implements AnalyzerInterface
 {
     public function scrutinize(Project $project)
     {
@@ -27,10 +28,15 @@ class JsLintAnalyzer implements AnalyzerInterface
             ->traverse();
     }
 
+    public function getName()
+    {
+        return 'js_hint';
+    }
+
     public function buildConfig(ConfigBuilder $builder)
     {
         $builder
-            ->analyzer('js_hint', 'Runs the JSHint static analysis tool.')
+            ->info('Runs the JSHint static analysis tool.')
             ->globalConfig()
                 ->booleanNode('use_native_config')
                     ->info('Whether to use JSHint\'s native config file, .jshintrc.')
@@ -54,17 +60,23 @@ class JsLintAnalyzer implements AnalyzerInterface
         if ($project->getGlobalConfig('js_hint.use_native_config')) {
             $config = $this->findNativeConfig($project, $file);
         } else {
-            $config = json_encode($project->getFileConfig($file, 'js_hint'));
+            $config = json_encode($project->getFileConfig($file, 'js_hint'), JSON_FORCE_OBJECT);
         }
 
         $cfgFile = tempnam(sys_get_temp_dir(), 'jshint_cfg');
-        file_put_contents($nativeConfig);
+        file_put_contents($cfgFile, $config);
 
         $inputFile = tempnam(sys_get_temp_dir(), 'jshint_input');
-        file_put_contents($file->getContent());
+        file_put_contents($inputFile.'.js', $file->getContent());
 
-        $proc = new Process('jshint --checkstyle-reporter --config '.escapeshellarg($cfgFile).' '.escapeshellarg($inputFile));
-        if (0 !== $proc->run()) {
+        $proc = new Process('jshint --checkstyle-reporter --config '.escapeshellarg($cfgFile).' '.escapeshellarg($inputFile.'.js'));
+        $exitCode = $proc->run();
+
+        unlink($cfgFile);
+        unlink($inputFile);
+        unlink($inputFile.'.js');
+
+        if ($exitCode > 1) {
             throw new ProcessFailedException($proc);
         }
 
@@ -73,7 +85,9 @@ class JsLintAnalyzer implements AnalyzerInterface
         libxml_disable_entity_loader($previous);
 
         foreach ($xml->xpath('//error') as $error) {
-            // <error line="42" column="36" severity="error" message="[&apos;username&apos;] is better written in dot notation." source="[&apos;{a}&apos;] is better written in dot notation." />
+            // <error line="42" column="36" severity="error"
+            //        message="[&apos;username&apos;] is better written in dot notation."
+            //        source="[&apos;{a}&apos;] is better written in dot notation." />
 
             $attrs = $error->attributes();
             $message = (string) $attrs->message;

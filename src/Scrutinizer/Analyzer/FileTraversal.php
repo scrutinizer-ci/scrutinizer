@@ -42,7 +42,7 @@ class FileTraversal
 
     public function traverse()
     {
-        $name = $this->analyzer->getConfigBuilder()->buildTree()->getName();
+        $name = $this->analyzer->getName();
 
         if ( ! $this->project->getGlobalConfig($name.'.enabled')) {
             return;

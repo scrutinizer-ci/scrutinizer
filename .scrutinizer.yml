@@ -15,7 +15,7 @@ js_lint:
         any-name:
             paths: [tests/*] # <- automatically added
             enabled: false # <- automatically added
-            options: 
+            config: 
               # config
 
 js_hint:
