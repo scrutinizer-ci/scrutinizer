@@ -29,12 +29,15 @@ class RunCommand extends Command
         }
 
         $scrutinizer = new Scrutinizer();
-        $project = $scrutinizer->scrutinize($dir);
+        $project = $scrutinizer->scrutinizeDirectory($dir);
 
         // TODO: Add other formatters.
         $first = true;
+        $nbFiles = 0;
+        $nbComments = 0;
         foreach ($project->getFiles() as $file) {
             assert($file instanceof File);
+            $nbFiles += 1;
 
             if ( ! $file->hasComments()) {
                 continue;
@@ -54,9 +57,16 @@ class RunCommand extends Command
             foreach ($comments as $line => $lineComments) {
                 foreach ($lineComments as $comment) {
                     $output->writeln(sprintf('Line %d: %s', $line, $comment));
+                    $nbComments += 1;
                 }
             }
         }
+
+        if ($nbComments > 0) {
+            $output->write(PHP_EOL);
+        }
+
+        $output->writeln(sprintf("Scanned Files: %s, Comments: %s", $nbFiles, $nbComments));
 
         return 0;
     }

@@ -36,7 +36,7 @@ class Scrutinizer
         return new Configuration($this->analyzers);
     }
 
-    public function scrutinize($dir, array $rawConfig = array())
+    public function scrutinizeDirectory($dir, array $rawConfig = array())
     {
         if ( ! is_dir($dir)) {
             throw new \InvalidArgumentException(sprintf('The directory "%s" does not exist.', $dir));

@@ -99,8 +99,11 @@ class JsHintAnalyzer implements AnalyzerInterface
     private function findNativeConfig(Project $project, File $file)
     {
         $path = $file->getPath();
+        $newPath = null;
 
-        while ('' !== $path = dirname($path)) {
+        while ($path !== $newPath = dirname($path)) {
+            $path = $newPath;
+
             if ($project->hasFile($path.'/.jshintrc')) {
                 return $project->getFile($path.'/.jshintrc')->getContent();
             }
