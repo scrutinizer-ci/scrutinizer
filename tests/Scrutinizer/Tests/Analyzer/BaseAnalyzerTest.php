@@ -21,9 +21,9 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
     {
         $testData = $this->parseTestFile($filename);
 
-        $file = new File($testData['filename'], $testData['content']);
+        $testData['files'][$testData['filename']] = $file = new File($testData['filename'], $testData['content']);
         $this->scrutinizer->scrutinizeFiles(
-            array($file),
+            $testData['files'],
             $testData['config']
         );
 
@@ -86,15 +86,13 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
 
     private function parseTestFile($filename)
     {
-        $tokens = preg_split("#\n\n-- ([A-Z-]+) --\n#m", file_get_contents($filename), null, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+        $tokens = preg_split("#\n\n-- (.+?) --\n#", file_get_contents($filename), null, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
-        $data = array('content' => array_shift($tokens), 'comments' => array(), 'config' => array());
+        $data = array('content' => array_shift($tokens), 'comments' => array(), 'config' => array(), 'files' => array());
         for ($i=0,$c=count($tokens); $i<$c; $i++) {
             switch ($tokens[$i]) {
                 case 'FILENAME':
-                    $data['filename'] = $tokens[$i+1];
-                    $i++;
-
+                    $data['filename'] = $tokens[++$i];
                     continue 2;
 
                 case 'COMMENTS':
@@ -115,6 +113,14 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
                 case 'CONFIG':
                     $data['config'] = Yaml::parse($tokens[++$i]);
                     continue 2;
+
+                default:
+                    if (preg_match('#^FILE: (.*)$#', $tokens[$i], $match)) {
+                        $data['files'][$match[1]] = new File($match[1], $tokens[++$i]);
+                        break;
+                    }
+
+                    throw new \RuntimeException(sprintf('Unknown section header "%s".', $tokens[$i]));
             }
         }
 

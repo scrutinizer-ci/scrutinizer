@@ -81,19 +81,21 @@ class Project
         }
 
         $pathConfig = null;
+        $relPath = $analyzerName.'.config';
         if (isset($this->config[$analyzerName]['path_configs'])) {
             $filePath = $file->getPath();
-            foreach ($this->config[$analyzerName]['path_configs'] as $pathConfig) {
+            foreach ($this->config[$analyzerName]['path_configs'] as $k => $pathConfig) {
                 if ( ! PathUtils::matches($filePath, $pathConfig['paths'])) {
                     continue;
                 }
 
+                $relPath = $analyzerName.'.path_configs.'.$k.'.config';
                 $config = $pathConfig['config'];
                 break;
             }
         }
 
-        return $this->walkConfig($pathConfig ?: $this->config[$analyzerName]['config'], $segments, $configPath);
+        return $this->walkConfig($pathConfig ?: $this->config[$analyzerName]['config'], $segments, $relPath);
     }
 
     /**
@@ -107,7 +109,7 @@ class Project
     {
         list($analyzerName, $segments) = $this->parseConfigPath($configPath);
 
-        return $this->walkConfig($this->config[$analyzerName], $segments, $configPath);
+        return $this->walkConfig($this->config[$analyzerName], $segments, $analyzerName);
     }
 
     public function getFiles()
@@ -138,11 +140,13 @@ class Project
         return false;
     }
 
-    private function walkConfig($config, array $segments, $fullPath)
+    private function walkConfig($config, array $segments, $relPath = null)
     {
-        $walked = null;
+        $fullPath = ($relPath ? $relPath.'.' : '').implode('.', $segments);
+
+        $walked = $relPath;
         foreach ($segments as $segment) {
-            $walked = $walked ? $segment : '.'.$segment;
+            $walked .= $walked ? '.'.$segment : $segment;
 
             if ( ! array_key_exists($segment, $config)) {
                 throw new \InvalidArgumentException(sprintf('There is no config at path "%s"; walked path: "%s".', $fullPath, $walked));

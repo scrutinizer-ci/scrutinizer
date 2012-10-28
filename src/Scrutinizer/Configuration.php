@@ -32,10 +32,9 @@ class Configuration
 
     public function process(array $values)
     {
-        $configs = array($values);
         $processor = new Processor();
 
-        return $processor->process($this->getTree(), $configs);
+        return $processor->process($this->getTree(), array($values));
     }
 
     public function getTree()

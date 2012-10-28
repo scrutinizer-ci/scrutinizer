@@ -2,6 +2,8 @@
 
 namespace Scrutinizer;
 
+use Scrutinizer\Analyzer\PHP\MessDetectorAnalyzer;
+
 use Scrutinizer\Analyzer\Javascript\JsHintAnalyzer;
 use Scrutinizer\Util\PathUtils;
 use Scrutinizer\Config\ConfigBuilder;
@@ -24,6 +26,7 @@ class Scrutinizer
     public function __construct()
     {
         $this->registerAnalyzer(new JsHintAnalyzer());
+        $this->registerAnalyzer(new MessDetectorAnalyzer());
     }
 
     public function registerAnalyzer($analyzer)
