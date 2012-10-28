@@ -2,8 +2,10 @@
 
 namespace Scrutinizer;
 
+use Scrutinizer\Analyzer\AnalyzerInterface;
+use Scrutinizer\Analyzer\LoggerAwareInterface;
+use Monolog\Logger;
 use Scrutinizer\Analyzer\PHP\MessDetectorAnalyzer;
-
 use Scrutinizer\Analyzer\Javascript\JsHintAnalyzer;
 use Scrutinizer\Util\PathUtils;
 use Scrutinizer\Config\ConfigBuilder;
@@ -21,16 +23,23 @@ use Symfony\Component\Yaml\Yaml;
  */
 class Scrutinizer
 {
+    private $logger;
     private $analyzers = array();
 
-    public function __construct()
+    public function __construct(Logger $logger = null)
     {
+        $this->logger = $logger ?: new Logger('scrutinizer');
+
         $this->registerAnalyzer(new JsHintAnalyzer());
         $this->registerAnalyzer(new MessDetectorAnalyzer());
     }
 
-    public function registerAnalyzer($analyzer)
+    public function registerAnalyzer(AnalyzerInterface $analyzer)
     {
+        if ($analyzer instanceof LoggerAwareInterface) {
+            $analyzer->setLogger($this->logger);
+        }
+
         $this->analyzers[] = $analyzer;
     }
 
@@ -65,11 +74,10 @@ class Scrutinizer
 
             $files[$relPath] = new File($relPath, file_get_contents($file->getRealPath()));
         }
+        $this->logger->info(sprintf('Found %d files in directory.', count($files)));
 
         $project = new Project($files, $config);
-        foreach ($this->analyzers as $analyzer) {
-            $analyzer->scrutinize($project);
-        }
+        $this->scrutinizeProject($project);
 
         return $project;
     }
@@ -77,12 +85,21 @@ class Scrutinizer
     public function scrutinizeFiles(array $files, array $rawConfig = array())
     {
         $config = $this->getConfiguration()->process($rawConfig);
-
         $project = new Project($files, $config);
-        foreach ($this->analyzers as $analyzer) {
-            $analyzer->scrutinize($project);
-        }
+        $this->scrutinizeProject($project);
 
-        return $config;
+        return $project;
+    }
+
+    public function scrutinizeProject(Project $project)
+    {
+        foreach ($this->analyzers as $analyzer) {
+            $this->logger->info(sprintf('Running analyzer "%s".', $analyzer->getName()), array('analyzer' => $analyzer));
+            try {
+                $analyzer->scrutinize($project);
+            } catch (\Exception $ex) {
+                $this->logger->err(sprintf('An error occurred in analyzer "%s": %s', $analyzer->getName(), $ex->getMessage()), array('analyzer' => $analyzer, 'exception' => $ex));
+            }
+        }
     }
 }

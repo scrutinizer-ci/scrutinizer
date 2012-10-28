@@ -2,6 +2,10 @@
 
 namespace Scrutinizer\Analyzer\PHP;
 
+use Monolog\Logger;
+
+use Scrutinizer\Analyzer\LoggerAwareInterface;
+
 use Scrutinizer\Model\Comment;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -11,11 +15,19 @@ use Scrutinizer\Analyzer\FileTraversal;
 use Scrutinizer\Model\Project;
 use Scrutinizer\Analyzer\AnalyzerInterface;
 
-class MessDetectorAnalyzer implements AnalyzerInterface
+class MessDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterface
 {
+    private $logger;
+
+    public function setLogger(Logger $logger)
+    {
+        $this->logger = $logger;
+    }
+
     public function scrutinize(Project $project)
     {
         FileTraversal::create($project, $this, 'analyze')
+            ->setLogger($logger)
             ->setExtensions($project->getGlobalConfig('php_md.extensions'))
             ->traverse();
     }

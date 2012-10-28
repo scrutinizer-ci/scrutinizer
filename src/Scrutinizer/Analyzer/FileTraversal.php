@@ -2,6 +2,8 @@
 
 namespace Scrutinizer\Analyzer;
 
+use Monolog\Logger;
+
 use Scrutinizer\Model\File;
 use Scrutinizer\Model\Project;
 
@@ -19,6 +21,7 @@ class FileTraversal
     private $analyzer;
     private $method;
 
+    private $logger;
     private $extensions = array();
 
     public static function create(Project $project, AnalyzerInterface $analyzer, $method)
@@ -31,6 +34,13 @@ class FileTraversal
         $this->project = $project;
         $this->analyzer = $analyzer;
         $this->method = $method;
+    }
+
+    public function setLogger(Logger $logger)
+    {
+        $this->logger = $logger;
+
+        return $this;
     }
 
     public function setExtensions(array $extensions)
@@ -59,6 +69,7 @@ class FileTraversal
                 continue;
             }
 
+            $this->logger->debug(sprintf('Analyzing file "%s".', $file->getPath()), array('project' => $this->project, 'file' => $file, 'analyzer' => $this->analyzer));
             $this->analyzer->{$this->method}($this->project, $file);
         }
     }

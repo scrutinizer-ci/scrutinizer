@@ -2,6 +2,10 @@
 
 namespace Scrutinizer\Analyzer\Javascript;
 
+use Monolog\Logger;
+
+use Scrutinizer\Analyzer\LoggerAwareInterface;
+
 use Scrutinizer\Util\NameGenerator;
 use Scrutinizer\Analyzer\FileTraversal;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -20,18 +24,25 @@ use Scrutinizer\Model\File;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class JsHintAnalyzer implements AnalyzerInterface
+class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
 {
     private $names;
+    private $logger;
 
     public function __construct()
     {
         $this->names = new NameGenerator();
     }
 
+    public function setLogger(Logger $logger)
+    {
+        $this->logger = $logger;
+    }
+
     public function scrutinize(Project $project)
     {
         FileTraversal::create($project, $this, 'analyze')
+            ->setLogger($this->logger)
             ->setExtensions($project->getGlobalConfig('js_hint.extensions'))
             ->traverse();
     }
