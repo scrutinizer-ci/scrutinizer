@@ -18,7 +18,7 @@ class Configuration
     private $builders = array();
 
     /**
-     * @param array<AnalyzerInterface> $analyzers
+     * @param AnalyzerInterface[] $analyzers
      */
     public function __construct(array $analyzers)
     {
@@ -41,8 +41,9 @@ class Configuration
     {
         $tb = new TreeBuilder();
 
-        $rootNode = $tb->root('scrutinizer', 'array');
+        $rootNode = $tb->root('{root}', 'array');
         $rootNode
+            ->attribute('artificial', true)
             ->children()
                 ->arrayNode('filter')
                     ->info('Allows you to filter which files are included in the review; by default, all files.')

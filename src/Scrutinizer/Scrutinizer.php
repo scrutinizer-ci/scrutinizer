@@ -3,7 +3,6 @@
 namespace Scrutinizer;
 
 use Monolog\Handler\NullHandler;
-
 use Scrutinizer\Analyzer\AnalyzerInterface;
 use Scrutinizer\Analyzer\LoggerAwareInterface;
 use Monolog\Logger;

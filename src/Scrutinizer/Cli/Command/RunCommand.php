@@ -2,6 +2,12 @@
 
 namespace Scrutinizer\Cli\Command;
 
+use Scrutinizer\Cli\OutputHandler;
+
+use Monolog\Handler\FingersCrossedHandler;
+
+use Monolog\Logger;
+
 use Scrutinizer\Model\File;
 use Scrutinizer\Scrutinizer;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,7 +34,10 @@ class RunCommand extends Command
             return 1;
         }
 
-        $scrutinizer = new Scrutinizer();
+        $logger = new Logger('scrutinizer');
+        $logger->pushHandler(new FingersCrossedHandler(new OutputHandler($output)));
+
+        $scrutinizer = new Scrutinizer($logger);
         $project = $scrutinizer->scrutinizeDirectory($dir);
 
         // TODO: Add other formatters.
