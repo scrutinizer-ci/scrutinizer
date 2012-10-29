@@ -27,7 +27,7 @@ class MessDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterface
     public function scrutinize(Project $project)
     {
         FileTraversal::create($project, $this, 'analyze')
-            ->setLogger($logger)
+            ->setLogger($this->logger)
             ->setExtensions($project->getGlobalConfig('php_md.extensions'))
             ->traverse();
     }

@@ -2,6 +2,8 @@
 
 namespace Scrutinizer;
 
+use Monolog\Handler\NullHandler;
+
 use Scrutinizer\Analyzer\AnalyzerInterface;
 use Scrutinizer\Analyzer\LoggerAwareInterface;
 use Monolog\Logger;
@@ -28,7 +30,12 @@ class Scrutinizer
 
     public function __construct(Logger $logger = null)
     {
-        $this->logger = $logger ?: new Logger('scrutinizer');
+        if (null === $logger) {
+            $logger = new Logger('scrutinizer');
+            $logger->pushHandler(new NullHandler());
+        }
+
+        $this->logger = $logger;
 
         $this->registerAnalyzer(new JsHintAnalyzer());
         $this->registerAnalyzer(new MessDetectorAnalyzer());
