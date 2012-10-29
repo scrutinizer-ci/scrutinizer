@@ -66,23 +66,9 @@ class Scrutinizer
         }
         $config = $this->getConfiguration()->process($rawConfig);
 
-        $files = array();
-        foreach (Finder::create()->files()->in($dir) as $file) {
-            $relPath = substr($file->getRealPath(), $dirLength + 1);
+        $project = Project::createFromDirectory($dir, $config);
+        $this->logger->info(sprintf('Found %d files in directory.', count($project->getFiles())));
 
-            if ($config['filter']['paths'] && ! PathUtils::matches($relPath, $config['filter']['paths'])) {
-                continue;
-            }
-
-            if ($config['filter']['excluded_paths'] && PathUtils::matches($relPath, $config['filter']['excluded_paths'])) {
-                continue;
-            }
-
-            $files[$relPath] = new File($relPath, file_get_contents($file->getRealPath()));
-        }
-        $this->logger->info(sprintf('Found %d files in directory.', count($files)));
-
-        $project = new Project($files, $config);
         $this->scrutinizeProject($project);
 
         return $project;

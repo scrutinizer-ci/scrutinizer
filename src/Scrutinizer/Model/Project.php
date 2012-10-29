@@ -11,6 +11,30 @@ class Project
     private $files;
     private $config;
 
+    public static function createFromDirectory($dir, array $config)
+    {
+        $files = array();
+        foreach (Finder::create()->files()->in($dir) as $file) {
+            $relPath = substr($file->getRealPath(), $dirLength + 1);
+
+            if ($config['filter']['paths'] && ! PathUtils::matches($relPath, $config['filter']['paths'])) {
+                continue;
+            }
+
+            if ($config['filter']['excluded_paths'] && PathUtils::matches($relPath, $config['filter']['excluded_paths'])) {
+                continue;
+            }
+
+            $files[$relPath] = new File($relPath, file_get_contents($file->getRealPath()));
+        }
+
+        return new self($files, $config);
+    }
+
+    public static function createFromFiles(array $files, array $config)
+    {
+    }
+
     public function __construct(array $files, array $config)
     {
         $this->files = $files;
