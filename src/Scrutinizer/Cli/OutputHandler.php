@@ -42,6 +42,6 @@ class OutputHandler extends AbstractHandler
     {
         $this->output->writeln($record['message']);
 
-        return true;
+        return false;
     }
 }
