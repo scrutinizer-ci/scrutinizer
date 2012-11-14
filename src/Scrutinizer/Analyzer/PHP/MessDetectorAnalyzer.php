@@ -3,9 +3,7 @@
 namespace Scrutinizer\Analyzer\PHP;
 
 use Monolog\Logger;
-
 use Scrutinizer\Analyzer\LoggerAwareInterface;
-
 use Scrutinizer\Model\Comment;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -15,13 +13,25 @@ use Scrutinizer\Analyzer\FileTraversal;
 use Scrutinizer\Model\Project;
 use Scrutinizer\Analyzer\AnalyzerInterface;
 
-class MessDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterface
+class MessDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterface, \Scrutinizer\Analyzer\FilesystemAwareInterface, \Scrutinizer\Analyzer\ProcessExecutorAwareInterface
 {
     private $logger;
+    private $executor;
+    private $fs;
 
     public function setLogger(Logger $logger)
     {
         $this->logger = $logger;
+    }
+    
+    public function setProcessExecutor(\Scrutinizer\Util\ProcessExecutorInterface $executor)
+    {
+        $this->executor = $executor;
+    }
+    
+    public function setFilesystem(\Scrutinizer\Util\FilesystemInterface $fs) 
+    {
+        $this->fs = $fs;
     }
 
     public function scrutinize(Project $project)
@@ -74,9 +84,9 @@ class MessDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterface
         $resolvedRulesets = array();
         foreach ($rulesets as $ruleset) {
             if ($project->hasFile($ruleset)) {
-                $cfgFile = tempnam(sys_get_temp_dir(), 'cfgFile');
-                file_put_contents($cfgFile, $project->getFile($ruleset)->getContent());
-                $resolvedRulesets[] = $configFiles[] = $cfgFile;
+                $cfgFile = $this->fs->createTempFile($project->getFile($ruleset)->getContent());
+                $configFiles[] = $cfgFile;
+                $resolvedRulesets[] = $cfgFile->getName();
 
                 continue;
             }
@@ -84,22 +94,22 @@ class MessDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterface
             $resolvedRulesets[] = $ruleset;
         }
 
-        $inputFile = tempnam(sys_get_temp_dir(), 'inputFile');
-        file_put_contents($inputFile, $file->getContent());
+        $inputFile = $this->fs->createTempFile($file->getContent());
 
-        $proc = new Process('phpmd '.escapeshellarg($inputFile).' xml '.escapeshellarg(implode(",", $resolvedRulesets)));
-        $exitCode = $proc->run();
+        $proc = new Process('phpmd '.escapeshellarg($inputFile->getName()).' xml '.escapeshellarg(implode(",", $resolvedRulesets)));
+        $executedProc = $this->executor->execute($proc);
+        $exitCode = $executedProc->getExitCode();
 
         if (0 !== $exitCode && 2 !== $exitCode) {
-            throw new ProcessFailedException($proc);
+            throw new ProcessFailedException($executedProc);
         }
 
-        unlink($inputFile);
+        $inputFile->delete();
         foreach ($configFiles as $file) {
-            unlink($file);
+            $file->delete();
         }
 
-        $output = $proc->getOutput();
+        $output = $executedProc->getOutput();
         $output = str_replace($inputFile, $file->getPath(), $output);
 
         $previous = libxml_disable_entity_loader(true);

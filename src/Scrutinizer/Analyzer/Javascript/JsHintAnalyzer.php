@@ -3,9 +3,7 @@
 namespace Scrutinizer\Analyzer\Javascript;
 
 use Monolog\Logger;
-
 use Scrutinizer\Analyzer\LoggerAwareInterface;
-
 use Scrutinizer\Util\NameGenerator;
 use Scrutinizer\Analyzer\FileTraversal;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -24,14 +22,26 @@ use Scrutinizer\Model\File;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
+class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface, \Scrutinizer\Analyzer\FilesystemAwareInterface, \Scrutinizer\Analyzer\ProcessExecutorAwareInterface
 {
     private $names;
     private $logger;
+    private $executor;
+    private $fs;
 
     public function __construct()
     {
         $this->names = new NameGenerator();
+    }
+    
+    public function setFilesystem(\Scrutinizer\Util\FilesystemInterface $fs) 
+    {
+        $this->fs = $fs;
+    }
+    
+    public function setProcessExecutor(\Scrutinizer\Util\ProcessExecutorInterface $executor)
+    {
+        $this->executor = $executor;
     }
 
     public function setLogger(Logger $logger)
@@ -82,25 +92,23 @@ class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
             $config = json_encode($project->getFileConfig($file, 'js_hint'), JSON_FORCE_OBJECT);
         }
 
-        $cfgFile = tempnam(sys_get_temp_dir(), 'jshint_cfg');
-        file_put_contents($cfgFile, $config);
+        $cfgFile = $this->fs->createTempFile($config);
+        
+        $inputFile = $this->fs->createTempFile($file->getContent());
+        $inputFile->rename($inputFile->getName().'.js');
 
-        $inputFile = tempnam(sys_get_temp_dir(), 'jshint_input');
-        file_put_contents($inputFile.'.js', $file->getContent());
+        $proc = new Process('jshint --checkstyle-reporter --config '.escapeshellarg($cfgFile->getName()).' '.escapeshellarg($inputFile->getName()));
+        $executedProc = $this->executor->execute($proc);
 
-        $proc = new Process('jshint --checkstyle-reporter --config '.escapeshellarg($cfgFile).' '.escapeshellarg($inputFile.'.js'));
-        $exitCode = $proc->run();
+        $cfgFile->delete();
+        $inputFile->delete();
 
-        unlink($cfgFile);
-        unlink($inputFile);
-        unlink($inputFile.'.js');
-
-        if ($exitCode > 1) {
-            throw new ProcessFailedException($proc);
+        if ($executedProc->getExitCode() > 1) {
+            throw new ProcessFailedException($executedProc);
         }
 
         $previous = libxml_disable_entity_loader(true);
-        $xml = simplexml_load_string($proc->getOutput());
+        $xml = simplexml_load_string($executedProc->getOutput());
         libxml_disable_entity_loader($previous);
 
         foreach ($xml->xpath('//error') as $error) {

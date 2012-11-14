@@ -7,11 +7,35 @@ class File
     private $path;
     private $content;
     private $comments = array();
+    
+    private $fixedFile;
 
     public function __construct($path, $content)
     {
         $this->path = $path;
         $this->content = $content;
+    }
+    
+    /**
+     * @return Option<FixedFile>
+     */
+    public function getFixedFile()
+    {
+        return \PhpOption\Option::fromValue($this->fixedFile, null);
+    }
+    
+    /**
+     * Gets or creates the fixed file.
+     * 
+     * @return FixedFile
+     */
+    public function getOrCreateFixedFile()
+    {
+        if (null === $this->fixedFile) {
+            return $this->fixedFile = new FixedFile($this->content);
+        }
+        
+        return $this->fixedFile;
     }
 
     public function getPath()

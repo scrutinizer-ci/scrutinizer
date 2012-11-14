@@ -14,6 +14,8 @@ use Scrutinizer\Model\File;
 use Scrutinizer\Model\Project;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Yaml;
+use Scrutinizer\Util\ProcessExecutorInterface;
+use Scrutinizer\Util\FilesystemInterface;
 
 /**
  * The Scrutinizer.
@@ -25,9 +27,11 @@ use Symfony\Component\Yaml\Yaml;
 class Scrutinizer
 {
     private $logger;
+    private $processExecutor;
+    private $filesystem;
     private $analyzers = array();
 
-    public function __construct(Logger $logger = null)
+    public function __construct(Logger $logger = null, ProcessExecutorInterface $processExecutor = null, FilesystemInterface $filesystem = null)
     {
         if (null === $logger) {
             $logger = new Logger('scrutinizer');
@@ -35,6 +39,8 @@ class Scrutinizer
         }
 
         $this->logger = $logger;
+        $this->processExecutor = $processExecutor ?: new Util\LocalProcessExecutor();
+        $this->filesystem = $filesystem ?: new Util\LocalFilesystem();
 
         $this->registerAnalyzer(new JsHintAnalyzer());
         $this->registerAnalyzer(new MessDetectorAnalyzer());
@@ -44,6 +50,12 @@ class Scrutinizer
     {
         if ($analyzer instanceof LoggerAwareInterface) {
             $analyzer->setLogger($this->logger);
+        }
+        if ($analyzer instanceof Analyzer\ProcessExecutorAwareInterface) {
+            $analyzer->setProcessExecutor($this->processExecutor);
+        }
+        if ($analyzer instanceof Analyzer\FilesystemAwareInterface) {
+            $analyzer->setFilesystem($this->filesystem);
         }
 
         $this->analyzers[] = $analyzer;
