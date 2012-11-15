@@ -105,7 +105,8 @@ class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface, \Scruti
         $cfgFile->delete();
         $inputFile->delete();
 
-        if ($executedProc->getExitCode() > 1) {
+        if ($executedProc->getExitCode() > 1
+                || ($executedProc->getExitCode() === 1 && $executedProc->getOutput() === '')) {
             throw new ProcessFailedException($executedProc);
         }
 
