@@ -1,6 +1,6 @@
 <?php
 
-namespace Scrutinizer\Analyzer\PHP;
+namespace Scrutinizer\Analyzer\Php;
 
 use Scrutinizer\Util\XmlUtils;
 
