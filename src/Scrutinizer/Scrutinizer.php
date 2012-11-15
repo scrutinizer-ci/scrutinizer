@@ -102,6 +102,7 @@ class Scrutinizer
             try {
                 $analyzer->scrutinize($project);
             } catch (\Exception $ex) {
+                throw $ex;
                 $this->logger->err(sprintf('An error occurred in analyzer "%s": %s', $analyzer->getName(), $ex->getMessage()), array('analyzer' => $analyzer, 'exception' => $ex));
             }
         }

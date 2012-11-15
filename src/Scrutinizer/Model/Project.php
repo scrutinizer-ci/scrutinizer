@@ -2,8 +2,7 @@
 
 namespace Scrutinizer\Model;
 
-use Symfony\Component\Validator\Constraints\All;
-
+use Symfony\Component\Finder\Finder;
 use Scrutinizer\Util\PathUtils;
 
 class Project
@@ -13,6 +12,7 @@ class Project
 
     public static function createFromDirectory($dir, array $config)
     {
+        $dirLength = strlen($dir);
         $files = array();
         foreach (Finder::create()->files()->in($dir) as $file) {
             $relPath = substr($file->getRealPath(), $dirLength + 1);

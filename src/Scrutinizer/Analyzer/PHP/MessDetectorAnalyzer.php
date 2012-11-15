@@ -23,13 +23,13 @@ class MessDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterface, \
     {
         $this->logger = $logger;
     }
-    
+
     public function setProcessExecutor(\Scrutinizer\Util\ProcessExecutorInterface $executor)
     {
         $this->executor = $executor;
     }
-    
-    public function setFilesystem(\Scrutinizer\Util\FilesystemInterface $fs) 
+
+    public function setFilesystem(\Scrutinizer\Util\FilesystemInterface $fs)
     {
         $this->fs = $fs;
     }
@@ -110,7 +110,7 @@ class MessDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterface, \
         }
 
         $output = $executedProc->getOutput();
-        $output = str_replace($inputFile, $file->getPath(), $output);
+        $output = str_replace($inputFile->getName(), $file->getPath(), $output);
 
         $previous = libxml_disable_entity_loader(true);
         $doc = simplexml_load_string($output);

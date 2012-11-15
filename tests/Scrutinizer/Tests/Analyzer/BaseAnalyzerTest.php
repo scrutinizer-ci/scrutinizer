@@ -3,9 +3,6 @@
 namespace Scrutinizer\Tests\Analyzer;
 
 use Scrutinizer\Model\File;
-
-use Scrutinizer\Model\Project;
-
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Finder\Finder;
 use Scrutinizer\Scrutinizer;

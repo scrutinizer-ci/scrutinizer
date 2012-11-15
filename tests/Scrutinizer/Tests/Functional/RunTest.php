@@ -11,7 +11,7 @@ class RunTest extends \PHPUnit_Framework_TestCase
     {
         $proc = $this->runCmd('run', array(__DIR__.'/Fixture/JsProject'));
 
-        $this->assertSame(0, $proc->getExitCode());
+        $this->assertSame(0, $proc->getExitCode(), $proc->getOutput().$proc->getErrorOutput());
         $this->assertEquals(<<<'TEXT'
 some_file.js
 ============
