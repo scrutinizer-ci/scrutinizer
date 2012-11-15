@@ -2,6 +2,8 @@
 
 namespace Scrutinizer\Analyzer\Javascript;
 
+use Scrutinizer\Util\XmlUtils;
+
 use Monolog\Logger;
 use Scrutinizer\Analyzer\LoggerAwareInterface;
 use Scrutinizer\Util\NameGenerator;
@@ -33,12 +35,12 @@ class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface, \Scruti
     {
         $this->names = new NameGenerator();
     }
-    
-    public function setFilesystem(\Scrutinizer\Util\FilesystemInterface $fs) 
+
+    public function setFilesystem(\Scrutinizer\Util\FilesystemInterface $fs)
     {
         $this->fs = $fs;
     }
-    
+
     public function setProcessExecutor(\Scrutinizer\Util\ProcessExecutorInterface $executor)
     {
         $this->executor = $executor;
@@ -93,7 +95,7 @@ class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface, \Scruti
         }
 
         $cfgFile = $this->fs->createTempFile($config);
-        
+
         $inputFile = $this->fs->createTempFile($file->getContent());
         $inputFile->rename($inputFile->getName().'.js');
 
@@ -107,9 +109,7 @@ class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface, \Scruti
             throw new ProcessFailedException($executedProc);
         }
 
-        $previous = libxml_disable_entity_loader(true);
-        $xml = simplexml_load_string($executedProc->getOutput());
-        libxml_disable_entity_loader($previous);
+        $xml = XmlUtils::safeParse($executedProc->getOutput());
 
         foreach ($xml->xpath('//error') as $error) {
             // <error line="42" column="36" severity="error"

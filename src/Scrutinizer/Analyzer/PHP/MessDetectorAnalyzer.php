@@ -2,6 +2,8 @@
 
 namespace Scrutinizer\Analyzer\PHP;
 
+use Scrutinizer\Util\XmlUtils;
+
 use Monolog\Logger;
 use Scrutinizer\Analyzer\LoggerAwareInterface;
 use Scrutinizer\Model\Comment;
@@ -111,10 +113,7 @@ class MessDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterface, \
 
         $output = $executedProc->getOutput();
         $output = str_replace($inputFile->getName(), $file->getPath(), $output);
-
-        $previous = libxml_disable_entity_loader(true);
-        $doc = simplexml_load_string($output);
-        libxml_disable_entity_loader($previous);
+        $doc = XmlUtils::safeParse($output);
 
         // <error filename="syntax_error.php" msg="Unexpected end of token stream in file: syntax_error.php." />
         foreach ($doc->xpath('//error') as $error) {
