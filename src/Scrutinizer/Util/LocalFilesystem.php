@@ -10,20 +10,25 @@ class LocalFilesystem implements FilesystemInterface
         if ( ! empty($content)) {
             file_put_contents($tempnam, $content);
         }
-        
+
         return new File($this, $tempnam, $content);
     }
-    
+
     public function write(File $file)
     {
         file_put_contents($file->getName(), $file->getContent());
     }
-    
+
+    public function read(File $file)
+    {
+        return file_get_contents($file->getName());
+    }
+
     public function delete(File $file)
     {
         unlink($file->getName());
     }
-    
+
     public function rename($oldName, $newName)
     {
         rename($oldName, $newName);

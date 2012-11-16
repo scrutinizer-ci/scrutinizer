@@ -2,8 +2,9 @@
 
 namespace Scrutinizer\Analyzer\Php;
 
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Scrutinizer\Analyzer\AbstractFileAnalyzer;
 use Scrutinizer\Util\XmlUtils;
-
 use Monolog\Logger;
 use Scrutinizer\Analyzer\LoggerAwareInterface;
 use Scrutinizer\Model\Comment;
@@ -15,62 +16,40 @@ use Scrutinizer\Analyzer\FileTraversal;
 use Scrutinizer\Model\Project;
 use Scrutinizer\Analyzer\AnalyzerInterface;
 
-class MessDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterface, \Scrutinizer\Analyzer\FilesystemAwareInterface, \Scrutinizer\Analyzer\ProcessExecutorAwareInterface
+class MessDetectorAnalyzer extends AbstractFileAnalyzer
 {
-    private $logger;
-    private $executor;
-    private $fs;
-
-    public function setLogger(Logger $logger)
-    {
-        $this->logger = $logger;
-    }
-
-    public function setProcessExecutor(\Scrutinizer\Util\ProcessExecutorInterface $executor)
-    {
-        $this->executor = $executor;
-    }
-
-    public function setFilesystem(\Scrutinizer\Util\FilesystemInterface $fs)
-    {
-        $this->fs = $fs;
-    }
-
-    public function scrutinize(Project $project)
-    {
-        FileTraversal::create($project, $this, 'analyze')
-            ->setLogger($this->logger)
-            ->setExtensions($project->getGlobalConfig('php_md.extensions'))
-            ->traverse();
-    }
-
     public function getName()
     {
         return 'php_md';
     }
 
-    public function buildConfig(ConfigBuilder $builder)
+    protected function getInfo()
+    {
+        return 'Runs the PHP Mess Detector (http://phpmd.org).';
+    }
+
+    protected function getDefaultExtensions()
+    {
+        return array('php');
+    }
+
+    protected function addFileConfig(ArrayNodeDefinition $builder)
     {
         $builder
-            ->info('Runs the PHP Mess Detector (http://phpmd.org).')
-            ->globalConfig()
-                ->arrayNode('extensions')
-                    ->defaultValue(array('php'))
-                    ->prototype('scalar')->end()
-                ->end()
-            ->end()
-            ->perFileConfig('array')
-                ->addDefaultsIfNotSet()
-                ->children()
-                    ->arrayNode('rulesets')
-                        ->defaultValue(array('codesize'))
-                        ->requiresAtLeastOneElement()
-                        ->prototype('scalar')
-                            ->info('A built-in ruleset, or a XML filename relative to the project\'s root directory.')
-                            ->beforeNormalization()
-                                ->ifTrue(function($v) { return 0 === strpos($v, './'); })
-                                ->then(function($v) { return substr($v, 2); })
-                            ->end()
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('rulesets')
+                    ->defaultValue(array('codesize'))
+                    ->requiresAtLeastOneElement()
+                    ->prototype('scalar')
+                        ->info('A built-in ruleset, or a XML filename relative to the project\'s root directory.')
+                        ->beforeNormalization()
+                            ->ifTrue(function($v) {
+                                return 0 === strpos($v, './');
+                            })
+                            ->then(function($v) {
+                                return substr($v, 2);
+                            })
                         ->end()
                     ->end()
                 ->end()
@@ -80,7 +59,7 @@ class MessDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterface, \
 
     public function analyze(Project $project, File $file)
     {
-        $rulesets = $project->getFileConfig($file, 'php_md.rulesets');
+        $rulesets = $project->getFileConfig($file, 'rulesets');
 
         $configFiles = array();
         $resolvedRulesets = array();

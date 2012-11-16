@@ -7,7 +7,8 @@ class File
     private $path;
     private $content;
     private $comments = array();
-    
+    private $metrics = array();
+
     private $fixedFile;
 
     public function __construct($path, $content)
@@ -15,7 +16,7 @@ class File
         $this->path = $path;
         $this->content = $content;
     }
-    
+
     /**
      * @return Option<FixedFile>
      */
@@ -23,10 +24,10 @@ class File
     {
         return \PhpOption\Option::fromValue($this->fixedFile, null);
     }
-    
+
     /**
      * Gets or creates the fixed file.
-     * 
+     *
      * @return FixedFile
      */
     public function getOrCreateFixedFile()
@@ -34,7 +35,7 @@ class File
         if (null === $this->fixedFile) {
             return $this->fixedFile = new FixedFile($this->content);
         }
-        
+
         return $this->fixedFile;
     }
 
@@ -70,5 +71,21 @@ class File
     public function getComments()
     {
         return $this->comments;
+    }
+
+    /**
+     * @param string $key
+     * @param integer|double $value
+     */
+    public function measure($key, $value)
+    {
+        $this->metrics[$type] = $value;
+
+        return $this;
+    }
+
+    public function getMetrics()
+    {
+        return $this->metrics;
     }
 }

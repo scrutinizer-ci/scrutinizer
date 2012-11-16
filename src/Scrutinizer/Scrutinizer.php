@@ -94,6 +94,8 @@ class Scrutinizer
     public function scrutinizeProject(Project $project)
     {
         foreach ($this->analyzers as $analyzer) {
+            $project->setAnalyzerName($analyzer->getName());
+
             $this->logger->info(sprintf('Running analyzer "%s".', $analyzer->getName()), array('analyzer' => $analyzer));
             try {
                 $analyzer->scrutinize($project);

@@ -41,4 +41,9 @@ class File
         $this->content = $newContent;
         $this->fs->write($this);
     }
+
+    public function reread()
+    {
+        return $this->content = $this->fs->read($this);
+    }
 }
