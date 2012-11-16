@@ -79,7 +79,10 @@ class File
      */
     public function measure($key, $value)
     {
-        $this->metrics[$type] = $value;
+        if (isset($this->metrics[$key])) {
+            throw new \InvalidArgumentException(sprintf('The metric "%s" already exists.', $key));
+        }
+        $this->metrics[$key] = $value;
 
         return $this;
     }
