@@ -3,9 +3,7 @@
 namespace Scrutinizer\Model;
 
 use PhpOption\Some;
-
 use PhpOption\None;
-
 use Symfony\Component\Finder\Finder;
 use Scrutinizer\Util\PathUtils;
 
