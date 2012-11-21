@@ -57,6 +57,11 @@ class Scrutinizer
         $this->analyzers[] = $analyzer;
     }
 
+    public function getAnalyzers()
+    {
+        return $this->analyzers;
+    }
+
     public function getConfiguration()
     {
         return new Configuration($this->analyzers);
