@@ -9,7 +9,7 @@ class LocalProcessExecutor implements ProcessExecutorInterface
     public function execute(Process $proc)
     {
         $proc->run();
-        
-        return $proc;
+
+        return new ProcessResult($proc->getExitCode(), $proc->getOutput(), $proc->getErrorOutput());
     }
 }

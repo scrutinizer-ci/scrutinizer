@@ -11,7 +11,7 @@ interface ProcessExecutorInterface
      * 
      * @param Process $proc
      * 
-     * @return Process the executed process (might be different from passed process)
+     * @return ProcessResult the result of the executed process
      */
     function execute(Process $proc);
 }
