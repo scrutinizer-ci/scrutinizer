@@ -9,7 +9,7 @@
         "symfony/finder": "2.1.*",
         "symfony/yaml": "2.*",
         "monolog/monolog": "1.2.*",
-        "phpoption/phpoption": "dev-master"
+        "phpoption/phpoption": "1.*"
     },
     "autoload": {
         "psr-0": {
