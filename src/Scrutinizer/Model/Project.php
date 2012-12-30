@@ -6,52 +6,46 @@ use PhpOption\Some;
 use PhpOption\None;
 use Symfony\Component\Finder\Finder;
 use Scrutinizer\Util\PathUtils;
+use JMS\Serializer\Annotation as Serializer;
 
+/**
+ * @Serializer\ExclusionPolicy("ALL")
+ */
 class Project implements ProjectInterface
 {
-    private $files;
+    private $dir;
+
+    /** @Serializer\Expose */
     private $config;
+
+    /** @Serializer\Expose */
+    private $files;
 
     private $analyzerName;
 
-    public static function createFromDirectory($dir, array $config)
+    public function __construct($dir, array $config)
     {
-        $dirLength = strlen($dir);
-        $files = array();
-        foreach (Finder::create()->files()->in($dir) as $file) {
-            $relPath = substr($file->getRealPath(), $dirLength + 1);
-
-            if ($config['filter']['paths'] && ! PathUtils::matches($relPath, $config['filter']['paths'])) {
-                continue;
-            }
-
-            if ($config['filter']['excluded_paths'] && PathUtils::matches($relPath, $config['filter']['excluded_paths'])) {
-                continue;
-            }
-
-            $files[$relPath] = new File($relPath, file_get_contents($file->getRealPath()));
-        }
-
-        return new self($files, $config);
-    }
-
-    public static function createFromFiles(array $files, array $config)
-    {
-    }
-
-    public function __construct(array $files, array $config)
-    {
-        $this->files = $files;
+        $this->dir = $dir;
         $this->config = $config;
+    }
+
+    public function getDir()
+    {
+        return $this->dir;
     }
 
     public function getFile($path)
     {
-        if ( ! isset($this->files[$path])) {
+        if ( ! is_file($this->dir.'/'.$path)) {
             return None::create();
         }
 
-        return new Some($this->files[$path]);
+        return new Some($this->files[] = new File($path, file_get_contents($this->dir.'/'.$path)));
+    }
+
+    public function getFiles()
+    {
+        return $this->files;
     }
 
     /**
@@ -147,9 +141,9 @@ class Project implements ProjectInterface
         return $this->walkConfig($this->config[$this->analyzerName], $segments, $this->analyzerName);
     }
 
-    public function getFiles()
+    public function getAnalyzerConfig()
     {
-        return $this->files;
+        return $this->config[$this->analyzerName];
     }
 
     private function matches(array $patterns, $path)

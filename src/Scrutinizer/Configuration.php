@@ -44,6 +44,9 @@ class Configuration
         $rootNode = $tb->root('{root}', 'array');
         $rootNode
             ->attribute('artificial', true)
+            ->fixXmlConfig('before_command')
+            ->fixXmlConfig('after_command')
+            ->fixXmlConfig('artifact')
             ->children()
                 ->arrayNode('filter')
                     ->info('Allows you to filter which files are included in the review; by default, all files.')
@@ -62,12 +65,35 @@ class Configuration
                         ->end()
                     ->end()
                 ->end()
+
+                ->arrayNode('before_commands')
+                    ->prototype('scalar')->end()
+                ->end()
+                ->arrayNode('after_commands')
+                    ->prototype('scalar')->end()
+                ->end()
+                ->arrayNode('artifacts')
+                    ->useAttributeAsKey('name')
+                    ->prototype('scalar')->end()
+                    ->validate()
+                        ->always(function($v) {
+                            foreach (array_keys($v) as $key) {
+                                if ( ! preg_match('/^[a-zA-Z_\-0-9]+$/', $key)) {
+                                    throw new \Exception(sprintf('The key "%s" does not match "^[a-zA-Z_\-0-9]+$".', $key));
+                                }
+                            }
+
+                            return $v;
+                        })
+                    ->end()
+                ->end()
             ->end()
         ;
 
+        $toolNode = $rootNode->children()->arrayNode('tools');
         foreach ($this->builders as $builder) {
             assert($builder instanceof ConfigBuilder);
-            $rootNode->append($builder);
+            $toolNode->append($builder);
         }
 
         return $tb->buildTree();

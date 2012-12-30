@@ -2,14 +2,17 @@
 
 namespace Scrutinizer\Cli\Command;
 
+use JMS\Serializer\JsonSerializationVisitor;
+use JMS\Serializer\Naming\CamelCaseNamingStrategy;
+use JMS\Serializer\SerializerBuilder;
 use Scrutinizer\Cli\OutputHandler;
-
 use Monolog\Handler\FingersCrossedHandler;
-
 use Monolog\Logger;
-
+use Scrutinizer\Cli\OutputLogger;
 use Scrutinizer\Model\File;
+use Scrutinizer\Model\Project;
 use Scrutinizer\Scrutinizer;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
@@ -23,6 +26,8 @@ class RunCommand extends Command
             ->setName('run')
             ->setDescription('Runs the scrutinizer.')
             ->addArgument('directory', InputArgument::REQUIRED, 'The directory that should be scrutinized.')
+            ->addOption('format', 'f', InputOption::VALUE_REQUIRED, 'The output format (defaults to plain).', 'plain')
+            ->addOption('output-file', null, InputOption::VALUE_REQUIRED, 'The file where to write the output (defaults to stdout).')
         ;
     }
 
@@ -34,16 +39,48 @@ class RunCommand extends Command
             return 1;
         }
 
-        $logger = new Logger('scrutinizer');
-        $logger->pushHandler(new FingersCrossedHandler(new OutputHandler($output)));
+        $project = (new Scrutinizer(new OutputLogger($output)))->scrutinize($dir);
+        $outputFile = $input->getOption('output-file');
 
-        $scrutinizer = new Scrutinizer($logger);
-        $project = $scrutinizer->scrutinizeDirectory($dir);
+        switch ($input->getOption('format')) {
+            case 'json':
+                $this->outputJson($output, $project, $outputFile);
+                break;
 
-        // TODO: Add other formatters.
+            case 'plain':
+                $this->outputPlain($output, $project, $outputFile);
+                break;
+
+            default:
+                throw new \LogicException(sprintf('Unknown output format "%s".', $input->getOption('format')));
+        }
+
+        return 0;
+    }
+
+    private function outputJson(OutputInterface $output, Project $project, $outputFile)
+    {
+        $visitor = new JsonSerializationVisitor(new CamelCaseNamingStrategy());
+        $visitor->setOptions(JSON_PRETTY_PRINT | JSON_FORCE_OBJECT);
+
+        $serializer = SerializerBuilder::create()
+            ->setSerializationVisitor('json', $visitor)
+            ->build();
+
+        if ( ! empty($outputFile)) {
+            file_put_contents($outputFile, $serializer->serialize($project, 'json'));
+
+            return;
+        }
+
+        $output->write($serializer->serialize($project, 'json'));
+    }
+
+    private function outputPlain(OutputInterface $output, Project $project, $outputFile)
+    {
+        $strOutput = '';
         $first = true;
-        $nbFiles = 0;
-        $nbComments = 0;
+        $nbFiles = $nbComments = 0;
         foreach ($project->getFiles() as $file) {
             assert($file instanceof File);
             $nbFiles += 1;
@@ -53,30 +90,36 @@ class RunCommand extends Command
             }
 
             if ( ! $first) {
-                $output->writeln('');
+                $strOutput .= PHP_EOL;
             }
             $first = false;
 
-            $output->writeln($file->getPath());
-            $output->writeln(str_repeat('=', strlen($file->getPath())));
+            $strOutput .= $file->getPath().PHP_EOL;
+            $strOutput .= str_repeat('=', strlen($file->getPath())).PHP_EOL;
 
             $comments = $file->getComments();
             ksort($comments);
 
             foreach ($comments as $line => $lineComments) {
                 foreach ($lineComments as $comment) {
-                    $output->writeln(sprintf('Line %d: %s', $line, $comment));
+                    $strOutput .= sprintf('Line %d: %s', $line, $comment).PHP_EOL;
                     $nbComments += 1;
                 }
             }
         }
 
         if ($nbComments > 0) {
-            $output->write(PHP_EOL);
+            $strOutput .= PHP_EOL;
         }
 
-        $output->writeln(sprintf("Scanned Files: %s, Comments: %s", $nbFiles, $nbComments));
+        $strOutput .= sprintf("Scanned Files: %s, Comments: %s", $nbFiles, $nbComments).PHP_EOL;
 
-        return 0;
+        if ( ! empty($outputFile)) {
+            file_put_contents($outputFile, $strOutput);
+
+            return;
+        }
+
+        $output->write($strOutput);
     }
 }

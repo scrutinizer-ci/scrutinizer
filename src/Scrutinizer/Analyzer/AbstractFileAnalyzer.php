@@ -2,18 +2,13 @@
 
 namespace Scrutinizer\Analyzer;
 
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Scrutinizer\Analyzer\FileTraversal;
 use Scrutinizer\Model\Project;
 use Scrutinizer\Model\File;
 use Scrutinizer\Config\NodeBuilder;
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Scrutinizer\Util\FilesystemInterface;
-use Scrutinizer\Util\ProcessExecutorInterface;
-use Monolog\Logger;
 use Scrutinizer\Config\ConfigBuilder;
-use Scrutinizer\Analyzer\FilesystemAwareInterface;
-use Scrutinizer\Analyzer\ProcessExecutorAwareInterface;
-use Scrutinizer\Analyzer\LoggerAwareInterface;
 use Scrutinizer\Analyzer\AnalyzerInterface;
 
 /**
@@ -21,31 +16,9 @@ use Scrutinizer\Analyzer\AnalyzerInterface;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-abstract class AbstractFileAnalyzer implements AnalyzerInterface, LoggerAwareInterface, ProcessExecutorAwareInterface, FilesystemAwareInterface
+abstract class AbstractFileAnalyzer implements AnalyzerInterface, LoggerAwareInterface
 {
-    /** @var Logger */
-    protected $logger;
-
-    /** @var ProcessExecutorInterface */
-    protected $executor;
-
-    /** @var FilesystemInterface */
-    protected $fs;
-
-    public function setLogger(Logger $logger)
-    {
-        $this->logger = $logger;
-    }
-
-    public function setProcessExecutor(ProcessExecutorInterface $executor)
-    {
-        $this->executor = $executor;
-    }
-
-    public function setFilesystem(FilesystemInterface $fs)
-    {
-        $this->fs = $fs;
-    }
+    use LoggerAwareTrait;
 
     public function getMetrics()
     {

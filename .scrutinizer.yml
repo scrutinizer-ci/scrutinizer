@@ -2,29 +2,59 @@ filter:
     filter: []
     excluded_paths: []
 
-js_lint:
-    enabled: true # <- automatically added
-    use_native_configs: true
-    # global config here
-    config: # <- automatically added
-        # path-dependent config here
-        options: 
-            # asdf
+before_commands:
+    - foo
+    - bar
 
-    path_configs: # <- automatically added
-        any-name:
-            paths: [tests/*] # <- automatically added
-            enabled: false # <- automatically added
-            config: 
-              # config
+after_commands:
+    - foo
+    - bar
 
-js_hint:
-    filter:
-        paths: []
-        excluded_paths: []
-    enabled: true
-    use_native_config: false
-    config:
-        pre: foo
-        bar: baz
+artifacts:
+    key1: path/to/artifact1
+    key2: path/to/artifact2
 
+tools:
+    js_lint:
+        enabled: true # <- automatically added
+        use_native_configs: true
+        # global config here
+        config: # <- automatically added
+            # path-dependent config here
+            options:
+                # asdf
+
+        path_configs: # <- automatically added
+            any-name:
+                paths: [tests/*] # <- automatically added
+                enabled: false # <- automatically added
+                config:
+                  # config
+
+    js_hint:
+        filter:
+            paths: []
+            excluded_paths: []
+        enabled: true
+        use_native_config: false
+        config:
+            pre: foo
+            bar: baz
+
+    custom:
+        custom1:
+            enabled: true
+            command: phpmd build/config.xml
+            output_file: build/logs/foo.xml
+            format: checkstyle
+            filter:
+                paths: []
+                excluded_paths: []
+
+        custom2:
+            enabled: true
+            command: phpmd foo
+            format: checkstyle
+            filter:
+                paths: []
+                excluded_paths: []

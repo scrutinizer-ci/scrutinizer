@@ -3,12 +3,14 @@
 namespace Scrutinizer;
 
 use Monolog\Handler\NullHandler;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Scrutinizer\Analyzer\AnalyzerInterface;
 use Scrutinizer\Analyzer\LoggerAwareInterface;
-use Monolog\Logger;
-use Scrutinizer\Analyzer\Php\MessDetectorAnalyzer;
-use Scrutinizer\Analyzer\Javascript\JsHintAnalyzer;
+use Scrutinizer\Analyzer;
+use Scrutinizer\Logger\LoggableProcess;
 use Scrutinizer\Model\Project;
+use Symfony\Component\Process\Process;
 use Symfony\Component\Yaml\Yaml;
 use Scrutinizer\Util\ProcessExecutorInterface;
 use Scrutinizer\Util\FilesystemInterface;
@@ -27,31 +29,21 @@ class Scrutinizer
     private $filesystem;
     private $analyzers = array();
 
-    public function __construct(Logger $logger = null, ProcessExecutorInterface $processExecutor = null, FilesystemInterface $filesystem = null)
+    public function __construct(LoggerInterface $logger = null)
     {
         if (null === $logger) {
-            $logger = new Logger('scrutinizer');
-            $logger->pushHandler(new NullHandler());
+            $logger = new NullLogger();
         }
-
         $this->logger = $logger;
-        $this->processExecutor = $processExecutor ?: new Util\LocalProcessExecutor();
-        $this->filesystem = $filesystem ?: new Util\LocalFilesystem();
 
-        $this->registerAnalyzer(new JsHintAnalyzer());
-        $this->registerAnalyzer(new MessDetectorAnalyzer());
+        $this->registerAnalyzer(new Analyzer\Javascript\JsHintAnalyzer());
+        $this->registerAnalyzer(new Analyzer\Php\MessDetectorAnalyzer());
     }
 
     public function registerAnalyzer(AnalyzerInterface $analyzer)
     {
         if ($analyzer instanceof LoggerAwareInterface) {
             $analyzer->setLogger($this->logger);
-        }
-        if ($analyzer instanceof Analyzer\ProcessExecutorAwareInterface) {
-            $analyzer->setProcessExecutor($this->processExecutor);
-        }
-        if ($analyzer instanceof Analyzer\FilesystemAwareInterface) {
-            $analyzer->setFilesystem($this->filesystem);
         }
 
         $this->analyzers[] = $analyzer;
@@ -67,47 +59,38 @@ class Scrutinizer
         return new Configuration($this->analyzers);
     }
 
-    public function scrutinizeDirectory($dir, array $rawConfig = array())
+    public function scrutinize($dir)
     {
         if ( ! is_dir($dir)) {
             throw new \InvalidArgumentException(sprintf('The directory "%s" does not exist.', $dir));
         }
-        $dirLength = strlen(realpath($dir));
+        $dir = realpath($dir);
 
-        if ( ! $rawConfig && is_file($dir.'/.scrutinizer.yml')) {
+        $rawConfig = array();
+        if (is_file($dir.'/.scrutinizer.yml')) {
             $rawConfig = Yaml::parse(file_get_contents($dir.'/.scrutinizer.yml'));
         }
+
         $config = $this->getConfiguration()->process($rawConfig);
 
-        $project = Project::createFromDirectory($dir, $config);
-        $this->logger->info(sprintf('Found %d files in directory.', count($project->getFiles())));
+        foreach ($config['before_commands'] as $cmd) {
+            $proc = new LoggableProcess($cmd, $dir);
+            $proc->setLogger($this->logger);
+            $proc->run();
+        }
 
-        $this->scrutinizeProject($project);
-
-        return $project;
-    }
-
-    public function scrutinizeFiles(array $files, array $rawConfig = array())
-    {
-        $config = $this->getConfiguration()->process($rawConfig);
-        $project = new Project($files, $config);
-        $this->scrutinizeProject($project);
-
-        return $project;
-    }
-
-    public function scrutinizeProject(Project $project)
-    {
+        $project = new Project($dir, $config);
         foreach ($this->analyzers as $analyzer) {
             $project->setAnalyzerName($analyzer->getName());
-
-            $this->logger->info(sprintf('Running analyzer "%s".', $analyzer->getName()), array('analyzer' => $analyzer));
-            try {
-                $analyzer->scrutinize($project);
-            } catch (\Exception $ex) {
-                throw $ex;
-                $this->logger->err(sprintf('An error occurred in analyzer "%s": %s', $analyzer->getName(), $ex->getMessage()), array('analyzer' => $analyzer, 'exception' => $ex));
-            }
+            $analyzer->scrutinize($project);
         }
+
+        foreach ($config['after_commands'] as $cmd) {
+            $proc = new LoggableProcess($cmd, $dir);
+            $proc->setLogger($this->logger);
+            $proc->run();
+        }
+
+        return $project;
     }
 }

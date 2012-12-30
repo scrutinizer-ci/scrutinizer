@@ -2,6 +2,12 @@
 
 namespace Scrutinizer\Model;
 
+use JMS\Serializer\Annotation as Serializer;
+use Scrutinizer\Util\DiffUtils;
+
+/**
+ * @Serializer\ExclusionPolicy("NONE")
+ */
 class File
 {
     private $path;
@@ -9,6 +15,7 @@ class File
     private $comments = array();
     private $metrics = array();
 
+    /** @Serializer\Exclude */
     private $fixedFile;
 
     public function __construct($path, $content)
@@ -90,5 +97,22 @@ class File
     public function getMetrics()
     {
         return $this->metrics;
+    }
+
+    /**
+     * @Serializer\VirtualProperty
+     */
+    public function getProposedPatch()
+    {
+        if (empty($this->fixedFile)) {
+            return null;
+        }
+
+        $after = $this->fixedFile->getContent();
+        if ($this->content === $after) {
+            return null;
+        }
+
+        return DiffUtils::generate($this->content, $after);
     }
 }
