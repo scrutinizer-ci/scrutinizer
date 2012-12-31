@@ -1,7 +1,7 @@
 Scrutinizer
 ===========
 
-Scrutinizer runs various static analysis tools on your code, collects,
+Scrutinizer runs various analysis tools on your code, collects,
 and displays the results for you. It can also be integrated into your CI set-up.
 
 Installation
