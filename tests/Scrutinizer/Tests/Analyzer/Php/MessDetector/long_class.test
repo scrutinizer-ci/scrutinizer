@@ -34,7 +34,8 @@ class Foo {
 LongClass.php
 
 -- CONFIG --
-php_md: ~
+tools:
+    php_md: ~
 
 -- COMMENTS --
 Line 4: The method example() has a Cyclomatic Complexity of 11. The configured cyclomatic complexity threshold is 10.

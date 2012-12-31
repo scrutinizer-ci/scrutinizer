@@ -91,6 +91,7 @@ class Configuration
         ;
 
         $toolNode = $rootNode->children()->arrayNode('tools');
+        $toolNode->addDefaultsIfNotSet();
         foreach ($this->builders as $builder) {
             assert($builder instanceof ConfigBuilder);
             $toolNode->append($builder);

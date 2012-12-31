@@ -16,6 +16,6 @@ class OutputLogger extends AbstractLogger
 
     public function log($level, $message, array $context = array())
     {
-
+        // TODO
     }
 }

@@ -11,7 +11,8 @@ syntax_error.php
 </pmd>
 
 -- CONFIG --
-php_md: ~
+tools:
+    php_md: ~
 
 -- COMMENTS --
 Line 1: Unexpected end of token stream in file: syntax_error.php.

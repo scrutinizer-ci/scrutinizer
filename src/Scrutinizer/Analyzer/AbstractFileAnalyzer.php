@@ -10,6 +10,8 @@ use Scrutinizer\Model\File;
 use Scrutinizer\Config\NodeBuilder;
 use Scrutinizer\Config\ConfigBuilder;
 use Scrutinizer\Analyzer\AnalyzerInterface;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 
 /**
  * Base class for file-based analyzers.
@@ -25,34 +27,27 @@ abstract class AbstractFileAnalyzer implements AnalyzerInterface, LoggerAwareInt
         return array();
     }
 
-    protected function addGlobalConfig(NodeBuilder $builder)
-    {
-    }
-
-    protected function addPerFileConfig(NodeBuilder $builder)
-    {
-    }
-
     abstract protected function getInfo();
     abstract protected function getDefaultExtensions();
     abstract public function analyze(Project $project, File $file);
 
-    public function buildConfig(ConfigBuilder $builder)
+    protected function buildConfigInternal(ConfigBuilder $builder)
     {
-        $builder->info($this->getInfo());
+    }
 
-        $globalConfig = $builder->globalConfig();
-        $globalConfig
-            ->fixXmlConfig('extension')
-            ->arrayNode('extensions')
-                ->prototype('scalar')
+    public final function buildConfig(ConfigBuilder $builder)
+    {
+        $builder
+            ->info($this->getInfo())
+            ->globalConfig()
+                ->arrayNode('extensions')
+                    ->prototype('scalar')
                     ->defaultValue($this->getDefaultExtensions())
                 ->end()
             ->end()
         ;
 
-        $this->addGlobalConfig($globalConfig);
-        $this->addPerFileConfig($builder->perFileConfig());
+        $this->buildConfigInternal($builder);
     }
 
     public function scrutinize(Project $project)

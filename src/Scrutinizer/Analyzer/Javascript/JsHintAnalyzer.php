@@ -2,10 +2,10 @@
 
 namespace Scrutinizer\Analyzer\Javascript;
 
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Scrutinizer\Util\XmlUtils;
-
 use Monolog\Logger;
-use Scrutinizer\Analyzer\LoggerAwareInterface;
 use Scrutinizer\Util\NameGenerator;
 use Scrutinizer\Analyzer\FileTraversal;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -13,7 +13,6 @@ use Symfony\Component\Process\Process;
 use Scrutinizer\Analyzer\AnalyzerInterface;
 use Scrutinizer\Config\ConfigBuilder;
 use Scrutinizer\Model\Comment;
-use Scrutinizer\Model\FileIterator;
 use Scrutinizer\Model\Project;
 use Scrutinizer\Model\File;
 
@@ -24,38 +23,22 @@ use Scrutinizer\Model\File;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface, \Scrutinizer\Analyzer\FilesystemAwareInterface, \Scrutinizer\Analyzer\ProcessExecutorAwareInterface
+class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     private $names;
-    private $logger;
-    private $executor;
-    private $fs;
 
     public function __construct()
     {
         $this->names = new NameGenerator();
     }
 
-    public function setFilesystem(\Scrutinizer\Util\FilesystemInterface $fs)
-    {
-        $this->fs = $fs;
-    }
-
-    public function setProcessExecutor(\Scrutinizer\Util\ProcessExecutorInterface $executor)
-    {
-        $this->executor = $executor;
-    }
-
-    public function setLogger(Logger $logger)
-    {
-        $this->logger = $logger;
-    }
-
     public function scrutinize(Project $project)
     {
         FileTraversal::create($project, $this, 'analyze')
             ->setLogger($this->logger)
-            ->setExtensions($project->getGlobalConfig('js_hint.extensions'))
+            ->setExtensions($project->getGlobalConfig('extensions'))
             ->traverse();
     }
 
@@ -85,7 +68,7 @@ class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface, \Scruti
                 ->end()
             ->end()
             ->perFileConfig('variable')
-                ->info('All options that are supported by JSHint (see http://jshint.com/docs/); only availabe when "use_native_config" is disabled.')
+                ->info('All options that are supported by JSHint (see http://jshint.com/docs/); only available when "use_native_config" is set to "false".')
                 ->defaultValue(array())
             ->end()
         ;
@@ -93,29 +76,30 @@ class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface, \Scruti
 
     public function analyze(Project $project, File $file)
     {
-        if ($project->getGlobalConfig('js_hint.use_native_config')) {
+        if ($project->getGlobalConfig('use_native_config')) {
             $config = $this->findNativeConfig($project, $file);
         } else {
-            $config = json_encode($project->getFileConfig($file, 'js_hint'), JSON_FORCE_OBJECT);
+            $config = json_encode($project->getFileConfig($file), JSON_FORCE_OBJECT);
         }
 
-        $cfgFile = $this->fs->createTempFile($config);
+        $cfgFile = tempnam(sys_get_temp_dir(), 'jshint');
+        file_put_contents($cfgFile, $config);
 
-        $inputFile = $this->fs->createTempFile($file->getContent());
-        $inputFile->rename($inputFile->getName().'.js');
+        $inputFile = tempnam(sys_get_temp_dir(), 'jshint_input');
+        rename($inputFile, $inputFile = $inputFile.'.js');
+        file_put_contents($inputFile, $file->getContent());
 
-        $proc = new Process('jshint --checkstyle-reporter --config '.escapeshellarg($cfgFile->getName()).' '.escapeshellarg($inputFile->getName()));
-        $executedProc = $this->executor->execute($proc);
+        $proc = new Process('jshint --checkstyle-reporter --config '.escapeshellarg($cfgFile).' '.escapeshellarg($inputFile));
+        $proc->run();
 
-        $cfgFile->delete();
-        $inputFile->delete();
+        unlink($cfgFile);
+        unlink($inputFile);
 
-        if ($executedProc->getExitCode() > 1
-                || ($executedProc->getExitCode() === 1 && $executedProc->getOutput() === '')) {
-            throw new ProcessFailedException($executedProc);
+        if ($proc->getExitCode() > 1 || ($proc->getExitCode() === 1 && $proc->getOutput() === '')) {
+            throw new ProcessFailedException($proc);
         }
 
-        $xml = XmlUtils::safeParse($executedProc->getOutput());
+        $xml = XmlUtils::safeParse($proc->getOutput());
 
         foreach ($xml->xpath('//error') as $error) {
             // <error line="42" column="36" severity="error"
@@ -150,7 +134,7 @@ class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface, \Scruti
 
             $configFile = $project->getFile($path.'/.jshintrc');
             if ($configFile->isDefined()) {
-                return $configFile->get();
+                return $configFile->get()->getContent();
             }
         }
 

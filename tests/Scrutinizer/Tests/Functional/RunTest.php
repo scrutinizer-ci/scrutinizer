@@ -26,7 +26,7 @@ TEXT
 
     private function runCmd($command, array $args = array())
     {
-        $proc = new Process(__DIR__.'/../../../../bin/scrutinizer '.escapeshellarg($command).' '.implode(" ", array_map('escapeshellarg', $args)));
+        $proc = new Process('php '.__DIR__.'/../../../../bin/scrutinizer '.escapeshellarg($command).' '.implode(" ", array_map('escapeshellarg', $args)));
         $proc->run();
 
         return $proc;

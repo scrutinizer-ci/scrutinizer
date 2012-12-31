@@ -8,10 +8,11 @@ use Symfony\Component\Finder\Finder;
 use Scrutinizer\Util\PathUtils;
 use JMS\Serializer\Annotation as Serializer;
 
+
 /**
  * @Serializer\ExclusionPolicy("ALL")
  */
-class Project implements ProjectInterface
+class Project
 {
     private $dir;
 
@@ -36,11 +37,15 @@ class Project implements ProjectInterface
 
     public function getFile($path)
     {
+        if (isset($this->files[$path])) {
+            return new Some($this->files[$path]);
+        }
+
         if ( ! is_file($this->dir.'/'.$path)) {
             return None::create();
         }
 
-        return new Some($this->files[] = new File($path, file_get_contents($this->dir.'/'.$path)));
+        return new Some($this->files[$path] = new File($path, file_get_contents($this->dir.'/'.$path)));
     }
 
     public function getFiles()
@@ -53,7 +58,7 @@ class Project implements ProjectInterface
      */
     public function setAnalyzerName($name)
     {
-        if ( ! isset($this->config[$name])) {
+        if ( ! isset($this->config['tools'][$name])) {
             throw new \InvalidArgumentException(sprintf('The analyzer "%s" does not exist.', $name));
         }
 
@@ -64,22 +69,21 @@ class Project implements ProjectInterface
      * Returns a path specific configuration setting, or the default if there
      * is no path-specific configuration for the file.
      *
-     * @param File $file
+     * @param string $filePath
      * @param string $configPath
      * @param string $default
      *
      * @return mixed
      */
-    public function getPathConfig(File $file, $configPath, $default = null)
+    public function getPathConfig($filePath, $configPath, $default = null)
     {
         $segments = explode('.', $configPath);
 
-        if ( ! isset($this->config[$this->analyzerName]['path_configs'])) {
+        if ( ! isset($this->config['tools'][$this->analyzerName]['path_configs'])) {
             return $default;
         }
 
-        $filePath = $file->getPath();
-        foreach ($this->config[$this->analyzerName]['path_configs'] as $pathConfig) {
+        foreach ($this->config['tools'][$this->analyzerName]['path_configs'] as $pathConfig) {
             if ( ! PathUtils::matches($filePath, $pathConfig['paths'])) {
                 continue;
             }
@@ -96,35 +100,45 @@ class Project implements ProjectInterface
      * This method first looks whether there is a path-specific setting, and if not
      * falls back to fetch the value from the default configuration.
      *
-     * @param File $file
+     * @param string|File $filePath
      * @param string $configPath
      *
      * @return mixed
      */
-    public function getFileConfig(File $file, $configPath)
+    public function getFileConfig($filePath, $configPath = null)
     {
-        $segments = explode('.', $configPath);
+        if ($filePath instanceof File) {
+            $filePath = $filePath->getPath();
+        }
 
-        if ( ! isset($this->config[$this->analyzerName]['config'])) {
+        if ( ! isset($this->config['tools'][$this->analyzerName]['config'])) {
             throw new \InvalidArgumentException(sprintf('The analyzer "%s" has no per-file configuration. Did you want to use getGlobalConfig() instead?', $this->analyzerName));
         }
 
-        $pathConfig = null;
+        $segments = explode('.', $configPath);
+
         $relPath = $this->analyzerName.'.config';
-        if (isset($this->config[$this->analyzerName]['path_configs'])) {
-            $filePath = $file->getPath();
-            foreach ($this->config[$this->analyzerName]['path_configs'] as $k => $pathConfig) {
+        if (isset($this->config['tools'][$this->analyzerName]['path_configs'])) {
+            foreach ($this->config['tools'][$this->analyzerName]['path_configs'] as $k => $pathConfig) {
                 if ( ! PathUtils::matches($filePath, $pathConfig['paths'])) {
                     continue;
                 }
 
                 $relPath = $this->analyzerName.'.path_configs.'.$k.'.config';
-                $config = $pathConfig['config'];
-                break;
+
+                if (empty($configPath)) {
+                    return $pathConfig['config'];
+                }
+
+                return $this->walkConfig($pathConfig['config'], $segments, $relPath);
             }
         }
 
-        return $this->walkConfig($pathConfig ?: $this->config[$this->analyzerName]['config'], $segments, $relPath);
+        if (empty($configPath)) {
+            return $this->config['tools'][$this->analyzerName]['config'];
+        }
+
+        return $this->walkConfig($this->config['tools'][$this->analyzerName]['config'], $segments, $relPath);
     }
 
     /**
@@ -138,12 +152,12 @@ class Project implements ProjectInterface
     {
         $segments = explode('.', $configPath);
 
-        return $this->walkConfig($this->config[$this->analyzerName], $segments, $this->analyzerName);
+        return $this->walkConfig($this->config['tools'][$this->analyzerName], $segments, $this->analyzerName);
     }
 
     public function getAnalyzerConfig()
     {
-        return $this->config[$this->analyzerName];
+        return $this->config['tools'][$this->analyzerName];
     }
 
     private function matches(array $patterns, $path)

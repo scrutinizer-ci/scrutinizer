@@ -2,10 +2,10 @@
 
 namespace Scrutinizer\Analyzer;
 
-use Monolog\Logger;
-
-use Scrutinizer\Model\File;
+use Psr\Log\LoggerInterface;
 use Scrutinizer\Model\Project;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * Convenience class for file traversals.
@@ -36,7 +36,7 @@ class FileTraversal
         $this->method = $method;
     }
 
-    public function setLogger(Logger $logger)
+    public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
 
@@ -52,22 +52,30 @@ class FileTraversal
 
     public function traverse()
     {
-        $name = $this->analyzer->getName();
-
-        if ( ! $this->project->getGlobalConfig($name.'.enabled')) {
+        if ( ! $this->project->getGlobalConfig('enabled')) {
             return;
         }
 
-        foreach ($this->project->getFiles() as $file) {
-            assert($file instanceof File);
+        $finder = Finder::create()
+            ->in($this->project->getDir())
+            ->files()
+            ->filter(function (SplFileInfo $file) {
+                if ($this->extensions && ! in_array($file->getExtension(), $this->extensions, true)) {
+                    return false;
+                }
 
-            if ($this->extensions && ! in_array($file->getExtension(), $this->extensions, true)) {
-                continue;
-            }
+                if ( ! $this->project->getPathConfig($file->getRelativePath(), 'enabled', true)) {
+                    return false;
+                }
 
-            if ( ! $this->project->getPathConfig($file, $name.'.enabled', true)) {
-                continue;
-            }
+                return true;
+            })
+        ;
+
+        foreach ($finder as $finderFile) {
+            /** @var $finderFile SplFileInfo */
+
+            $file = $this->project->getFile($finderFile->getRelativePathname())->get();
 
             if (null !== $this->logger) {
                 $this->logger->debug(sprintf('Analyzing file "%s".', $file->getPath()), array('project' => $this->project, 'file' => $file, 'analyzer' => $this->analyzer));

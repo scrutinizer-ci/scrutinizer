@@ -4,8 +4,9 @@ function f,d() { }
 syntax_error.js
 
 -- CONFIG --
-js_hint:
-    use_native_config: false
+tools:
+    js_hint:
+        use_native_config: false
 
 -- COMMENTS --
 Line 1: Expected '(' and instead saw ','.

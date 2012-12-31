@@ -25,8 +25,6 @@ use Scrutinizer\Util\FilesystemInterface;
 class Scrutinizer
 {
     private $logger;
-    private $processExecutor;
-    private $filesystem;
     private $analyzers = array();
 
     public function __construct(LoggerInterface $logger = null)
@@ -42,7 +40,7 @@ class Scrutinizer
 
     public function registerAnalyzer(AnalyzerInterface $analyzer)
     {
-        if ($analyzer instanceof LoggerAwareInterface) {
+        if ($analyzer instanceof \Psr\Log\LoggerAwareInterface) {
             $analyzer->setLogger($this->logger);
         }
 
@@ -68,7 +66,7 @@ class Scrutinizer
 
         $rawConfig = array();
         if (is_file($dir.'/.scrutinizer.yml')) {
-            $rawConfig = Yaml::parse(file_get_contents($dir.'/.scrutinizer.yml'));
+            $rawConfig = Yaml::parse(file_get_contents($dir.'/.scrutinizer.yml')) ?: array();
         }
 
         $config = $this->getConfiguration()->process($rawConfig);

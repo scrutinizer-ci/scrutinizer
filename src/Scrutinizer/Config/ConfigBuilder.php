@@ -45,6 +45,9 @@ class ConfigBuilder extends ArrayNodeDefinition
         throw new \LogicException('Please use globalConfig() instead.');
     }
 
+    /**
+     * @return ConfigBuilder
+     */
     public function globalConfig()
     {
         return $this->getNodeBuilder();

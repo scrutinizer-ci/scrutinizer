@@ -2,19 +2,15 @@
 
 namespace Scrutinizer\Analyzer\Php;
 
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Scrutinizer\Analyzer\AbstractFileAnalyzer;
 use Scrutinizer\Util\XmlUtils;
-use Monolog\Logger;
-use Scrutinizer\Analyzer\LoggerAwareInterface;
 use Scrutinizer\Model\Comment;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
 use Scrutinizer\Model\File;
 use Scrutinizer\Config\ConfigBuilder;
 use Scrutinizer\Analyzer\FileTraversal;
 use Scrutinizer\Model\Project;
-use Scrutinizer\Analyzer\AnalyzerInterface;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 class MessDetectorAnalyzer extends AbstractFileAnalyzer
 {
@@ -33,23 +29,25 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
         return array('php');
     }
 
-    protected function addFileConfig(ArrayNodeDefinition $builder)
+    protected function buildConfigInternal(ConfigBuilder $builder)
     {
         $builder
-            ->addDefaultsIfNotSet()
-            ->children()
-                ->arrayNode('rulesets')
-                    ->defaultValue(array('codesize'))
-                    ->requiresAtLeastOneElement()
-                    ->prototype('scalar')
-                        ->info('A built-in ruleset, or a XML filename relative to the project\'s root directory.')
-                        ->beforeNormalization()
-                            ->ifTrue(function($v) {
-                                return 0 === strpos($v, './');
-                            })
-                            ->then(function($v) {
-                                return substr($v, 2);
-                            })
+            ->perFileConfig('array')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('rulesets')
+                        ->defaultValue(array('codesize'))
+                        ->requiresAtLeastOneElement()
+                        ->prototype('scalar')
+                            ->info('A built-in ruleset, or a XML filename relative to the project\'s root directory.')
+                            ->beforeNormalization()
+                                ->ifTrue(function($v) {
+                                    return 0 === strpos($v, './');
+                                })
+                                ->then(function($v) {
+                                    return substr($v, 2);
+                                })
+                            ->end()
                         ->end()
                     ->end()
                 ->end()
@@ -64,10 +62,13 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
         $configFiles = array();
         $resolvedRulesets = array();
         foreach ($rulesets as $ruleset) {
-            if ($project->hasFile($ruleset)) {
-                $cfgFile = $this->fs->createTempFile($project->getFile($ruleset)->getContent());
+            $ruleFile = $project->getFile($ruleset);
+            if ($ruleFile->isDefined()) {
+                $cfgFile = tempnam(sys_get_temp_dir(), 'phpmd_cfg');
+                file_put_contents($cfgFile, $ruleFile->get()->getContent());
+
                 $configFiles[] = $cfgFile;
-                $resolvedRulesets[] = $cfgFile->getName();
+                $resolvedRulesets[] = $cfgFile;
 
                 continue;
             }
@@ -75,28 +76,26 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
             $resolvedRulesets[] = $ruleset;
         }
 
-        $inputFile = $this->fs->createTempFile($file->getContent());
+        $inputFile = tempnam(sys_get_temp_dir(), 'phpmd_input');
+        file_put_contents($inputFile, $file->getContent());
 
-        $proc = new Process('phpmd '.escapeshellarg($inputFile->getName()).' xml '.escapeshellarg(implode(",", $resolvedRulesets)));
-        $executedProc = $this->executor->execute($proc);
-        $exitCode = $executedProc->getExitCode();
+        $proc = new Process('phpmd '.escapeshellarg($inputFile).' xml '.escapeshellarg(implode(",", $resolvedRulesets)));
+        $exitCode = $proc->run();
 
         if (0 !== $exitCode && 2 !== $exitCode) {
-            throw new ProcessFailedException($executedProc);
+            throw new ProcessFailedException($proc);
         }
 
-        $inputFile->delete();
-        foreach ($configFiles as $file) {
-            $file->delete();
-        }
+        unlink($inputFile);
+        array_map('unlink', $configFiles);
 
-        $output = $executedProc->getOutput();
-        $output = str_replace($inputFile->getName(), $file->getPath(), $output);
+        $output = $proc->getOutput();
+        $output = str_replace($inputFile, $file->getPath(), $output);
         $doc = XmlUtils::safeParse($output);
 
         // <error filename="syntax_error.php" msg="Unexpected end of token stream in file: syntax_error.php." />
         foreach ($doc->xpath('//error') as $error) {
-            assert($error instanceof \SimpleXMLElement);
+            /** @var $error \SimpleXMLElement */
 
             $attrs = $error->attributes();
             $file->addComment(1, new Comment('php_md.error', (string) $attrs->msg));
@@ -107,7 +106,7 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
         //            class="Foo" method="example" priority="3"
         // >The method example() has a Cyclomatic Complexity of 11. The configured cyclomatic complexity threshold is 10.</violation>
         foreach ($doc->xpath('//violation') as $violation) {
-            assert($violation instanceof \SimpleXMLElement);
+            /** @var $violation \SimpleXMLElement */
 
             $attrs = $violation->attributes();
             $rule = preg_replace_callback('#[A-Z]#', function($v) { return '_'.strtolower($v[0]); }, lcfirst((string) $attrs->rule));

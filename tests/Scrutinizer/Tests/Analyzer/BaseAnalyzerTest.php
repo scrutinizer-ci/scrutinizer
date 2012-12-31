@@ -3,12 +3,14 @@
 namespace Scrutinizer\Tests\Analyzer;
 
 use Scrutinizer\Model\File;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Finder\Finder;
 use Scrutinizer\Scrutinizer;
 
 class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
 {
+    private $fs;
     private $scrutinizer;
 
     /**
@@ -17,14 +19,26 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
     public function testScrutinize($filename)
     {
         $testData = $this->parseTestFile($filename);
+        $testData['files'][$testData['filename']] = $testData['content'];
 
-        $testData['files'][$testData['filename']] = $file = new File($testData['filename'], $testData['content']);
-        $this->scrutinizer->scrutinizeFiles(
-            $testData['files'],
-            $testData['config']
-        );
+        $tmpDir = tempnam(sys_get_temp_dir(), 'scrtnzer');
+        $this->fs->remove($tmpDir);
+        $this->fs->mkdir($tmpDir);
+        foreach ($testData['files'] as $name => $content) {
+            $dir = dirname($name);
 
-        $comments = $file->getComments();
+            if ('' !== $dir && ! is_dir($tmpDir.'/'.$dir)) {
+                mkdir($tmpDir.'/'.$dir, 0777, true);
+            }
+
+            file_put_contents($tmpDir.'/'.$name, $content);
+        }
+        file_put_contents($tmpDir.'/.scrutinizer.yml', json_encode($testData['config']));
+
+        $project = $this->scrutinizer->scrutinize($tmpDir);
+        $comments = $project->getFile($testData['filename'])->get()->getComments();
+        $this->fs->remove($tmpDir);
+
         $this->assertCount(count($testData['comments']), $comments, "Found comments:\n".$this->dumpComments($comments));
         foreach ($testData['comments'] as $line => $lineComments) {
             $this->assertArrayHasKey($line, $comments, 'Expected comments on line '.$line.', but found none. Found comments: '.$this->dumpComments($comments));
@@ -78,6 +92,7 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        $this->fs = new Filesystem();
         $this->scrutinizer = new Scrutinizer();
     }
 
@@ -113,7 +128,7 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
 
                 default:
                     if (preg_match('#^FILE: (.*)$#', $tokens[$i], $match)) {
-                        $data['files'][$match[1]] = new File($match[1], $tokens[++$i]);
+                        $data['files'][$match[1]] = $tokens[++$i];
                         break;
                     }
 
