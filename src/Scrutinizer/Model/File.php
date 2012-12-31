@@ -99,6 +99,16 @@ class File
         return $this->metrics;
     }
 
+    public function hasProposedPatch()
+    {
+        return ! empty($this->fixedFile);
+    }
+
+    public function hasMetrics()
+    {
+        return ! empty($this->metrics);
+    }
+
     /**
      * @Serializer\VirtualProperty
      */

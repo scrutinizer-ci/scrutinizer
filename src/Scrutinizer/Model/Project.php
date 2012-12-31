@@ -19,9 +19,7 @@ class Project
     /** @Serializer\Expose */
     private $config;
 
-    /** @Serializer\Expose */
     private $files;
-
     private $analyzerName;
 
     public function __construct($dir, array $config)
@@ -51,6 +49,26 @@ class Project
     public function getFiles()
     {
         return $this->files;
+    }
+
+    /**
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("files")
+     */
+    public function getFilesWithAnnotations()
+    {
+        $files = array();
+        foreach ($this->files as $file) {
+            /** @var $file File */
+
+            if ( ! $file->hasComments() && ! $file->hasProposedPatch() && ! $file->hasMetrics()) {
+                continue;
+            }
+
+            $files[] = $file;
+        }
+
+        return $files;
     }
 
     /**
