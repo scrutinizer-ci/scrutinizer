@@ -13,7 +13,7 @@
         "psr/log": "1.0.0",
         "phpoption/phpoption": "1.*",
         "jms/serializer": "dev-master",
-        "phpcollection/phpcollection": "0.1.*@dev"
+        "phpcollection/phpcollection": "0.2.*@dev"
     },
     "autoload": {
         "psr-0": {
