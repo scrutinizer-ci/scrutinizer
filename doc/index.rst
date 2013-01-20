@@ -17,16 +17,17 @@ your project has, lines of code, but also opens up possibilities to track things
 has developed over-time, or how the amount of database queries changed. The latter can for example help you to identify
 code that introduced certain performance degradations.
 
-Languages
----------
+Supported Languages and Tools
+-----------------------------
 Below, is the list of languages that we support at the moment. In addition, you can also always run custom commands as
-long as their output is in one of our supported formats.
+long as their output format is among our supported formats.
 
-Finally, we always love to expand support to more languages, so please get in contact if we are missing your favorite
-language at the moment.
-
-
-- Javascript
-- :doc:`PHP <tools/php/index>`
+Finally, we always love to expand support to more languages, so please `get in contact <https://scrutinizer-ci.com/contact>`_
+if we are missing your favorite language.
 
 
+.. toctree ::
+    :glob:
+    :titlesonly:
+
+    tools/*/index

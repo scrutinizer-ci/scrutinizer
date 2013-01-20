@@ -1,6 +1,10 @@
-PHP Analysis Tools
-==================
+PHP
+===
 
-The following analysis tools are supported for PHP
+Support for the following tools has been built-in. In addition you can also run your own PHP scripts.
 
-- :doc:`PHP Analyzer <php-analyzer/index>`
+.. toctree ::
+    :glob:
+    :titlesonly:
+
+    */index
