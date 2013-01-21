@@ -122,7 +122,7 @@ class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
                 }
             }
 
-            $file->addComment((integer) $attrs->line, new Comment((string) $attrs->source, $message, $params));
+            $file->addComment((integer) $attrs->line, new Comment($this->getName(), (string) $attrs->source, $message, $params));
         }
     }
 

@@ -7,9 +7,11 @@ class Comment
     private $id;
     private $message;
     private $params;
+    private $tool;
 
-    public function __construct($id, $message, array $params = array())
+    public function __construct($tool, $id, $message, array $params = array())
     {
+        $this->tool = $tool;
         $this->id = $id;
         $this->message = $message;
         $this->params = $params;
@@ -28,6 +30,11 @@ class Comment
     public function getParams()
     {
         return $this->params;
+    }
+
+    public function getTool()
+    {
+        return $this->tool;
     }
 
     public function __toString()

@@ -104,7 +104,7 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
             /** @var $error \SimpleXMLElement */
 
             $attrs = $error->attributes();
-            $file->addComment(1, new Comment('php_md.error', (string) $attrs->msg));
+            $file->addComment(1, new Comment($this->getName(), 'php_md.error', (string) $attrs->msg));
         }
 
         // <violation beginline="4" endline="30" rule="CyclomaticComplexity" ruleset="Code Size Rules"
@@ -116,7 +116,7 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
 
             $attrs = $violation->attributes();
             $rule = preg_replace_callback('#[A-Z]#', function($v) { return '_'.strtolower($v[0]); }, lcfirst((string) $attrs->rule));
-            $file->addComment((integer) $attrs->beginline, new Comment('php_md.'.$rule, trim((string) $violation)));
+            $file->addComment((integer) $attrs->beginline, new Comment($this->getName(), 'php_md.'.$rule, trim((string) $violation)));
         }
     }
 }
