@@ -4,6 +4,7 @@ namespace Scrutinizer\Cli\Command;
 
 use JMS\Serializer\JsonSerializationVisitor;
 use JMS\Serializer\Naming\CamelCaseNamingStrategy;
+use JMS\Serializer\Naming\SerializedNameAnnotationStrategy;
 use JMS\Serializer\SerializerBuilder;
 use Scrutinizer\Cli\OutputHandler;
 use Monolog\Handler\FingersCrossedHandler;
@@ -60,8 +61,8 @@ class RunCommand extends Command
 
     private function outputJson(OutputInterface $output, Project $project, $outputFile)
     {
-        $visitor = new JsonSerializationVisitor(new CamelCaseNamingStrategy());
-        $visitor->setOptions(JSON_PRETTY_PRINT | JSON_FORCE_OBJECT);
+        $visitor = new JsonSerializationVisitor(new SerializedNameAnnotationStrategy(new CamelCaseNamingStrategy()));
+        $visitor->setOptions(JSON_PRETTY_PRINT);
 
         $serializer = SerializerBuilder::create()
             ->setSerializationVisitor('json', $visitor)

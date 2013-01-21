@@ -4,6 +4,19 @@ namespace Scrutinizer\Util;
 
 abstract class PathUtils
 {
+    public static function isFiltered($path, array $filter)
+    {
+        if (isset($filter['paths']) && ! self::matches($path, $filter['paths'])) {
+            return true;
+        }
+
+        if (isset($filter['excluded_paths']) && self::matches($path, $filter['excluded_paths'])) {
+            return true;
+        }
+
+        return false;
+    }
+
     public static function matches($path, array $patterns)
     {
         foreach ($patterns as $pattern) {
