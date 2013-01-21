@@ -21,6 +21,8 @@ use Scrutinizer\Model\File;
  *
  * @see https://github.com/jshint/jshint
  *
+ * @doc-path tools/javascript/jshint/
+ * @display-name JSHint
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface

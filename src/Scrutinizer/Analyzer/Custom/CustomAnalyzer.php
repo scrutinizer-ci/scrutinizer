@@ -14,6 +14,8 @@ use Scrutinizer\Model\Project;
  *
  * We support different output formats; all of which you can find in the Parser/ sub-namespace.
  *
+ * @doc-path tools/custom/
+ * @display-name Custom
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
 class CustomAnalyzer implements AnalyzerInterface, LoggerAwareInterface

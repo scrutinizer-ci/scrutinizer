@@ -12,6 +12,12 @@ use Scrutinizer\Model\Project;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
+/**
+ * Integrates PHP Mess Detector.
+ *
+ * @doc-path tools/php/phpmd/
+ * @display-name PHP Mess Detector
+ */
 class MessDetectorAnalyzer extends AbstractFileAnalyzer
 {
     public function getName()

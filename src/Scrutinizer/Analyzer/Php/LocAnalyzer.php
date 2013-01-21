@@ -10,6 +10,12 @@ use Scrutinizer\Model\File;
 use Scrutinizer\Model\Project;
 use Scrutinizer\Analyzer\AbstractFileAnalyzer;
 
+/**
+ * Integrates LOC Analyzer
+ *
+ * @doc-path tools/php/loc/
+ * @display-name PHP Loc
+ */
 class LocAnalyzer extends AbstractFileAnalyzer
 {
     public function getName()
