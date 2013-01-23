@@ -5,6 +5,7 @@ namespace Scrutinizer;
 use Scrutinizer\Config\ConfigBuilder;
 use Scrutinizer\Analyzer\AnalyzerInterface;
 use Scrutinizer\Config\NodeBuilder;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 
@@ -37,6 +38,10 @@ class Configuration
         return $processor->process($this->getTree(), array($values));
     }
 
+    /**
+     * @return ArrayNodeDefinition
+     * @throws \Exception
+     */
     public function getTree()
     {
         $tb = new TreeBuilder();

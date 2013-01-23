@@ -10,14 +10,7 @@ bugs, or even auto-fix files.
 - :doc:`Annotating Code with Doc Comments <intro/annotating_code>`
 - :doc:`Using Different Configuration for Tests <intro/using_different_configuration_for_tests>`
 
-Configuration
--------------
-You can enable PHP Analyzer with the following configuration:
-
-.. code-block :: yaml
-
-    tools:
-        php_analyzer: true
+.. include :: php_analyzer_configuration.rst
 
 
 .. toctree ::
@@ -31,3 +24,4 @@ You can enable PHP Analyzer with the following configuration:
 .. include :: checks_include.rst
 .. include :: fixes_include.rst
 
+.. include :: php_analyzer_configuration_reference.rst

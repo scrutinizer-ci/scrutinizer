@@ -7,13 +7,5 @@ PHP Mess Detector
     --- http://phpmd.org/
 
 
-
-Configuration
--------------
-
-You can enable PHPMD with the following configuration:
-
-.. code-block :: yaml
-
-    tools:
-        php_md: true
+.. include :: phpmd_configuration.rst
+.. include :: phpmd_configuration_reference.rst

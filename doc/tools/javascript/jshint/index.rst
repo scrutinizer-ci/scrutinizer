@@ -6,14 +6,8 @@ JS Hint
 
     --- http://www.jshint.com/
 
-Configuration
--------------
-
-You can enable JS Hint for your code by adding the following to your configuration file:
-
-.. code-block :: yaml
-
-    tools:
-        js_hint: true
+.. include :: jshint_configuration.rst
 
 This basic configuration will execute JSHint on all files that end with ``.js`` in your project.
+
+.. include :: jshint_configuration_reference.rst
