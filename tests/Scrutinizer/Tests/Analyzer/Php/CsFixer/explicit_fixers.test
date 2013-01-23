@@ -1,0 +1,29 @@
+<?php
+
+namespace Foo;
+
+class Foo {
+    function bar() {
+    }
+}
+
+-- FILENAME --
+Foo/Foo.php
+
+-- FIXED CONTENT --
+<?php
+
+namespace Foo;
+
+class Foo {
+    public function bar() {
+    }
+}
+
+-- CONFIG --
+tools:
+    php_cs_fixer:
+        config:
+            # Fixers have precedence before levels.
+            level: psr2
+            fixers: [visibility]

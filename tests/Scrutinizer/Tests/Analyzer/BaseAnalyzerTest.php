@@ -36,7 +36,10 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
         file_put_contents($tmpDir.'/.scrutinizer.yml', json_encode($testData['config']));
 
         $project = $this->scrutinizer->scrutinize($tmpDir);
-        $comments = $project->getFile($testData['filename'])->get()->getComments();
+
+        /** @var $file File */
+        $file = $project->getFile($testData['filename'])->get();
+        $comments = $file->getComments();
         $this->fs->remove($tmpDir);
 
         $this->assertCount(count($testData['comments']), $comments, "Found comments:\n".$this->dumpComments($comments));
@@ -58,6 +61,14 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
             if (count($comments[$line]) > 0) {
                 $this->fail(sprintf("Found some comments on line %d which were not expected. Unexpected comments:\n%s", $line, $this->dumpComments($comments[$line])));
             }
+        }
+
+        $fixedFile = $file->getFixedFile();
+        if (null !== $testData['fixed_content']) {
+            $this->assertTrue($fixedFile->isDefined());
+            $this->assertEquals($testData['fixed_content'], $fixedFile->get()->getContent());
+        } else {
+            $this->assertFalse($fixedFile->isDefined(), 'File has new content, but was not expected to.');
         }
     }
 
@@ -100,7 +111,7 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
     {
         $tokens = preg_split("#\n\n-- (.+?) --\n#", file_get_contents($filename), null, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
-        $data = array('content' => array_shift($tokens), 'comments' => array(), 'config' => array(), 'files' => array());
+        $data = array('content' => array_shift($tokens), 'comments' => array(), 'config' => array(), 'files' => array(), 'fixed_content' => null);
         for ($i=0,$c=count($tokens); $i<$c; $i++) {
             switch ($tokens[$i]) {
                 case 'FILENAME':
@@ -120,6 +131,12 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
                         $data['comments'][(integer) $match[1]][] = $match[2];
                     }
 
+                    continue 2;
+
+                case 'FIXED CONTENT':
+                case 'FIXED_CONTENT':
+                case 'FIXED-CONTENT':
+                    $data['fixed_content'] = $tokens[++$i];
                     continue 2;
 
                 case 'CONFIG':

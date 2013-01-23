@@ -13,6 +13,7 @@ class RunTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame(0, $proc->getExitCode(), $proc->getOutput().$proc->getErrorOutput());
         $this->assertEquals(<<<'TEXT'
+Analyzing file "some_file.js".
 some_file.js
 ============
 Line 1: Unused variable: 'foo'

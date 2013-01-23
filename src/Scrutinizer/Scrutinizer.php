@@ -36,6 +36,7 @@ class Scrutinizer
 
         $this->registerAnalyzer(new Analyzer\Javascript\JsHintAnalyzer());
         $this->registerAnalyzer(new Analyzer\Php\MessDetectorAnalyzer());
+        $this->registerAnalyzer(new Analyzer\Php\CsFixerAnalyzer());
     }
 
     public function registerAnalyzer(AnalyzerInterface $analyzer)

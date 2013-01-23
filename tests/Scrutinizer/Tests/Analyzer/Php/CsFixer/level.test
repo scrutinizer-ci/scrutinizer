@@ -1,0 +1,33 @@
+<?php
+
+namespace Foo\Bar;
+
+class Baz {
+    public function foo() {
+        echo 'foo';
+    }
+}
+
+-- FILENAME --
+Foo/Bar/Baz.php
+
+-- FIXED CONTENT --
+<?php
+
+namespace Foo\Bar;
+
+class Baz
+{
+    public function foo()
+    {
+        echo 'foo';
+    }
+}
+
+
+-- CONFIG --
+tools:
+    php_cs_fixer:
+        config:
+            level: psr2
+
