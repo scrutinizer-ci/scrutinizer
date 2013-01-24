@@ -35,13 +35,10 @@ class PhpAnalyzer extends AbstractFileAnalyzer
         $ref = new \ReflectionProperty('Symfony\Component\Config\Definition\Builder\TreeBuilder', 'root');
         $ref->setAccessible(true);
 
-        $globalNode = $builder->globalConfig();
         $pathConfigNode = $builder->perFileConfig('array');
         foreach ((new Analyzer)->getPassConfig()->getConfigurations() as $cfg) {
             /** @var $cfg TreeBuilder */
             $def = $ref->getValue($cfg);
-
-            $globalNode->append($def);
             $pathConfigNode->append($def);
         }
     }
