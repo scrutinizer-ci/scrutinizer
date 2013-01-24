@@ -74,6 +74,10 @@ class ConfigBuilder extends ArrayNodeDefinition
                 }
             ));
 
+            $ref = new \ReflectionProperty($node, 'equivalentValues');
+            $ref->setAccessible(true);
+            $ref->setValue($node, array());
+
             $node->addEquivalentValue(true, array('enabled' => true));
             $node->addEquivalentValue(null, array('enabled' => true));
             $node->addEquivalentValue(false, array('enabled' => false));
