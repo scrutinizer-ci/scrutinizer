@@ -7,5 +7,6 @@ PHP Mess Detector
     --- http://phpmd.org/
 
 
-.. include :: phpmd_configuration.rst
-.. include :: phpmd_configuration_reference.rst
+.. include :: php_md_configuration.rst
+
+.. include :: php_md_configuration_reference.rst

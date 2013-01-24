@@ -12,16 +12,16 @@ bugs, or even auto-fix files.
 
 .. include :: php_analyzer_configuration.rst
 
+For an overview of all options, see the :doc:`configuration reference <config_reference>`.
 
 .. toctree ::
     :hidden:
     :glob:
 
     intro/*
+    config_reference
     checks
     fixes
 
 .. include :: checks_include.rst
 .. include :: fixes_include.rst
-
-.. include :: php_analyzer_configuration_reference.rst

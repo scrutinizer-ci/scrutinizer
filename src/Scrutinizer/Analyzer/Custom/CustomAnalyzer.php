@@ -67,15 +67,18 @@ class CustomAnalyzer implements AnalyzerInterface, LoggerAwareInterface
     public function buildConfig(ConfigBuilder $builder)
     {
         $builder
-            ->prototype('array')
-                ->children()
-                    ->booleanNode('enabled')->defaultTrue()->end()
-                    ->scalarNode('command')->isRequired()->end()
-                    ->scalarNode('output_file')->end()
-                    ->enumNode('format')->isRequired()->values($this->parser->getSupportedFormats())->end()
-                ->end()
-            ->end()
+            ->info('Runs Custom Commands')
         ;
+/*            ->arrayNode('commands')
+                ->prototype('array')
+                    ->children()
+                        ->booleanNode('enabled')->defaultTrue()->end()
+                        ->scalarNode('command')->isRequired()->end()
+                        ->scalarNode('output_file')->end()
+                        ->enumNode('format')->isRequired()->values($this->parser->getSupportedFormats())->end()
+                    ->end()
+                ->end()
+        ;*/
     }
 
     /**

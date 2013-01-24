@@ -6,8 +6,8 @@ JS Hint
 
     --- http://www.jshint.com/
 
-.. include :: jshint_configuration.rst
+.. include :: js_hint_configuration.rst
 
 This basic configuration will execute JSHint on all files that end with ``.js`` in your project.
 
-.. include :: jshint_configuration_reference.rst
+.. include :: js_hint_configuration_reference.rst

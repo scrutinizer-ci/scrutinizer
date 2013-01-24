@@ -12,7 +12,7 @@ class ParserManager
 
     public function __construct()
     {
-        foreach (Finder::create()->files()->in(__DIR__.'/Parser')->depth(1)->name('*Parser.php') as $file) {
+        foreach (Finder::create()->files()->in(__DIR__.'/Parser')->name('*Parser.php') as $file) {
             /** @var $file SplFileInfo */
 
             $className = 'Scrutinizer\Analyzer\Custom\Parser\\'.$file->getBasename('.php');
