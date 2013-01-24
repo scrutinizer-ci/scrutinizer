@@ -22,8 +22,8 @@ Supported Languages and Tools
 Below, is the list of languages that we support at the moment. In addition, you can also always run custom commands as
 long as their output format is among our supported formats.
 
-Finally, we always love to add built-in support for more languages. If we are missing your favorite language/tool, do
-not hesitate to `contact us <https://github.com/scrutinizer-ci/scrutinizer/issues>`_.
+Finally, we always love to add built-in support for more languages. If we are missing your favorite language/tool, please
+just `open an issue <https://github.com/scrutinizer-ci/scrutinizer/issues/new>`_.
 
 .. toctree ::
     :glob:

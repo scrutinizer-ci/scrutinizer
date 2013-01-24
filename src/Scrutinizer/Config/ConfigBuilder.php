@@ -2,6 +2,7 @@
 
 namespace Scrutinizer\Config;
 
+use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\Config\Definition\PrototypedArrayNode;
 use Symfony\Component\Config\Definition\BooleanNode;
 use Symfony\Component\Config\Definition\ArrayNode;
@@ -20,29 +21,18 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 class ConfigBuilder extends ArrayNodeDefinition
 {
     private $perFileConfigDef;
-
-    public function __construct($name)
-    {
-        parent::__construct($name);
-
-        $this->setBuilder(new NodeBuilder());
-        $this
-            ->addDefaultsIfNotSet()
-            ->beforeNormalization()
-                ->always(function($v) {
-                    if (is_array($v) && ! array_key_exists('enabled', $v)) {
-                        $v['enabled'] = true;
-                    }
-
-                    return $v;
-                })
-            ->end()
-        ;
-    }
+    private $addDefaultSettings = true;
 
     public function children()
     {
         throw new \LogicException('Please use globalConfig() instead.');
+    }
+
+    public function disableDefaultSettings()
+    {
+        $this->addDefaultSettings = false;
+
+        return $this;
     }
 
     /**
@@ -69,30 +59,43 @@ class ConfigBuilder extends ArrayNodeDefinition
             throw new \RuntimeException(sprintf('Each analyzer should have some short info. You can add by calling $configBuilder->info("my info").'));
         }
 
-        // Overwrite special treatmeant of booleans, and null.
-        $this->treatTrueLike(array('enabled' => true));
-        $this->treatNullLike(array('enabled' => true));
-        $this->treatFalseLike(array('enabled' => false));
-
         $node = parent::createNode();
 
-        $node->addChild($enabledNode = new BooleanNode('enabled'));
-        $enabledNode->setDefaultValue(false);
+        if ($this->addDefaultSettings) {
+            $node->setAddIfNotSet(true);
 
-        $filterDef = new ArrayNodeDefinition('filter');
-        $filterDef->setBuilder(new NodeBuilder());
-        $filterDef
-            ->addDefaultsIfNotSet()
-            ->children()
-                ->arrayNode('paths')
-                    ->prototype('scalar')->end()
+            $node->setNormalizationClosures(array(
+                function($v) {
+                    if (is_array($v) && ! array_key_exists('enabled', $v)) {
+                        $v['enabled'] = true;
+                    }
+
+                    return $v;
+                }
+            ));
+
+            $node->addEquivalentValue(true, array('enabled' => true));
+            $node->addEquivalentValue(null, array('enabled' => true));
+            $node->addEquivalentValue(false, array('enabled' => false));
+
+            $node->addChild($enabledNode = new BooleanNode('enabled'));
+            $enabledNode->setDefaultValue(false);
+
+            $filterDef = new ArrayNodeDefinition('filter');
+            $filterDef->setBuilder(new NodeBuilder());
+            $filterDef
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('paths')
+                        ->prototype('scalar')->end()
+                    ->end()
+                    ->arrayNode('excluded_paths')
+                        ->prototype('scalar')->end()
+                    ->end()
                 ->end()
-                ->arrayNode('excluded_paths')
-                    ->prototype('scalar')->end()
-                ->end()
-            ->end()
-        ;
-        $node->addChild($filterDef->getNode());
+            ;
+            $node->addChild($filterDef->getNode());
+        }
 
         if ($this->perFileConfigDef) {
             $node->addChild($this->perFileConfigDef->getNode());

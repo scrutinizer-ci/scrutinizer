@@ -2,6 +2,7 @@
 
 namespace Scrutinizer;
 
+use Scrutinizer\Analyzer\Custom\CustomAnalyzer;
 use Scrutinizer\Config\ConfigBuilder;
 use Scrutinizer\Analyzer\AnalyzerInterface;
 use Scrutinizer\Config\NodeBuilder;
