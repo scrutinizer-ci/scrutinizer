@@ -18,10 +18,12 @@ The most basic configuration looks like this:
     tools:
         custom_commands:
             -
-                command: check.sh %pathname%
+                command: check.sh %pathname% %fixed_pathname%
                 output_format: scrutinizer_json
 
-The place holder ``%pathname%`` is automatically replaced with the absolute path of each file that needs to be checked.
+The placeholder ``%pathname%`` is automatically replaced with the absolute path of each file that needs to be checked;
+``%fixed_pathname%`` is replaced with the path to a temporary file which contains the latest fixed content. In most
+cases, the content of both files will be identical unless a previous command has already proposed a change to a file.
 
 Supported Output Formats
 ------------------------
@@ -35,25 +37,21 @@ This allows you to output a simple json structure:
 .. code-block :: js
 
     {
-        "comments": {
-            "line-nb": [
-                {
-                    "id": "some-unique-id",
-                    "message": "A human readable text which is later displayed, and which may have a {placeholder}",
-                    "params": {
-                        "placeholder": "some-value"
-                    }
-                },
-                {
-                    // Another comment on the same line.
+        "comments": [
+            {
+                "line": 123,
+                "id": "some-unique-id",
+                "message": "A human readable text which is later displayed, and which may have a {placeholder}",
+                "params": {
+                    "placeholder": "some-value"
                 }
-            ],
-            "another-line-nb": [
-                // More comments on another line.
-            ]
-        },
+            },
+            {
+                // Another comment.
+            }
+        ],
 
-        "new-content": "the new content of the file"
+        "fixed_content": "the new content of the file"
     }
 
 In general, it is recommended to not embed dynamic parts in the message, but instead use placeholders and specify

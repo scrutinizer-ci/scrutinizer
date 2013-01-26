@@ -8,8 +8,11 @@ use Scrutinizer\Analyzer\AnalyzerInterface;
 use Scrutinizer\Analyzer\FileTraversal;
 use Scrutinizer\Config\ConfigBuilder;
 use Scrutinizer\Logger\LoggableProcess;
+use Scrutinizer\Model\Comment;
 use Scrutinizer\Model\File;
+use Scrutinizer\Model\FixedFile;
 use Scrutinizer\Model\Project;
+use Scrutinizer\Util\DiffUtils;
 use Scrutinizer\Util\PathUtils;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -52,13 +55,38 @@ class CustomAnalyzer implements AnalyzerInterface, LoggerAwareInterface
                 }
 
                 $project->getFile($file->getRelativePathname())->map(function(File $projectFile) use ($commandData, $file) {
-                    $proc = new LoggableProcess(str_replace('%pathname%', escapeshellarg($file->getRealPath()), $commandData['command']));
+                    $fixedContentFile = tempnam(sys_get_temp_dir(), 'fixed');
+                    file_put_contents($fixedContentFile, $projectFile->getOrCreateFixedFile()->getContent());
+
+                    $placeholders = array(
+                        '%pathname%' => escapeshellarg($file->getRealPath()),
+                        '%fixed_pathname%' => escapeshellarg($fixedContentFile),
+                    );
+
+                    $proc = new LoggableProcess(strtr($commandData['command'], $placeholders));
                     $proc->setLogger($this->logger);
-                    if (0 === $proc->run()) {
+                    $exitCode = $proc->run();
+
+                    unlink($fixedContentFile);
+
+                    if (0 === $exitCode) {
                         $output = isset($customAnalyzer['output_file']) ? file_get_contents($customAnalyzer['output_file'])
                             : $proc->getOutput();
 
-                        $this->outputProcessor->processFileOutput($projectFile, $commandData['output_format'], $output);
+                        $parsedOutput = $this->parser->parse($commandData['output_format'], $output);
+
+                        foreach ($parsedOutput['comments'] as $comment) {
+                            $projectFile->addComment($comment['line'], new Comment(
+                                'custom_commands',
+                                $comment['id'],
+                                $comment['message'],
+                                $comment['params']
+                            ));
+                        }
+
+                        if (null !== $parsedOutput['fixed_content']) {
+                            $projectFile->getFixedFile()->get()->setContent($parsedOutput['fixed_content']);
+                        }
                     } else {
                         $this->logger->error('An error occurred while executing "'.$proc->getCommandLine().'"; ignoring result.');
                     }
@@ -92,8 +120,8 @@ class CustomAnalyzer implements AnalyzerInterface, LoggerAwareInterface
                         ->isRequired()->cannotBeEmpty()
                         ->validate()
                             ->always(function($v) {
-                                if (false === strpos($v, '%pathname%')) {
-                                    throw new \Exception('Command must contain the "%pathname%" placeholder.');
+                                if (false === strpos($v, '%pathname%') && false === strpos($v, '%fixed_pathname%')) {
+                                    throw new \Exception('Command must contain the "%pathname%", or "%fixed_pathname%" placeholder.');
                                 }
 
                                 return $v;
