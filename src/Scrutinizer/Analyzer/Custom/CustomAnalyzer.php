@@ -54,6 +54,10 @@ class CustomAnalyzer implements AnalyzerInterface, LoggerAwareInterface
                     continue;
                 }
 
+                if ( ! $project->isAnalyzed($file->getRelativePathname())) {
+                    continue;
+                }
+
                 $project->getFile($file->getRelativePathname())->map(function(File $projectFile) use ($commandData, $file) {
                     $fixedContentFile = tempnam(sys_get_temp_dir(), 'fixed');
                     file_put_contents($fixedContentFile, $projectFile->getOrCreateFixedFile()->getContent());
