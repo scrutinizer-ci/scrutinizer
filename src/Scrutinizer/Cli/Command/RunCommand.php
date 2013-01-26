@@ -29,6 +29,7 @@ class RunCommand extends Command
             ->addArgument('directory', InputArgument::REQUIRED, 'The directory that should be scrutinized.')
             ->addOption('format', 'f', InputOption::VALUE_REQUIRED, 'The output format (defaults to plain).', 'plain')
             ->addOption('output-file', null, InputOption::VALUE_REQUIRED, 'The file where to write the output (defaults to stdout).')
+            ->addOption('path-file', null, InputOption::VALUE_REQUIRED, 'A file with paths that should be analyzed (by default all paths)')
         ;
     }
 
@@ -40,7 +41,16 @@ class RunCommand extends Command
             return 1;
         }
 
-        $project = (new Scrutinizer(new OutputLogger($output)))->scrutinize($dir);
+        $paths = array();
+        if (null !== $pathFile = $input->getOption('path-file')) {
+            if ( ! is_file($pathFile)) {
+                throw new \InvalidArgumentException(sprintf('The file "%s" does not exist.', $pathFile));
+            }
+
+            $paths = explode("\n", file_get_contents($pathFile));
+        }
+
+        $project = (new Scrutinizer(new OutputLogger($output)))->scrutinize($dir, $paths);
         $outputFile = $input->getOption('output-file');
 
         switch ($input->getOption('format')) {

@@ -19,13 +19,15 @@ class Project
     /** @Serializer\Expose */
     private $config;
 
+    private $paths;
     private $files;
     private $analyzerName;
 
-    public function __construct($dir, array $config)
+    public function __construct($dir, array $config, array $paths = array())
     {
         $this->dir = $dir;
         $this->config = $config;
+        $this->paths = $paths;
     }
 
     public function getDir()
@@ -176,6 +178,15 @@ class Project
     public function getAnalyzerConfig()
     {
         return $this->config['tools'][$this->analyzerName];
+    }
+
+    public function isAnalyzed($path)
+    {
+        if (empty($this->paths)) {
+            return true;
+        }
+
+        return in_array($path, $this->paths, true);
     }
 
     private function matches(array $patterns, $path)

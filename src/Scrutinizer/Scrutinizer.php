@@ -60,7 +60,7 @@ class Scrutinizer
         return new Configuration($this->analyzers);
     }
 
-    public function scrutinize($dir)
+    public function scrutinize($dir, array $paths = array())
     {
         if ( ! is_dir($dir)) {
             throw new \InvalidArgumentException(sprintf('The directory "%s" does not exist.', $dir));
@@ -80,7 +80,7 @@ class Scrutinizer
             $proc->run();
         }
 
-        $project = new Project($dir, $config);
+        $project = new Project($dir, $config, $paths);
         foreach ($this->analyzers as $analyzer) {
             $project->setAnalyzerName($analyzer->getName());
             $analyzer->scrutinize($project);

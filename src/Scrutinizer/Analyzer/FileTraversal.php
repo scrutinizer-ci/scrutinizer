@@ -60,6 +60,10 @@ class FileTraversal
             ->in($this->project->getDir())
             ->files()
             ->filter(function (SplFileInfo $file) {
+                if ( ! $this->project->isAnalyzed($file->getRelativePathname())) {
+                    return false;
+                }
+
                 if ($this->extensions && ! in_array($file->getExtension(), $this->extensions, true)) {
                     return false;
                 }
