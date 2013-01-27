@@ -4,6 +4,11 @@ namespace Scrutinizer\Util;
 
 abstract class XmlUtils
 {
+    /**
+     * @param string $str
+     *
+     * @return \SimpleXMLElement
+     */
     public static function safeParse($str)
     {
         libxml_clear_errors();

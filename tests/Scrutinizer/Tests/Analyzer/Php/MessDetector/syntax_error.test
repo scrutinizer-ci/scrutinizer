@@ -12,7 +12,7 @@ syntax_error.php
 
 -- CONFIG --
 tools:
-    php_md: ~
+    php_mess_detector: ~
 
 -- COMMENTS --
 Line 1: Unexpected end of token stream in file: syntax_error.php.

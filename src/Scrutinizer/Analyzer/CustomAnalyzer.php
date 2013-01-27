@@ -1,6 +1,6 @@
 <?php
 
-namespace Scrutinizer\Analyzer\Custom;
+namespace Scrutinizer\Analyzer;
 
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;

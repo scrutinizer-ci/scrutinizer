@@ -15,14 +15,14 @@ use Symfony\Component\Process\Process;
 /**
  * Integrates PHP Mess Detector.
  *
- * @doc-path tools/php/phpmd/
+ * @doc-path tools/php/mess-detector/
  * @display-name PHP Mess Detector
  */
 class MessDetectorAnalyzer extends AbstractFileAnalyzer
 {
     public function getName()
     {
-        return 'php_md';
+        return 'php_mess_detector';
     }
 
     protected function getInfo()

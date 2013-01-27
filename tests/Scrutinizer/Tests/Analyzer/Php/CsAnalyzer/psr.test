@@ -1,0 +1,18 @@
+<?php
+
+class Foo
+{
+    public function foo() {
+        echo 'foo';
+    }
+}
+
+-- FILENAME --
+Foo.php
+
+-- CONFIG --
+tools:
+    php_code_sniffer: ~
+
+-- COMMENTS --
+Line 5: Opening brace should be on a new line

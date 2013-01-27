@@ -1,6 +1,6 @@
 <?php
 
-namespace Scrutinizer\Analyzer\Custom;
+namespace Scrutinizer\Analyzer;
 
 use Scrutinizer\Model\Project;
 
@@ -19,5 +19,5 @@ interface ParserInterface
      *
      * @return void
      */
-    public function parse(Project $project, $content);
+    public function parse($content);
 }

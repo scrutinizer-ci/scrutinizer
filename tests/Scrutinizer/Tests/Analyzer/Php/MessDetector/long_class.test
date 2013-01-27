@@ -35,7 +35,7 @@ LongClass.php
 
 -- CONFIG --
 tools:
-    php_md: ~
+    php_mess_detector: ~
 
 -- COMMENTS --
 Line 4: The method example() has a Cyclomatic Complexity of 11. The configured cyclomatic complexity threshold is 10.

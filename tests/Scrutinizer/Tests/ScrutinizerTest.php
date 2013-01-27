@@ -10,8 +10,8 @@ class ScrutinizerTest extends \PHPUnit_Framework_TestCase
     {
         $config = (new Scrutinizer())->getConfiguration();
 
-        $rs = $config->process(array('tools' => array('php_md' => true)));
-        $this->assertTrue($rs['tools']['php_md']['enabled']);
+        $rs = $config->process(array('tools' => array('php_mess_detector' => true)));
+        $this->assertTrue($rs['tools']['php_mess_detector']['enabled']);
         $this->assertFalse($rs['tools']['php_cs_fixer']['enabled']);
     }
 }
