@@ -5,6 +5,6 @@ PHP Code Sniffer
 
     --- http://pear.php.net/package/PHP_CodeSniffer
 
-.. include :: phpcs_configuration.rst
+.. include :: php_code_sniffer_configuration.rst
 
-.. include :: phpcs_configuration_reference.rst
+.. include :: php_code_sniffer_configuration_reference.rst
