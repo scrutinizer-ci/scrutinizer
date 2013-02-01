@@ -1,0 +1,14 @@
+foobar
+
+-- FILENAME --
+README.txt
+
+-- CONFIG --
+tools:
+    custom_commands:
+        -
+            command: "php %dir%/Fixture/check.php %pathname%"
+            output_format: scrutinizer_json
+
+-- COMMENTS --
+Line 1: foobar

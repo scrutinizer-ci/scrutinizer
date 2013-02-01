@@ -39,7 +39,7 @@ class Scrutinizer
         $this->registerAnalyzer(new Analyzer\Php\CsFixerAnalyzer());
         $this->registerAnalyzer(new Analyzer\Php\PhpAnalyzer());
         $this->registerAnalyzer(new Analyzer\Php\CsAnalyzer());
-//        $this->registerAnalyzer(new Analyzer\CustomAnalyzer());
+        $this->registerAnalyzer(new Analyzer\CustomAnalyzer());
     }
 
     public function registerAnalyzer(AnalyzerInterface $analyzer)

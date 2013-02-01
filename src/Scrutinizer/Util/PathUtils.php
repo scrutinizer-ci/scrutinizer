@@ -6,11 +6,11 @@ abstract class PathUtils
 {
     public static function isFiltered($path, array $filter)
     {
-        if (isset($filter['paths']) && ! self::matches($path, $filter['paths'])) {
+        if ( ! empty($filter['paths']) && ! self::matches($path, $filter['paths'])) {
             return true;
         }
 
-        if (isset($filter['excluded_paths']) && self::matches($path, $filter['excluded_paths'])) {
+        if ( ! empty($filter['excluded_paths']) && self::matches($path, $filter['excluded_paths'])) {
             return true;
         }
 

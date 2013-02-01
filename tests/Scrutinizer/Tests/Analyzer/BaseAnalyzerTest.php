@@ -63,13 +63,8 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
             }
         }
 
-        $fixedFile = $file->getFixedFile();
-        if (null !== $testData['fixed_content']) {
-            $this->assertTrue($fixedFile->isDefined());
-            $this->assertEquals($testData['fixed_content'], $fixedFile->get()->getContent());
-        } else {
-            $this->assertFalse($fixedFile->isDefined(), 'File has new content, but was not expected to.');
-        }
+        $fixedFile = $file->getOrCreateFixedFile();
+        $this->assertEquals($testData['fixed_content'] ?: $file->getContent(), $fixedFile->getContent());
     }
 
     private function dumpComments(array $comments)
@@ -109,7 +104,9 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
 
     private function parseTestFile($filename)
     {
-        $tokens = preg_split("#\n\n-- (.+?) --\n#", file_get_contents($filename), null, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+        $testContent = file_get_contents($filename);
+        $testContent = str_replace('%dir%', __DIR__, $testContent);
+        $tokens = preg_split("#\n\n-- (.+?) --\n#", $testContent, null, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
         $data = array('content' => array_shift($tokens), 'comments' => array(), 'config' => array(), 'files' => array(), 'fixed_content' => null);
         for ($i=0,$c=count($tokens); $i<$c; $i++) {

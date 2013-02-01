@@ -27,12 +27,14 @@ class ParserManager
             ->children()
                 ->arrayNode('comments')
                     ->prototype('array')
-                        ->scalarNode('line')->isRequired()->cannotBeEmpty()->end()
-                        ->scalarNode('id')->isRequired()->cannotBeEmpty()->end()
-                        ->scalarNode('message')->isRequired()->cannotBeEmpty()->end()
-                        ->arrayNode('params')
-                            ->useAttributeAsKey('name')
-                            ->prototype('scalar')->end()
+                        ->children()
+                            ->scalarNode('line')->isRequired()->cannotBeEmpty()->end()
+                            ->scalarNode('id')->isRequired()->cannotBeEmpty()->end()
+                            ->scalarNode('message')->isRequired()->cannotBeEmpty()->end()
+                            ->arrayNode('params')
+                                ->useAttributeAsKey('name')
+                                ->prototype('scalar')->end()
+                            ->end()
                         ->end()
                     ->end()
                 ->end()
@@ -54,7 +56,7 @@ class ParserManager
             throw new \InvalidArgumentException(sprintf('The format "%s" is not supported.', $format));
         }
 
-        return $this->processor->process($this->node, $this->parsers[$format]->parse($output));
+        return $this->processor->process($this->node, array($this->parsers[$format]->parse($output)));
     }
 
     public function getSupportedFormats()

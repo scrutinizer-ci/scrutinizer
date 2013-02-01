@@ -75,6 +75,16 @@ This XML format looks as follows:
         </file>
     </checkstyle>
 
+The corresponding configuration looks like this:
+
+.. code-block :: yaml
+
+    tools:
+        custom_commands:
+            -
+                # ...
+                output_format: checkstyle
+
 Logging
 -------
 By default, the result is expected to be sent to STDOUT. However, if you also would like to log progress so that you
