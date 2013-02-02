@@ -54,6 +54,7 @@ class Configuration
             ->fixXmlConfig('after_command')
             ->fixXmlConfig('artifact')
             ->children()
+                ->booleanNode('inherit')->defaultFalse()->end()
                 ->arrayNode('filter')
                     ->info('Allows you to filter which files are included in the review; by default, all files.')
                     ->fixXmlConfig('path')
