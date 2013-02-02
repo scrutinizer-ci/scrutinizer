@@ -32,6 +32,11 @@ class Configuration
         }
     }
 
+    public function processConfigs(array $configs)
+    {
+        return (new Processor())->process($this->getTree(), $configs);
+    }
+
     public function process(array $values)
     {
         $processor = new Processor();
