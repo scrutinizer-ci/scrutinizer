@@ -26,6 +26,11 @@ Finally, we always love to add built-in support for more languages. If we are mi
 just `open an issue <https://github.com/scrutinizer-ci/scrutinizer/issues/new>`_.
 
 .. toctree ::
+    :hidden:
+
+    configuration
+
+.. toctree ::
     :glob:
     :titlesonly:
 
@@ -33,24 +38,9 @@ just `open an issue <https://github.com/scrutinizer-ci/scrutinizer/issues/new>`_
 
 Configuration
 -------------
-Scrutinizer relies on Yaml to provide it with configuration data; it scans different locations for this data. Most of
-the time, you either place a ``.scrutinizer.yml`` file in your repository, or if you have the same configuration for all
-branches insert the configuration directly on the settings page.
 
-Most tools allow you to specify a global configuration which is applicable to your entire project, and also to override
-this global config for selected sub-paths. The general structure looks like this:
+Scrutinizer uses configuration in Yaml format; it scans different locations for this data. Most of the time, you will define
+a global base configuration where you only overwrite a few selected settings for each repository.
 
-.. code-block :: yaml
+Learn more in the :doc:`dedicated configuration chapter <configuration>`.
 
-    tools:
-        tool-name:
-            config:
-                # Global Configuration goes here
-
-            path_configs:
-                -
-                    paths: [some-dir/*]
-                    config:
-                        # Configuration for all files in some-dir/ goes here
-
-In the different language sections, you find all the specific options which are available for each tool.
