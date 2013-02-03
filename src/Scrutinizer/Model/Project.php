@@ -20,7 +20,7 @@ class Project
     private $config;
 
     private $paths;
-    private $files;
+    private $files = array();
     private $analyzerName;
 
     public function __construct($dir, array $config, array $paths = array())
