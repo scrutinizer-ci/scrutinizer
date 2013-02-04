@@ -15,10 +15,14 @@ class LoggableProcess extends Process
         $this->logger = $logger;
     }
 
-    public function run()
+    public function run($callable = null)
     {
         return parent::run(
-            function ($type, $data) {
+            function ($type, $data) use ($callable) {
+                if (null !== $callable) {
+                    call_user_func($callable, $type, $data);
+                }
+
                 if (null === $this->logger) {
                     return;
                 }
