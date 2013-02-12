@@ -37,25 +37,21 @@ This allows you to output a simple json structure:
 .. code-block :: js
 
     {
-        "files": {
-            "/path/to/file": {
-                "comments": [
-                    {
-                        "line": 123,
-                        "id": "some-unique-id",
-                        "message": "A human readable text which is later displayed, and which may have a {placeholder}",
-                        "params": {
-                            "placeholder": "some-value"
-                        }
-                    },
-                    {
-                        // Another comment.
-                    }
-                ],
-
-                "fixed_content": "the new content of the file"
+        "comments": [
+            {
+                "line": 123,
+                "id": "some-unique-id",
+                "message": "A human readable text which is later displayed, and which may have a {placeholder}",
+                "params": {
+                    "placeholder": "some-value"
+                }
+            },
+            {
+                // Another comment.
             }
-        }
+        ],
+
+        "fixed_content": "the new content of the file"
     }
 
 In general, it is recommended to not embed dynamic parts in the message, but instead use placeholders and specify
@@ -69,7 +65,7 @@ This XML format looks as follows:
 
     <?xml version="1.0" encoding="UTF-8"?>
     <checkstyle>
-        <file name="/path/to/file">
+        <file name="/any-path">
             <error line="2" column="1" severity="error" message="Missing file doc comment" source="some.id"/>
             <error line="47" column="20" severity="warning" message="Equals sign not aligned" source="some.other.id"/>
         </file>

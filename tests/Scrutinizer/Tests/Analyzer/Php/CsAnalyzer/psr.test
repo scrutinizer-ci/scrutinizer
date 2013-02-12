@@ -15,4 +15,4 @@ tools:
     php_code_sniffer: ~
 
 -- COMMENTS --
-Line 5: Opening brace should be on a new line
+Line 3: Each class must be in a namespace of at least one level (a top-level vendor name)
