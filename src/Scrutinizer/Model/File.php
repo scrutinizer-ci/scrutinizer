@@ -11,7 +11,10 @@ use Scrutinizer\Util\DiffUtils;
 class File
 {
     private $path;
+
+    /** @Serializer\Exclude */
     private $content;
+
     private $comments = array();
     private $metrics = array();
 
