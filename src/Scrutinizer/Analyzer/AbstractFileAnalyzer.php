@@ -41,7 +41,7 @@ abstract class AbstractFileAnalyzer implements AnalyzerInterface, LoggerAwareInt
             ->info($this->getInfo())
             ->globalConfig()
                 ->arrayNode('extensions')
-                    ->prototype('scalar')
+                    ->prototype('scalar')->end()
                     ->defaultValue($this->getDefaultExtensions())
                 ->end()
             ->end()
