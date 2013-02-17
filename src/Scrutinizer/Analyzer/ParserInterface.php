@@ -14,7 +14,6 @@ interface ParserInterface
     public function getFormat();
 
     /**
-     * @param \Scrutinizer\Model\Project $project
      * @param string $content
      *
      * @return void
