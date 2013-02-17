@@ -81,9 +81,26 @@ class CsFixerAnalyzer extends AbstractFileAnalyzer
 
         file_put_contents($tmpPath, $fixedFile->getContent());
 
-        $proc = new Process('php-cs-fixer fix '.escapeshellarg($tmpPath).' '.$options);
-        if (0 !== $proc->run()) {
-            throw new ProcessFailedException($proc);
+        // For some reason, this command sometimes fails on the first try. So until we find the real cause for this, as
+        // a workaround we will simply try it again.
+        $i = 0;
+        $failedProc = null;
+        do {
+            $proc = new Process('php-cs-fixer fix '.escapeshellarg($tmpPath).' '.$options);
+            if (0 === $proc->run()) {
+                $failedProc = null;
+                break;
+            }
+
+            if (null === $failedProc) {
+                $failedProc = $proc;
+            }
+
+            $i += 1;
+        } while ($i < 3);
+
+        if (null !== $failedProc) {
+            throw new ProcessFailedException($failedProc);
         }
 
         $fixedFile->setContent(file_get_contents($tmpPath));
