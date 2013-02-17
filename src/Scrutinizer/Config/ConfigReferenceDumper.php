@@ -32,7 +32,8 @@ class ConfigReferenceDumper
 
     /**
      * @param NodeInterface $node
-     * @param int           $depth
+     *
+     * @return string The reference
      */
     public function dumpNode(NodeInterface $node)
     {
