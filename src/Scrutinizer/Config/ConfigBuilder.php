@@ -13,7 +13,7 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 /**
  * Specialized builder to enforce a default config structure for analyzers.
  *
- * This adds some predictability to the config structure while also safing us
+ * This adds some predictability to the config structure while also saving us
  * to type that much.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>

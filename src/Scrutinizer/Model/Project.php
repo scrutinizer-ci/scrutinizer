@@ -8,7 +8,6 @@ use Symfony\Component\Finder\Finder;
 use Scrutinizer\Util\PathUtils;
 use JMS\Serializer\Annotation as Serializer;
 
-
 /**
  * @Serializer\ExclusionPolicy("ALL")
  */

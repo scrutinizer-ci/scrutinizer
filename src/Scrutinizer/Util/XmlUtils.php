@@ -28,5 +28,5 @@ abstract class XmlUtils
         return $doc;
     }
 
-    private final function __construct() { }
+    final private function __construct() { }
 }

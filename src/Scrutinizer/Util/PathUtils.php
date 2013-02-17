@@ -28,5 +28,5 @@ abstract class PathUtils
         return false;
     }
 
-    private final function __construct() { }
+    final private function __construct() { }
 }

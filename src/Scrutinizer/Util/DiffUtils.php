@@ -39,7 +39,7 @@ abstract class DiffUtils
                 return '';
 
             // The first four lines contain information about the files which were being compared.
-            // We can savely trim them as we only generate the diff for one file.
+            // We can safely trim them as we only generate the diff for one file.
             case 1:
                 $output = explode("\n", $proc->getOutput());
 
@@ -175,10 +175,10 @@ abstract class DiffUtils
             if (0 === strpos($lines[0], 'new file')) {
                 list(, $bMode) = $match('#new file mode (.+)$#', array_shift($lines));
                 $newFile = true;
-            } else if (0 === strpos($lines[0], 'deleted file')) {
+            } elseif (0 === strpos($lines[0], 'deleted file')) {
                 list(, $aMode) = $match('#deleted file mode (.+)$#', array_shift($lines));
                 $deletedFile = true;
-            } else if (0 === strpos($lines[0], 'similarity index')) {
+            } elseif (0 === strpos($lines[0], 'similarity index')) {
                 list(, $simIndex) = $match('#similarity index (\d+)%#', array_shift($lines));
                 $renamedFile = true;
                 array_shift($lines); // Shift away the ``rename from/to ...`` lines.
@@ -251,11 +251,11 @@ abstract class DiffUtils
 
             if (' ' === $lines[$curLine][0]) {
                 $type = 'common';
-            } else if ('-' === $lines[$curLine][0]) {
+            } elseif ('-' === $lines[$curLine][0]) {
                 $type = 'removed';
-            } else if ('+' === $lines[$curLine][0]) {
+            } elseif ('+' === $lines[$curLine][0]) {
                 $type = 'added';
-            } else if ('\\' === $lines[$curLine][0]) {
+            } elseif ('\\' === $lines[$curLine][0]) {
                 continue;
             } else {
                 throw new \RuntimeException(sprintf('Invalid line start "%s" of line "%s".', $lines[$curLine][0], $lines[$curLine]));
@@ -270,5 +270,5 @@ abstract class DiffUtils
         return $chunk;
     }
 
-    private final function __construct() { }
+    final private function __construct() { }
 }
