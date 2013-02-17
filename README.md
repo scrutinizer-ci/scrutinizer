@@ -1,35 +1,26 @@
 Scrutinizer
 ===========
-
 Scrutinizer runs static code analysis, and runtime inspectors on your code, gathers their results, and combines them
 in a unified output format.
 
 Installation
 ------------
+You can download a compiled phar file from [scrutinizer-ci.com/scrutinizer.phar](https://scrutinizer-ci.com/scrutinizer.phar).
 
-After downloading, you need to install the vendors via [composer](https://getcomposer.org):
+After downloading, you can simply run scrutinizer with
 
 ```
-composer install --dev
+php scrutinizer.phar
 ```
 
-Then, you can use the executable ``./bin/scrutinizer``.
-
+This will give you a nice output with all available sub-commands.
 
 Configuration
 -------------
-
 Scrutinizer uses a configuration file named ``.scrutinizer.yml`` which it expects in the root folder of your
 project.
 
-To enable a tool, a minimal configuration such as:
+If you would like to run a build from scrutinizer-ci.com on your local PC, simply copy the resolved configuration to a
+``.scrutinizer.yml`` file in your root folder.
 
-```
-tools:
-    js_hint: ~
-```
-
-is sufficient, and would enable [JsHint](http://www.jshint.com/). For a complete reference, see below.
-
-
-Learn more about scrutinizer in [its documentation](https://scrutinizer-ci.com/docs).
+Learn more about configuration in [the documentation](https://scrutinizer-ci.com/docs).

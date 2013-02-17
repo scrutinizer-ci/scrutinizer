@@ -1,0 +1,12 @@
+{
+    "directories": [
+        "src/",
+        "vendor/"
+    ],
+    "files": [
+        "bin/scrutinizer"
+    ],
+    "main": "bin/scrutinizer",
+    "output": "scrutinizer.phar",
+    "stub": true
+}
