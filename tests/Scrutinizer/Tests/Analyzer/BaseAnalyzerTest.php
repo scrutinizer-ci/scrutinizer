@@ -46,9 +46,9 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
         foreach ($testData['comments'] as $line => $lineComments) {
             $this->assertArrayHasKey($line, $comments, 'Expected comments on line '.$line.', but found none. Found comments: '.$this->dumpComments($comments));
 
-            foreach ($lineComments as $k => $comment) {
+            foreach ($lineComments as $comment) {
                 foreach ($comments[$line] as $fK => $foundComment) {
-                    if ($comment === (string) $foundComment) {
+                    if (false !== strpos($foundComment, $comment)) {
                         unset($comments[$line][$fK]);
 
                         continue 2;

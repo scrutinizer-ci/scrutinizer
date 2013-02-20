@@ -42,6 +42,7 @@ class Comment
         $replaceMap = array();
         foreach ($this->params as $k => $v) {
             $replaceMap['%'.$k.'%'] = $v;
+            $replaceMap['{'.$k.'}'] = $v;
         }
 
         return strtr($this->message, $replaceMap);
