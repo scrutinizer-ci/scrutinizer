@@ -2,7 +2,6 @@
 
 namespace Scrutinizer;
 
-use Monolog\Handler\NullHandler;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Scrutinizer\Analyzer\AnalyzerInterface;
@@ -10,10 +9,7 @@ use Scrutinizer\Analyzer\LoggerAwareInterface;
 use Scrutinizer\Analyzer;
 use Scrutinizer\Logger\LoggableProcess;
 use Scrutinizer\Model\Project;
-use Symfony\Component\Process\Process;
 use Symfony\Component\Yaml\Yaml;
-use Scrutinizer\Util\ProcessExecutorInterface;
-use Scrutinizer\Util\FilesystemInterface;
 
 /**
  * The Scrutinizer.
