@@ -14,7 +14,7 @@
         "phpoption/phpoption": "1.*",
         "jms/serializer": "dev-master",
         "phpcollection/phpcollection": "0.2.*@dev",
-        "guzzle/guzzle": "3.2.*"
+        "guzzle/guzzle": "3.0.*"
     },
     "autoload": {
         "psr-0": {
