@@ -25,7 +25,6 @@ class CsFixerAnalyzer extends AbstractFileAnalyzer
     {
         $this->fs = new Filesystem();
         $this->tmpDir = tempnam(sys_get_temp_dir(), 'php-cs-fixer');
-        $this->command = "php-cs-fixer";
         $this->fs->remove($this->tmpDir);
         $this->fs->mkdir($this->tmpDir);
     }
@@ -48,6 +47,11 @@ class CsFixerAnalyzer extends AbstractFileAnalyzer
     protected function buildConfigInternal(ConfigBuilder $builder)
     {
         $builder
+            ->globalConfig()
+                ->scalarNode('command')
+                    ->defaultValue('php-cs-fixer')
+                ->end()
+            ->end()
             ->perFileConfig('array')
                 ->addDefaultsIfNotSet()
                 ->fixXmlConfig('fixer')
@@ -64,6 +68,7 @@ class CsFixerAnalyzer extends AbstractFileAnalyzer
 
     public function analyze(Project $project, File $file)
     {
+        $command = $project->getGlobalConfig('command');
         $fixers = $project->getFileConfig($file, 'fixers');
 
         $options = '';
@@ -87,7 +92,7 @@ class CsFixerAnalyzer extends AbstractFileAnalyzer
         $i = 0;
         $failedProc = null;
         do {
-            $proc = new Process($this->command.' fix '.escapeshellarg($tmpPath).' '.$options);
+            $proc = new Process($command.' fix '.escapeshellarg($tmpPath).' '.$options);
             if (0 === $proc->run()) {
                 $failedProc = null;
                 break;
