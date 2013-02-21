@@ -3,12 +3,12 @@
 namespace Scrutinizer\Analyzer\Php;
 
 use Scrutinizer\Util\XmlUtils;
-use Scrutinizer\Model\Metric;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
+use Scrutinizer\Config\ConfigBuilder;
 use Scrutinizer\Model\File;
 use Scrutinizer\Model\Project;
 use Scrutinizer\Analyzer\AbstractFileAnalyzer;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 /**
  * Integrates LOC Analyzer
@@ -25,16 +25,27 @@ class LocAnalyzer extends AbstractFileAnalyzer
 
     public function getMetrics()
     {
-        return array(
-        );
+        return array();
+    }
+
+    protected function buildConfigInternal(ConfigBuilder $builder)
+    {
+        $builder
+            ->globalConfig()
+                ->scalarNode('command')
+                    ->defaultValue('phploc')
+                ->end()
+            ->end()
+        ;
     }
 
     public function analyze(Project $project, File $file)
     {
+        $command = $project->getGlobalConfig('command');
         $inputFile = $this->fs->createTempFile($file->getContent());
         $outFile = $this->fs->createTempFile();
 
-        $proc = new Process('phploc --log-xml '.escapeshellarg($outFile->getName()).' '.escapeshellarg($inputFile->getName()));
+        $proc = new Process($command.' --log-xml '.escapeshellarg($outFile->getName()).' '.escapeshellarg($inputFile->getName()));
         $executedProc = $this->executor->execute($proc);
 
         $output = $outFile->reread();

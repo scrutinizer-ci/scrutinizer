@@ -38,6 +38,11 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
     protected function buildConfigInternal(ConfigBuilder $builder)
     {
         $builder
+            ->globalConfig()
+                ->scalarNode('command')
+                    ->defaultValue('phpmd')
+                ->end()
+            ->end()
             ->perFileConfig('array')
                 ->addDefaultsIfNotSet()
                 ->children()
@@ -63,6 +68,7 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
 
     public function analyze(Project $project, File $file)
     {
+        $command = $project->getGlobalConfig('command');
         $rulesets = $project->getFileConfig($file, 'rulesets');
 
         $configFiles = array();
@@ -85,7 +91,7 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
         $inputFile = tempnam(sys_get_temp_dir(), 'phpmd_input');
         file_put_contents($inputFile, $file->getContent());
 
-        $proc = new Process('phpmd '.escapeshellarg($inputFile).' xml '.escapeshellarg(implode(",", $resolvedRulesets)));
+        $proc = new Process($command.' '.escapeshellarg($inputFile).' xml '.escapeshellarg(implode(",", $resolvedRulesets)));
         $exitCode = $proc->run();
 
         if (0 !== $exitCode && 2 !== $exitCode) {
