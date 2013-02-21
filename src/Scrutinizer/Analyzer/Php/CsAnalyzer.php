@@ -20,6 +20,11 @@ use Symfony\Component\Process\Process;
  */
 class CsAnalyzer extends AbstractFileAnalyzer
 {
+    public function __construct()
+    {
+        $this->command = 'phpcs';
+    }
+
     public function getInfo()
     {
         return 'Runs PHP Code Sniffer';
@@ -65,7 +70,7 @@ class CsAnalyzer extends AbstractFileAnalyzer
     public function analyze(Project $project, File $file)
     {
         $config = $project->getFileConfig($file);
-        $cmd = 'phpcs --standard='.escapeshellarg($config['standard']);
+        $cmd = $this->command.' --standard='.escapeshellarg($config['standard']);
 
         if ( ! empty($config['sniffs'])) {
             $cmd .= ' --sniffs='.implode(',', $config['sniffs']);

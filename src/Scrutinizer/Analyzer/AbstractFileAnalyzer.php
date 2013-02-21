@@ -22,6 +22,13 @@ abstract class AbstractFileAnalyzer implements AnalyzerInterface, LoggerAwareInt
 {
     use LoggerAwareTrait;
 
+    /**
+     * The command to use to run the analyser.
+     *
+     * @var String
+     */
+    protected $command;
+
     public function getMetrics()
     {
         return array();
@@ -44,6 +51,10 @@ abstract class AbstractFileAnalyzer implements AnalyzerInterface, LoggerAwareInt
                     ->prototype('scalar')->end()
                     ->defaultValue($this->getDefaultExtensions())
                 ->end()
+                ->scalarNode('command')
+                    ->defaultNull()
+                ->end()
+                ->end()
             ->end()
         ;
 
@@ -52,9 +63,20 @@ abstract class AbstractFileAnalyzer implements AnalyzerInterface, LoggerAwareInt
 
     public function scrutinize(Project $project)
     {
+        $this->setCommand($project->getGlobalConfig('command'));
+
         FileTraversal::create($project, $this, 'analyze')
             ->setExtensions($project->getGlobalConfig('extensions'))
             ->setLogger($this->logger)
             ->traverse();
+    }
+
+    public function setCommand($command = null)
+    {
+        if (null !== $command) {
+            $this->command = $command;
+        }
+
+        return $this;
     }
 }

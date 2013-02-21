@@ -20,6 +20,11 @@ use Symfony\Component\Process\Process;
  */
 class MessDetectorAnalyzer extends AbstractFileAnalyzer
 {
+    public function __construct()
+    {
+        $this->command = 'phpmd';
+    }
+
     public function getName()
     {
         return 'php_mess_detector';
@@ -85,7 +90,7 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
         $inputFile = tempnam(sys_get_temp_dir(), 'phpmd_input');
         file_put_contents($inputFile, $file->getContent());
 
-        $proc = new Process('phpmd '.escapeshellarg($inputFile).' xml '.escapeshellarg(implode(",", $resolvedRulesets)));
+        $proc = new Process($this->command.' '.escapeshellarg($inputFile).' xml '.escapeshellarg(implode(",", $resolvedRulesets)));
         $exitCode = $proc->run();
 
         if (0 !== $exitCode && 2 !== $exitCode) {

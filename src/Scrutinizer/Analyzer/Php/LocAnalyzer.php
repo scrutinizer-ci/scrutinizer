@@ -18,6 +18,11 @@ use Scrutinizer\Analyzer\AbstractFileAnalyzer;
  */
 class LocAnalyzer extends AbstractFileAnalyzer
 {
+    public function __construct()
+    {
+        $this->command = 'phploc';
+    }
+
     public function getName()
     {
         return 'phploc';
@@ -34,7 +39,7 @@ class LocAnalyzer extends AbstractFileAnalyzer
         $inputFile = $this->fs->createTempFile($file->getContent());
         $outFile = $this->fs->createTempFile();
 
-        $proc = new Process('phploc --log-xml '.escapeshellarg($outFile->getName()).' '.escapeshellarg($inputFile->getName()));
+        $proc = new Process($this->command.' --log-xml '.escapeshellarg($outFile->getName()).' '.escapeshellarg($inputFile->getName()));
         $executedProc = $this->executor->execute($proc);
 
         $output = $outFile->reread();
