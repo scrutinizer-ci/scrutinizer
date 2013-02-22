@@ -6,6 +6,7 @@ use Psr\Log\LoggerInterface;
 use Scrutinizer\Model\Project;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+use Scrutinizer\Util\PathUtils;
 
 /**
  * Convenience class for file traversals.
@@ -61,6 +62,10 @@ class FileTraversal
             ->files()
             ->filter(function (SplFileInfo $file) {
                 if ( ! $this->project->isAnalyzed($file->getRelativePathname())) {
+                    return false;
+                }
+
+                if ( PathUtils::isFiltered($file->getRelativePathname(), $this->project->getGlobalConfig('filter'))) {
                     return false;
                 }
 
