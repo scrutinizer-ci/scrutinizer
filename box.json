@@ -6,6 +6,9 @@
     "files": [
         "bin/scrutinizer"
     ],
+    "replacements": {
+        "revision": "HEAD"
+    },
     "main": "bin/scrutinizer",
     "output": "scrutinizer.phar",
     "stub": true

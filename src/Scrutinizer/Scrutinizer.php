@@ -20,6 +20,8 @@ use Symfony\Component\Yaml\Yaml;
  */
 class Scrutinizer
 {
+    const REVISION = '@revision@';
+
     private $logger;
     private $analyzers = array();
 

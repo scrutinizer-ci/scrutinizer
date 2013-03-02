@@ -5,6 +5,7 @@ namespace Scrutinizer\Cli;
 use Scrutinizer\Cli\Command\ConfigReferenceCommand;
 
 use Scrutinizer\Cli\Command\RunCommand;
+use Scrutinizer\Cli\Command\SelfUpdateCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 
 class Application extends BaseApplication
@@ -19,6 +20,7 @@ class Application extends BaseApplication
         $commands = parent::getDefaultCommands();
         $commands[] = new RunCommand();
         $commands[] = new ConfigReferenceCommand();
+        $commands[] = new SelfUpdateCommand();
 
         return $commands;
     }
