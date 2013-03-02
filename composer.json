@@ -1,6 +1,12 @@
 {
     "name": "scrutinizer/scrutinizer",
     "description": "A library for gathering code analysis results",
+    "license": "Apache2",
+
+    "repositories": [
+        {"type": "git", "url": "git://github.com/schmittjoh/PHP-Parser"}
+    ],
+
     "require": {
         "php": ">=5.4",
         "symfony/config": "2.1.*",
@@ -12,9 +18,10 @@
         "monolog/monolog": "1.2.*",
         "psr/log": "1.0.0",
         "phpoption/phpoption": "1.*",
-        "jms/serializer": "dev-master",
+        "jms/serializer": "0.12.*@dev",
         "phpcollection/phpcollection": "0.2.*@dev",
-        "guzzle/guzzle": "3.0.*"
+        "guzzle/guzzle": "3.0.*",
+        "nikic/php-parser": "dev-master"
     },
     "autoload": {
         "psr-0": {

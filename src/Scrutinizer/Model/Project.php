@@ -62,7 +62,7 @@ class Project
         foreach ($this->files as $file) {
             /** @var $file File */
 
-            if ( ! $file->hasComments() && ! $file->hasProposedPatch() && ! $file->hasMetrics()) {
+            if ( ! $file->hasComments() && ! $file->hasProposedPatch() && ! $file->hasMetrics() && ! $file->getLineAttributes()) {
                 continue;
             }
 
@@ -70,6 +70,20 @@ class Project
         }
 
         return $files;
+    }
+
+    public function isAnalyzerEnabled($name)
+    {
+        if ( ! isset($this->config['tools'][$name])) {
+            return false;
+        }
+
+        // The custom analyzer for example does not possess this attribute, but is always enabled.
+        if ( ! isset($this->config['tools'][$name]['enabled'])) {
+            return true;
+        }
+
+        return $this->config['tools'][$name]['enabled'];
     }
 
     /**
@@ -186,6 +200,11 @@ class Project
         }
 
         return in_array($path, $this->paths, true);
+    }
+
+    public function getPaths()
+    {
+        return $this->paths;
     }
 
     private function matches(array $patterns, $path)

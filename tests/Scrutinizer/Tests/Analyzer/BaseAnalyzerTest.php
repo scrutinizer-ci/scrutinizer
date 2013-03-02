@@ -11,6 +11,8 @@ use Scrutinizer\Scrutinizer;
 class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
 {
     private $fs;
+
+    /** @var Scrutinizer */
     private $scrutinizer;
 
     /**
@@ -35,7 +37,7 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
         }
         file_put_contents($tmpDir.'/.scrutinizer.yml', json_encode($testData['config']));
 
-        $project = $this->scrutinizer->scrutinize($tmpDir);
+        $project = $this->scrutinizer->scrutinize($tmpDir, $testData['changed_paths']);
 
         /** @var $file File */
         $file = $project->getFile($testData['filename'])->get();
@@ -65,6 +67,21 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
 
         $fixedFile = $file->getOrCreateFixedFile();
         $this->assertEquals($testData['fixed_content'] ?: $file->getContent(), $fixedFile->getContent());
+
+        $this->assertEquals(
+            $this->dumpLineAttributes($testData['line_attributes']),
+            $this->dumpLineAttributes($file->getLineAttributes())
+        );
+    }
+
+    private function dumpLineAttributes(array $lineAttributes)
+    {
+        $str = '';
+        foreach ($lineAttributes as $line => $attributes) {
+            $str .= "Line $line: ".json_encode($attributes, JSON_FORCE_OBJECT)."\n";
+        }
+
+        return $str;
     }
 
     private function dumpComments(array $comments)
@@ -108,7 +125,15 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
         $testContent = str_replace('%dir%', __DIR__, $testContent);
         $tokens = preg_split("#\n\n-- (.+?) --\n#", $testContent, null, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
-        $data = array('content' => array_shift($tokens), 'comments' => array(), 'config' => array(), 'files' => array(), 'fixed_content' => null);
+        $data = array(
+            'content' => array_shift($tokens),
+            'comments' => array(),
+            'config' => array(),
+            'files' => array(),
+            'fixed_content' => null,
+            'line_attributes' => array(),
+            'changed_paths' => array(),
+        );
         for ($i=0,$c=count($tokens); $i<$c; $i++) {
             switch ($tokens[$i]) {
                 case 'FILENAME':
@@ -129,6 +154,45 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
                     }
 
                     continue 2;
+
+                case 'CHANGED PATHS':
+                case 'CHANGED-PATHS':
+                case 'CHANGED_PATHS':
+                    foreach (explode("\n", $tokens[++$i]) as $line) {
+                        $path = trim($line);
+                        if ('' === $path) {
+                            continue;
+                        }
+
+                        $data['changed_paths'][] = $path;
+                    }
+                    break;
+
+                case 'LINE ATTRIBUTES':
+                case 'LINE-ATTRIBUTES':
+                case 'LINE_ATTRIBUTES':
+                    foreach (explode("\n", $tokens[++$i]) as $line) {
+                        if ('' === trim($line)) {
+                            continue;
+                        }
+
+                        if ( ! preg_match('#^Line ([0-9]+): ([^$]+)$#', $line, $match)) {
+                            throw new \RuntimeException(sprintf('Could not extract attributes for line "%d".', $line));
+                        }
+
+                        if (isset($data['line_attributes'][$match[1]])) {
+                            throw new \RuntimeException(sprintf('Attributes for line "%d" were specified more than once.', $line));
+                        }
+
+                        $attrs = json_decode($match[2], true);
+                        if ( ! is_array($attrs)) {
+                            throw new \RuntimeException(sprintf('Attributes must be an array, but got %s.', json_encode($attrs)));
+                        }
+
+                        $data['line_attributes'][$match[1]] = $attrs;
+                    }
+
+                    break;
 
                 case 'FIXED CONTENT':
                 case 'FIXED_CONTENT':

@@ -20,11 +20,32 @@ class File
 
     /** @Serializer\Exclude */
     private $fixedFile;
+    private $lineAttributes = array();
 
     public function __construct($path, $content)
     {
         $this->path = $path;
         $this->content = $content;
+    }
+
+    /**
+     * Sets an attribute for the given line.
+     *
+     * @param integer $line
+     * @param string $key
+     * @param mixed $value
+     */
+    public function setLineAttribute($line, $key, $value)
+    {
+        $this->lineAttributes[$line][$key] = $value;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLineAttributes()
+    {
+        return $this->lineAttributes;
     }
 
     /**

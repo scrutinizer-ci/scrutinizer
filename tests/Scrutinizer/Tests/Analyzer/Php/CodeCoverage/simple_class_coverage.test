@@ -1,0 +1,89 @@
+<?php
+
+namespace Foo;
+
+class Foo
+{
+    private $bar;
+
+    public function __construct(Bar $bar)
+    {
+        $this->bar = $bar;
+    }
+
+    public function getBar()
+    {
+        return $this->bar;
+    }
+
+    public function getBarName()
+    {
+        return $this->bar->getName();
+    }
+}
+
+-- FILENAME --
+src/Foo.php
+
+-- FILE: src/Bar.php --
+<?php
+
+namespace Foo;
+
+class Bar
+{
+    private $name;
+
+    public function __construct($name)
+    {
+        $this->name = $name;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+}
+
+-- FILE: tests/FooTest.php --
+<?php
+
+namespace Foo;
+
+class FooTest extends \PHPUnit_Framework_TestCase
+{
+    public function testGetBar()
+    {
+        $foo = new Foo($bar = new Bar('Foo'));
+        $this->assertSame($bar, $foo->getBar());
+    }
+}
+
+-- FILE: bootstrap.php --
+<?php
+
+require_once __DIR__.'/src/Bar.php';
+require_once __DIR__.'/src/Foo.php';
+
+-- FILE: phpunit.xml --
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="bootstrap.php">
+    <testsuites>
+        <testsuite name="Test Suite">
+            <directory>./tests</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
+
+-- CONFIG --
+tools:
+    php_code_coverage: true
+
+-- LINE ATTRIBUTES --
+Line 9: {"coverage_count":1}
+Line 11: {"coverage_count":1}
+Line 12: {"coverage_count":1}
+Line 14: {"coverage_count":1}
+Line 16: {"coverage_count":1}
+Line 19: {"coverage_count":0}
+Line 21: {"coverage_count":0}

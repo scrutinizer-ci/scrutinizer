@@ -36,6 +36,7 @@ class Scrutinizer
         $this->registerAnalyzer(new Analyzer\Php\PhpAnalyzer());
         $this->registerAnalyzer(new Analyzer\Php\CsAnalyzer());
         $this->registerAnalyzer(new Analyzer\Php\SecurityAdvisoryAnalyzer());
+        $this->registerAnalyzer(new Analyzer\Php\CodeCoverageAnalyzer());
         $this->registerAnalyzer(new Analyzer\CustomAnalyzer());
     }
 
@@ -80,6 +81,10 @@ class Scrutinizer
 
         $project = new Project($dir, $config, $paths);
         foreach ($this->analyzers as $analyzer) {
+            if ( ! $project->isAnalyzerEnabled($analyzer->getName())) {
+                continue;
+            }
+
             $project->setAnalyzerName($analyzer->getName());
             $analyzer->scrutinize($project);
         }

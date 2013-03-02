@@ -1,0 +1,42 @@
+<?php
+
+namespace Foo;
+
+class Foo
+{
+}
+
+-- FILENAME --
+src/Foo.php
+
+-- FILE: tests/FooTest.php --
+<?php
+
+namespace Foo;
+
+class FooTest extends \PHPUnit_Framework_TestCase
+{
+    public function testFails()
+    {
+        $this->fail('This test fails');
+    }
+}
+
+-- FILE: bootstrap.php --
+<?php
+
+require_once __DIR__.'/src/Foo.php';
+
+-- FILE: phpunit.xml --
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="bootstrap.php">
+    <testsuites>
+        <testsuite name="Test Suite">
+            <directory>./tests</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
+
+-- CONFIG --
+tools:
+    php_code_coverage: true
