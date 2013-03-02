@@ -28,7 +28,7 @@ class ImpactAnalyzer
             $beforeAffectedFiles = $affectedFiles;
             $traverser = new \PHPParser_NodeTraverser();
             $traverser->addVisitor($finder = new FindElementsVisitor());
-            $traverser->addVisitor($usageVisitor = new ClassNameExtractor($classes));
+            $traverser->addVisitor($usageVisitor = new UsageVisitor($classes));
 
             foreach ($phpFiles as $pathname => $ast) {
                 $traverser->traverse($ast);

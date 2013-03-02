@@ -3,11 +3,11 @@
 namespace Scrutinizer\Analyzer\Php\Util;
 
 /**
- * Extracts declared classes from PHP files.
+ * Checks whether one of the given classes is used in the test.
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class ClassNameExtractor extends \PHPParser_NodeVisitorAbstract
+class UsageVisitor extends \PHPParser_NodeVisitorAbstract
 {
     private $classes;
     private $affected = false;
