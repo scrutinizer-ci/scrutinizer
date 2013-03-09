@@ -13,7 +13,7 @@ After downloading, you can simply run scrutinizer with
 php scrutinizer.phar
 ```
 
-This will give you a nice output with all available sub-commands.
+This will give you a nice output with all available sub-commands. Note that Scrutinizer requires PHP 5.4 or greater.
 
 Configuration
 -------------
