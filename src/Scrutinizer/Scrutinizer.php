@@ -36,6 +36,7 @@ class Scrutinizer
         $this->registerAnalyzer(new Analyzer\Php\PhpAnalyzer());
         $this->registerAnalyzer(new Analyzer\Php\CsAnalyzer());
         $this->registerAnalyzer(new Analyzer\Php\SecurityAdvisoryAnalyzer());
+        $this->registerAnalyzer(new Analyzer\Php\CopyPasteDetectorAnalyzer());
         $this->registerAnalyzer(new Analyzer\CustomAnalyzer());
     }
 
