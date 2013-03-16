@@ -97,7 +97,7 @@ class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
         unlink($cfgFile);
         unlink($inputFile);
 
-        if ($proc->getExitCode() > 1 || ($proc->getExitCode() === 1 && $proc->getOutput() === '')) {
+        if ($proc->getExitCode() > 2 || $proc->getOutput() === '') {
             throw new ProcessFailedException($proc);
         }
 
