@@ -1,0 +1,105 @@
+<?php
+
+class A
+{
+    public function traverse()
+    {
+        if ( ! $this->project->getGlobalConfig('enabled')) {
+            return;
+        }
+
+        $finder = Finder::create()
+            ->in($this->project->getDir())
+            ->files()
+            ->filter(function (SplFileInfo $file) {
+                if ( ! $this->project->isAnalyzed($file->getRelativePathname())) {
+                    return false;
+                }
+
+                if ( PathUtils::isFiltered($file->getRelativePathname(), $this->project->getGlobalConfig('filter'))) {
+                    return false;
+                }
+
+                if ($this->extensions && ! in_array($file->getExtension(), $this->extensions, true)) {
+                    return false;
+                }
+
+                if ( ! $this->project->getPathConfig($file->getRelativePath(), 'enabled', true)) {
+                    return false;
+                }
+
+                return true;
+            })
+        ;
+
+        foreach ($finder as $finderFile) {
+            /** @var $finderFile SplFileInfo */
+
+            $file = $this->project->getFile($finderFile->getRelativePathname())->get();
+
+            if (null !== $this->logger) {
+                $this->logger->debug(sprintf('Analyzing file "%s".', $file->getPath()), array('project' => $this->project, 'file' => $file, 'analyzer' => $this->analyzer));
+            }
+            $this->analyzer->{$this->method}($this->project, $file);
+        }
+    }
+}
+
+-- FILENAME --
+src/A.php
+
+-- FILE: src/B.php --
+<?php
+
+class B
+{
+    public function traverse()
+    {
+        if ( ! $this->project->getGlobalConfig('enabled')) {
+            return;
+        }
+
+        $finder = Finder::create()
+            ->in($this->project->getDir())
+            ->files()
+            ->filter(function (SplFileInfo $file) {
+                if ( ! $this->project->isAnalyzed($file->getRelativePathname())) {
+                    return false;
+                }
+
+                if ( PathUtils::isFiltered($file->getRelativePathname(), $this->project->getGlobalConfig('filter'))) {
+                    return false;
+                }
+
+                if ($this->extensions && ! in_array($file->getExtension(), $this->extensions, true)) {
+                    return false;
+                }
+
+                if ( ! $this->project->getPathConfig($file->getRelativePath(), 'enabled', true)) {
+                    return false;
+                }
+
+                return true;
+            })
+        ;
+
+        foreach ($finder as $finderFile) {
+            /** @var $finderFile SplFileInfo */
+
+            $file = $this->project->getFile($finderFile->getRelativePathname())->get();
+
+            if (null !== $this->logger) {
+                $this->logger->debug(sprintf('Analyzing file "%s".', $file->getPath()), array('project' => $this->project, 'file' => $file, 'analyzer' => $this->analyzer));
+            }
+            $this->analyzer->{$this->method}($this->project, $file);
+        }
+    }
+}
+
+-- CHANGED PATHS --
+src/B.php
+
+-- CONFIG --
+tools:
+    php_cpd: true
+
