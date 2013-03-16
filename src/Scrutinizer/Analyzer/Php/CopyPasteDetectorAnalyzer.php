@@ -16,7 +16,7 @@ use Symfony\Component\Process\Process;
 /**
  * Runs the PHP Copy Past Detector.
  *
- * @display-name PHPCPD
+ * @display-name PHP Copy/Paste Detector
  * @doc-path tools/php/copy-paste-detector/
  */
 class CopyPasteDetectorAnalyzer implements AnalyzerInterface
