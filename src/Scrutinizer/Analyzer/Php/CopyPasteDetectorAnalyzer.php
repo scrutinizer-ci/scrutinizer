@@ -74,7 +74,9 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface
 
         $excludedDirs = $project->getGlobalConfig('excluded_dirs');
         if ( ! empty($excludedDirs)) {
-            $command .= ' '.escapeshellarg(implode(',', $excludedDirs));
+            foreach ($excludedDirs as $dir) {
+                $command .= sprintf(' --exclude %s' , escapeshellarg($dir));
+            }
         }
 
         // Scan the current directory.
