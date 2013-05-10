@@ -101,11 +101,7 @@ class CustomAnalyzer implements AnalyzerInterface, LoggerAwareInterface
                                 break;
 
                             case 'project':
-                                if (false === strpos($v['command'], '%path%')) {
-                                    throw new \Exception('The command must contain the "%path%" placeholder.');
-                                }
                                 break;
-
 
                             default:
                                 throw new \LogicException('Previous cases were exhaustive.');
