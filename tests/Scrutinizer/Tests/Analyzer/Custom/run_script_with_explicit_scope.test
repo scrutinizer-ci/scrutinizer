@@ -7,7 +7,7 @@ README.txt
 tools:
     custom_commands:
         -
-            # scope is intentionally missing here to ensure BC behavior.
+            scope: file
             command: "php %dir%/Fixture/check.php %pathname%"
 
 -- COMMENTS --

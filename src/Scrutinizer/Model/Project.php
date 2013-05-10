@@ -18,6 +18,9 @@ class Project
     /** @Serializer\Expose */
     private $config;
 
+    /** @Serializer\Expose */
+    private $metrics = array();
+
     private $paths;
     private $files = array();
     private $analyzerName;
@@ -50,6 +53,11 @@ class Project
     public function getFiles()
     {
         return $this->files;
+    }
+
+    public function getMetrics()
+    {
+        return $this->metrics;
     }
 
     /**
@@ -205,6 +213,11 @@ class Project
     public function getPaths()
     {
         return $this->paths;
+    }
+
+    public function setSimpleValuedMetric($key, $value)
+    {
+        $this->metrics[$key] = $value;
     }
 
     private function matches(array $patterns, $path)

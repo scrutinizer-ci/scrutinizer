@@ -5,14 +5,12 @@ namespace Scrutinizer\Model;
 class Metric
 {
     private $key;
-    private $label;
-    private $type;
+    private $value;
 
-    public function __construct($key, $label, $type)
+    public function __construct($key, $value)
     {
         $this->key = $key;
-        $this->label = $label;
-        $this->type = $type;
+        $this->value = $value;
     }
 
     public function getKey()
@@ -20,13 +18,8 @@ class Metric
         return $this->key;
     }
 
-    public function getLabel()
+    public function getValue()
     {
-        return $this->label;
-    }
-
-    public function getType()
-    {
-        return $this->type;
+        return $this->value;
     }
 }

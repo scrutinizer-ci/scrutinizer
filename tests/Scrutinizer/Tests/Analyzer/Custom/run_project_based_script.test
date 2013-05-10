@@ -1,0 +1,32 @@
+foobar
+
+-- FILENAME --
+README.md
+
+-- FILE: Foo.php --
+<?php
+
+class Foo {
+
+}
+
+-- FILE: Bar.php --
+<?php
+
+class Bar {
+
+}
+
+-- CHANGED-PATHS --
+README.md
+Bar.php
+
+-- CONFIG --
+tools:
+    custom_commands:
+        -
+            scope: project
+            command: php %dir%/Fixture/project_check.php %path% %changed_paths_file%
+
+-- PROJECT-METRICS --
+my-benchmark: 0.123

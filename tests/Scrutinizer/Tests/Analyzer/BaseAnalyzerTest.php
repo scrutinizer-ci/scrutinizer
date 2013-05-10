@@ -72,6 +72,11 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
             $this->dumpLineAttributes($testData['line_attributes']),
             $this->dumpLineAttributes($file->getLineAttributes())
         );
+
+        $this->assertEquals(
+            $testData['project_metrics'],
+            $project->getMetrics()
+        );
     }
 
     private function dumpLineAttributes(array $lineAttributes)
@@ -130,6 +135,7 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
             'comments' => array(),
             'config' => array(),
             'files' => array(),
+            'project_metrics' => array(),
             'fixed_content' => null,
             'line_attributes' => array(),
             'changed_paths' => array(),
@@ -198,6 +204,12 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
                 case 'FIXED_CONTENT':
                 case 'FIXED-CONTENT':
                     $data['fixed_content'] = $tokens[++$i];
+                    continue 2;
+
+                case 'PROJECT METRICS':
+                case 'PROJECT_METRICS':
+                case 'PROJECT-METRICS':
+                    $data['project_metrics'] = Yaml::parse($tokens[++$i]);
                     continue 2;
 
                 case 'CONFIG':

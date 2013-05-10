@@ -38,6 +38,9 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
     ],
     "config": [
 
+    ],
+    "metrics": [
+
     ]
 }',
             $this->serializer->serialize($project, 'json')
