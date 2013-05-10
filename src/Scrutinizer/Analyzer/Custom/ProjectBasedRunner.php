@@ -20,6 +20,14 @@ class ProjectBasedRunner extends AbstractRunner
                 ->arrayNode('metrics')
                     ->normalizeKeys(false)
                     ->useAttributeAsKey('key')
+                    ->validate()->always(function($metrics) {
+                        $rs = array();
+                        foreach ($metrics as $k => $v) {
+                            $rs['my-'.$k] = $v;
+                        }
+
+                        return $rs;
+                    })->end()
                     ->prototype('array')
                         ->beforeNormalization()
                             ->ifTrue(function($v) { return ! is_array($v); })

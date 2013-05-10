@@ -94,12 +94,9 @@ The output of the command is to expected to be JSON with the following structure
 
     {
         "metrics": {
-            "my-benchmark1-result": 0.234342
+            "benchmark1-result": 0.234342
         }
     }
-
-It is highly recommended to prefix all your own metrics with ``my-`` to avoid collisions with built-in metrics.
-
 
 Logging
 -------

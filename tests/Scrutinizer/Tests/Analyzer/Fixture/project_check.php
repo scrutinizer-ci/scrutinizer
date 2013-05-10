@@ -21,6 +21,6 @@ if ( ! is_file($projectDir.'/README.md')) {
 
 echo json_encode(array(
     'metrics' => array(
-        'my-benchmark' => 0.123,
+        'benchmark' => 0.123,
     ),
 ));
