@@ -15,10 +15,9 @@ class ProjectBasedRunner extends AbstractRunner
     public function __construct()
     {
         $tb = new TreeBuilder();
-        $tb->root('{root}', 'array')
+        $metricsNode = $tb->root('{root}', 'array')
             ->children()
                 ->arrayNode('metrics')
-                    ->normalizeKeys(false)
                     ->useAttributeAsKey('key')
                     ->validate()->always(function($metrics) {
                         $rs = array();
@@ -47,9 +46,11 @@ class ProjectBasedRunner extends AbstractRunner
                             ->end()
                         ->end()
                     ->end()
-                ->end()
-            ->end()
         ;
+
+        if (method_exists($metricsNode, 'normalizeKeys')) {
+            $metricsNode->normalizeKeys(false);
+        }
         $this->outputConfigNode = $tb->buildTree();
 
         $this->configProcessor = new Processor();

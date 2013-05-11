@@ -20,8 +20,10 @@ class FileBasedRunner extends AbstractRunner
     public function __construct()
     {
         $tb = new TreeBuilder();
-        $tb->root('{root}', 'array')
+
+        $paramsNode = $tb->root('{root}', 'array')
             ->children()
+                ->scalarNode('fixed_content')->defaultNull()->end()
                 ->arrayNode('comments')
                     ->prototype('array')
                         ->children()
@@ -29,15 +31,13 @@ class FileBasedRunner extends AbstractRunner
                             ->scalarNode('id')->isRequired()->cannotBeEmpty()->end()
                             ->scalarNode('message')->isRequired()->cannotBeEmpty()->end()
                             ->arrayNode('params')
-                                ->normalizeKeys(false)
                                 ->useAttributeAsKey('name')
                                 ->prototype('scalar')->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-                ->scalarNode('fixed_content')->defaultNull()->end()
         ;
+
+        if (method_exists($paramsNode, 'normalizeKeys')) {
+            $paramsNode->normalizeKeys(false);
+        }
         $this->outputConfigNode = $tb->buildTree();
 
         $this->configProcessor = new Processor();
