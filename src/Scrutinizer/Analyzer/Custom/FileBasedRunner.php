@@ -70,8 +70,6 @@ class FileBasedRunner extends AbstractRunner
                     $proc->setLogger($this->logger);
                     $exitCode = $proc->run();
 
-                    unlink($fixedContentFile);
-
                     if (0 === $exitCode) {
                         $output = isset($customAnalyzer['output_file']) ? file_get_contents($customAnalyzer['output_file'])
                             : $proc->getOutput();
@@ -99,6 +97,8 @@ class FileBasedRunner extends AbstractRunner
                         $this->logger->error('An error occurred while executing "'.$proc->getCommandLine().'"; ignoring result.');
                     }
                 }
+
+                unlink($fixedContentFile);
             });
         }
     }

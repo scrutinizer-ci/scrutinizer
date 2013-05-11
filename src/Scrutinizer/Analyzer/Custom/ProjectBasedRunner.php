@@ -73,8 +73,6 @@ class ProjectBasedRunner extends AbstractRunner
             $proc->setLogger($this->logger);
             $exitCode = $proc->run();
 
-            unlink($tmpFile);
-
             if (0 === $exitCode) {
                 $output = isset($customAnalyzer['output_file']) ? file_get_contents($customAnalyzer['output_file'])
                     : $proc->getOutput();
@@ -94,5 +92,7 @@ class ProjectBasedRunner extends AbstractRunner
                 }
             }
         }
+
+        unlink($tmpFile);
     }
 }
