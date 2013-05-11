@@ -14,8 +14,6 @@ use JMS\Serializer\Annotation as Serializer;
 class Project
 {
     private $dir;
-
-    /** @Serializer\Expose */
     private $config;
 
     /** @Serializer\Expose */

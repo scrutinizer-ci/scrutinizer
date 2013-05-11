@@ -36,9 +36,6 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
             }
         }
     ],
-    "config": [
-
-    ],
     "metrics": [
 
     ]
