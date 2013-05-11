@@ -119,6 +119,17 @@ class CustomAnalyzer implements AnalyzerInterface, LoggerAwareInterface
                         ->values(array('project', 'file'))
                         ->defaultValue('file')
                     ->end()
+                    ->scalarNode('iterations')
+                        ->info('If the command computes statistical metrics, you can increase the number of iterations to achieve a more reliable estimate.')
+                        ->validate()->always(function($v) {
+                            if ( ! is_int($v)) {
+                                throw new \Exception(sprintf('"iterations" must be an integer, but got "%s".', gettype($v)));
+                            }
+
+                            return $v;
+                        })->end()
+                        ->defaultValue(1)
+                    ->end()
                     ->arrayNode('filter')
                         ->addDefaultsIfNotSet()
                         ->fixXmlConfig('path')

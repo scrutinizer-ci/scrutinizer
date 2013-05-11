@@ -67,24 +67,31 @@ class ProjectBasedRunner extends AbstractRunner
         );
 
         $cmd = strtr($commandData['command'], $placeholders);
-        $proc = new LoggableProcess($cmd);
-        $proc->setLogger($this->logger);
-        $exitCode = $proc->run();
 
-        unlink($tmpFile);
+        for ($i=0; $i<$commandData['iterations']; $i++) {
+            $proc = new LoggableProcess($cmd);
+            $proc->setLogger($this->logger);
+            $exitCode = $proc->run();
 
-        if (0 === $exitCode) {
-            $output = isset($customAnalyzer['output_file']) ? file_get_contents($customAnalyzer['output_file'])
-                : $proc->getOutput();
+            unlink($tmpFile);
 
-            $rawOutput = json_decode($output, true);
-            if ( ! is_array($rawOutput)) {
-                throw new \RuntimeException(sprintf('The output of "%s" must be an array, but got: %s', $commandData['command'], $output));
-            }
+            if (0 === $exitCode) {
+                $output = isset($customAnalyzer['output_file']) ? file_get_contents($customAnalyzer['output_file'])
+                    : $proc->getOutput();
 
-            $parsedOutput = $this->configProcessor->process($this->outputConfigNode, array($rawOutput));
-            foreach ($parsedOutput['metrics'] as $k => $data) {
-                $project->setSimpleValuedMetric($k, $data['value']);
+                $rawOutput = json_decode($output, true);
+                if ( ! is_array($rawOutput)) {
+                    throw new \RuntimeException(sprintf('The output of "%s" must be an array, but got: %s', $commandData['command'], $output));
+                }
+
+                $parsedOutput = $this->configProcessor->process($this->outputConfigNode, array($rawOutput));
+                foreach ($parsedOutput['metrics'] as $k => $data) {
+                    if ($commandData['iterations'] === 1) {
+                        $project->setSimpleValuedMetric($k, $data['value']);
+                    } else {
+                        $project->addMetricDataPoint($k, $data['value']);
+                    }
+                }
             }
         }
     }

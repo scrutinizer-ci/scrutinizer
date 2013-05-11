@@ -215,7 +215,20 @@ class Project
 
     public function setSimpleValuedMetric($key, $value)
     {
+        if ( ! is_numeric($value)) {
+            throw new \LogicException('$value must be a number.');
+        }
+
         $this->metrics[$key] = $value;
+    }
+
+    public function addMetricDataPoint($key, $value)
+    {
+        if ( ! is_numeric($value)) {
+            throw new \LogicException('$value must be a number.');
+        }
+
+        $this->metrics[$key][] = $value;
     }
 
     private function matches(array $patterns, $path)

@@ -65,31 +65,39 @@ class FileBasedRunner extends AbstractRunner
                     '%fixed_pathname%' => escapeshellarg($fixedContentFile),
                 );
 
-                $proc = new LoggableProcess(strtr($commandData['command'], $placeholders));
-                $proc->setLogger($this->logger);
-                $exitCode = $proc->run();
+                for ($i=0; $i<$commandData['iterations']; $i++) {
+                    $proc = new LoggableProcess(strtr($commandData['command'], $placeholders));
+                    $proc->setLogger($this->logger);
+                    $exitCode = $proc->run();
 
-                unlink($fixedContentFile);
+                    unlink($fixedContentFile);
 
-                if (0 === $exitCode) {
-                    $output = isset($customAnalyzer['output_file']) ? file_get_contents($customAnalyzer['output_file'])
-                        : $proc->getOutput();
+                    if (0 === $exitCode) {
+                        $output = isset($customAnalyzer['output_file']) ? file_get_contents($customAnalyzer['output_file'])
+                            : $proc->getOutput();
 
-                    $parsedOutput = $this->configProcessor->process($this->outputConfigNode, array(json_decode($output, true)));
-                    foreach ($parsedOutput['comments'] as $comment) {
-                        $projectFile->addComment($comment['line'], new Comment(
-                            'custom_commands',
-                            $comment['id'],
-                            $comment['message'],
-                            $comment['params']
-                        ));
+                        $parsedOutput = $this->configProcessor->process($this->outputConfigNode, array(json_decode($output, true)));
+
+                        // Safe-guard to avoid the same comments being added multiple times.
+                        if ($commandData['iterations'] > 1 && ( ! empty($parsedOutput['comments']) || ! empty($parsedOutput['fixed_content']))) {
+                            throw new \LogicException(sprintf('Commands which add comments, or patches cannot have more than one iteration. Offending command: %s', $commandData['command']));
+                        }
+
+                        foreach ($parsedOutput['comments'] as $comment) {
+                            $projectFile->addComment($comment['line'], new Comment(
+                                'custom_commands',
+                                $comment['id'],
+                                $comment['message'],
+                                $comment['params']
+                            ));
+                        }
+
+                        if (null !== $parsedOutput['fixed_content']) {
+                            $projectFile->getFixedFile()->get()->setContent($parsedOutput['fixed_content']);
+                        }
+                    } else {
+                        $this->logger->error('An error occurred while executing "'.$proc->getCommandLine().'"; ignoring result.');
                     }
-
-                    if (null !== $parsedOutput['fixed_content']) {
-                        $projectFile->getFixedFile()->get()->setContent($parsedOutput['fixed_content']);
-                    }
-                } else {
-                    $this->logger->error('An error occurred while executing "'.$proc->getCommandLine().'"; ignoring result.');
                 }
             });
         }
