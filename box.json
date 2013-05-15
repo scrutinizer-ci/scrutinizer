@@ -4,7 +4,8 @@
         "vendor/"
     ],
     "directories-bin": [
-        "src/Scrutinizer/Model/"
+        "src/Scrutinizer/Model/",
+        "vendor/jms/serializer/src/JMS/Serializer/Annotation"
     ],
     "files": [
         "bin/scrutinizer"
