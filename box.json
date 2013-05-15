@@ -5,7 +5,8 @@
     ],
     "directories-bin": [
         "src/Scrutinizer/Model/",
-        "vendor/jms/serializer/src/JMS/Serializer/Annotation"
+        "vendor/jms/serializer/src/JMS/Serializer/Annotation/",
+        "vendor/doctrine/annotations/lib/Doctrine/Common/Annotations/Annotation/"
     ],
     "files": [
         "bin/scrutinizer"
