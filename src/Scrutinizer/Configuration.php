@@ -58,6 +58,16 @@ class Configuration
             ->fixXmlConfig('before_command')
             ->fixXmlConfig('after_command')
             ->fixXmlConfig('artifact')
+            ->validate()->always(function($v) {
+                // Copy over the global filter options if no local filter has been defined for a tool.
+                foreach ($v['tools'] as &$tool) {
+                    if (isset($tool['filter']) && empty($tool['filter']['paths']) && empty($tool['filter']['excluded_paths'])) {
+                        $tool['filter'] = $v['filter'];
+                    }
+                }
+
+                return $v;
+            })->end()
             ->children()
                 ->booleanNode('inherit')->defaultFalse()->end()
                 ->arrayNode('filter')
