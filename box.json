@@ -3,6 +3,9 @@
         "src/",
         "vendor/"
     ],
+    "directories-bin": [
+        "src/Scrutinizer/Model/"
+    ],
     "files": [
         "bin/scrutinizer"
     ],
