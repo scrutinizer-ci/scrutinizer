@@ -71,7 +71,7 @@ class FileBasedRunner extends AbstractRunner
                     $exitCode = $proc->run();
 
                     if (0 === $exitCode) {
-                        $output = isset($customAnalyzer['output_file']) ? file_get_contents($customAnalyzer['output_file'])
+                        $output = isset($commandData['output_file']) ? file_get_contents($commandData['output_file'])
                             : $proc->getOutput();
 
                         $parsedOutput = $this->configProcessor->process($this->outputConfigNode, array(json_decode($output, true)));
