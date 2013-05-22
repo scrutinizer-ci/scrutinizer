@@ -149,4 +149,4 @@ tools:
     php_cpd: true
 
 -- COMMENTS --
-Line 5: This and the next 39 lines are the same as lines 5 to 44 in src/B.php.
+Line 5: This and the next 39 lines are the same as lines 5 to 44 in src/C.php.
