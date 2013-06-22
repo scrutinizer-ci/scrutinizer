@@ -30,6 +30,7 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface
     {
         $builder
             ->info('Runs PHP Copy/Paste Detector')
+            ->disableDefaultFilter()
             ->globalConfig()
                 ->scalarNode('command')
                     ->defaultValue('phpcpd')

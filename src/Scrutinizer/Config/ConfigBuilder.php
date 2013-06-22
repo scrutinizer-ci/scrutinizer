@@ -22,6 +22,7 @@ class ConfigBuilder extends ArrayNodeDefinition
 {
     private $perFileConfigDef;
     private $addDefaultSettings = true;
+    private $addDefaultFilter = true;
 
     public function children()
     {
@@ -31,6 +32,13 @@ class ConfigBuilder extends ArrayNodeDefinition
     public function disableDefaultSettings()
     {
         $this->addDefaultSettings = false;
+
+        return $this;
+    }
+
+    public function disableDefaultFilter()
+    {
+        $this->addDefaultFilter = false;
 
         return $this;
     }
@@ -85,20 +93,22 @@ class ConfigBuilder extends ArrayNodeDefinition
             $node->addChild($enabledNode = new BooleanNode('enabled'));
             $enabledNode->setDefaultValue(false);
 
-            $filterDef = new ArrayNodeDefinition('filter');
-            $filterDef->setBuilder(new NodeBuilder());
-            $filterDef
-                ->addDefaultsIfNotSet()
-                ->children()
-                    ->arrayNode('paths')
-                        ->prototype('scalar')->end()
+            if ($this->addDefaultFilter) {
+                $filterDef = new ArrayNodeDefinition('filter');
+                $filterDef->setBuilder(new NodeBuilder());
+                $filterDef
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('paths')
+                            ->prototype('scalar')->end()
+                        ->end()
+                        ->arrayNode('excluded_paths')
+                            ->prototype('scalar')->end()
+                        ->end()
                     ->end()
-                    ->arrayNode('excluded_paths')
-                        ->prototype('scalar')->end()
-                    ->end()
-                ->end()
-            ;
-            $node->addChild($filterDef->getNode());
+                ;
+                $node->addChild($filterDef->getNode());
+            }
         }
 
         if ($this->perFileConfigDef) {

@@ -162,6 +162,7 @@ class LocAnalyzer implements AnalyzerInterface
     {
         $builder
             ->info('Analyzes the size and structure of a PHP project.')
+            ->disableDefaultFilter()
             ->globalConfig()
                 ->scalarNode('command')->defaultValue('phploc')->end()
                 ->arrayNode('names')
