@@ -19,7 +19,7 @@ interface AnalyzerInterface
      *
      * @return void
      */
-    function scrutinize(Project $project);
+    public function scrutinize(Project $project);
 
     /**
      * Builds the configuration structure of this analyzer.
@@ -35,14 +35,7 @@ interface AnalyzerInterface
      *
      * @return void
      */
-    function buildConfig(ConfigBuilder $builder);
-
-    /**
-     * Returns metadata for metrics that are measured by this analyzer.
-     *
-     * @return array<Metric>
-     */
-    function getMetrics();
+    public function buildConfig(ConfigBuilder $builder);
 
     /**
      * The name of this analyzer.
@@ -51,5 +44,5 @@ interface AnalyzerInterface
      *
      * @return string
      */
-    function getName();
+    public function getName();
 }

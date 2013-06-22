@@ -2,6 +2,7 @@
 
 namespace Scrutinizer\Analyzer\Php;
 
+use Scrutinizer\Analyzer\AnalyzerInterface;
 use Scrutinizer\Util\XmlUtils;
 use Scrutinizer\Config\ConfigBuilder;
 use Scrutinizer\Model\File;
@@ -13,113 +14,211 @@ use Symfony\Component\Process\Process;
 /**
  * Integrates LOC Analyzer
  *
- * @doc-path tools/php/loc/
- * @display-name PHP Loc
+ * @doc-path tools/php/lines-of-code/
+ * @display-name PHP Lines Of Code
  */
-class LocAnalyzer extends AbstractFileAnalyzer
+class LocAnalyzer implements AnalyzerInterface
 {
+    private static $metrics = array(
+        'files' => array(),
+        'loc' => array(
+            'key' => 'lines_of_code',
+        ),
+        'lloc' => array(
+            'key' => 'logical_lines_of_code',
+        ),
+        'llocClasses' => array(
+            'key' => 'logical_lines_of_code_in_classes',
+        ),
+        'llocFunctions' => array(
+            'key' => 'logical_lines_of_code_in_functions',
+        ),
+        'llocGlobal' => array(
+            'key' => 'logical_lines_of_code_in_global_namespace',
+        ),
+        'cloc' => array(
+            'key' => 'lines_of_comments',
+        ),
+        'ccn' => array(
+            'key' => 'cyclomatic_complexity',
+        ),
+        'ccnMethods' => array(
+            'key' => 'cyclomatic_complexity_in_methods',
+        ),
+        'interfaces' => array(),
+        'traits' => array(),
+        'classes' => array(),
+        'abstractClasses' => array(
+            'key' => 'abstract_classes',
+        ),
+        'concreteClasses' => array(
+            'key' => 'concrete_classes',
+        ),
+        'functions' => array(),
+        'namedFunctions' => array(
+            'key' => 'named_functions',
+        ),
+        'anonymousFunctions' => array(
+            'key' => 'anonymous_functions',
+        ),
+        'methods' => array(),
+        'publicMethods' => array(
+            'key' => 'public_methods',
+        ),
+        'nonPublicMethods' => array(
+            'key' => 'non_public_methods',
+        ),
+        'nonStaticMethods' => array(
+            'key' => 'non_static_methods',
+        ),
+        'staticMethods' => array(
+            'key' => 'static_methods',
+        ),
+        'constants' => array(),
+        'classConstants' => array(
+            'key' => 'class_constants',
+        ),
+        'globalConstants' => array(
+            'key' => 'global_constants',
+        ),
+        'testClasses' => array(
+            'key' => 'test_classes',
+        ),
+        'testMethods' => array(
+            'key' => 'test_methods',
+        ),
+        'ccnByLloc' => array(
+            'type' => 'float',
+            'key' => 'average_cyclomatic_complexity_per_logical_line_of_code',
+        ),
+        'ccnByNom' => array(
+            'type' => 'float',
+            'key' => 'average_cyclomatic_complexity_per_method',
+        ),
+        'llocByNoc' => array(
+            'type' => 'float',
+            'key' => 'average_logical_lines_of_code_per_class',
+        ),
+        'llocByNom' => array(
+            'type' => 'float',
+            'key' => 'average_logical_lines_of_code_per_method',
+        ),
+        'llocByNof' => array(
+            'type' => 'float',
+            'key' => 'average_logical_lines_of_code_per_function',
+        ),
+        'methodCalls' => array(
+            'key' => 'method_calls',
+        ),
+        'staticMethodCalls' => array(
+            'key' => 'static_method_calls',
+        ),
+        'instanceMethodCalls' => array(
+            'key' => 'instance_method_calls',
+        ),
+        'attributeAccesses' => array(
+            'key' => 'attribute_accesses',
+        ),
+        'staticAttributeAccesses' => array(
+            'key' => 'static_attribute_accesses',
+        ),
+        'instanceAttributeAccesses' => array(
+            'key' => 'instance_attribute_accesses',
+        ),
+        'globalAccesses' => array(
+            'key' => 'global_accesses',
+        ),
+        'globalVariableAccesses' => array(
+            'key' => 'global_variable_accesses',
+        ),
+        'superGlobalVariableAccesses' => array(
+            'key' => 'super_global_variable_accesses',
+        ),
+        'globalConstantAccesses' => array(
+            'key' => 'global_constant_accesses',
+        ),
+    );
+
     public function getName()
     {
-        return 'phploc';
+        return 'php_loc';
     }
 
-    public function getMetrics()
-    {
-        return array();
-    }
-
-    protected function buildConfigInternal(ConfigBuilder $builder)
+    /**
+     * Builds the configuration structure of this analyzer.
+     *
+     * This is comparable to Symfony2's default builders except that the
+     * ConfigBuilder does add a unified way to enable and disable analyzers,
+     * and also provides a unified basic structure for all analyzers.
+     *
+     * You can read more about how to define your configuration at
+     * http://symfony.com/doc/current/components/config/definition.html
+     *
+     * @param ConfigBuilder $builder
+     *
+     * @return void
+     */
+    public function buildConfig(ConfigBuilder $builder)
     {
         $builder
+            ->info('Analyzes the size and structure of a PHP project.')
             ->globalConfig()
-                ->scalarNode('command')
-                    ->defaultValue('phploc')
+                ->scalarNode('command')->defaultValue('phploc')->end()
+                ->arrayNode('names')
+                    ->defaultValue(array('*.php'))
+                    ->prototype('scalar')->end()
+                ->end()
+                ->arrayNode('excluded_dirs')
+                    ->prototype('scalar')->end()
                 ->end()
             ->end()
         ;
-    }
-
-    public function analyze(Project $project, File $file)
+    }    /**
+     * Analyzes the given project.
+     *
+     * @param Project $project
+     *
+     * @return void
+     */
+    public function scrutinize(Project $project)
     {
-        $command = $project->getGlobalConfig('command');
-        $inputFile = $this->fs->createTempFile($file->getContent());
-        $outFile = $this->fs->createTempFile();
+        $outputFile = tempnam(sys_get_temp_dir(), 'phploc-output');
+        $command = $project->getGlobalConfig('command').' --log-xml '.escapeshellarg($outputFile);
 
-        $proc = new Process($command.' --log-xml '.escapeshellarg($outFile->getName()).' '.escapeshellarg($inputFile->getName()));
-        $executedProc = $this->executor->execute($proc);
-
-        $output = $outFile->reread();
-        $inputFile->delete();
-        $outFile->delete();
-
-        if (0 !== $executedProc->getExitCode()) {
-            throw new ProcessFailedException($executedProc);
+        $names = $project->getGlobalConfig('names');
+        if ( ! empty($names)) {
+            $command .= ' --names '.escapeshellarg(implode(',', $names));
         }
 
-        /*
-         * <?xml version="1.0" encoding="UTF-8"?>
-            <phploc>
-              <loc>107</loc>
-              <nclocClasses>85</nclocClasses>
-              <cloc>7</cloc>
-              <ncloc>100</ncloc>
-              <ccn>11</ccn>
-              <ccnMethods>11</ccnMethods>
-              <interfaces>0</interfaces>
-              <traits>0</traits>
-              <classes>1</classes>
-              <abstractClasses>0</abstractClasses>
-              <concreteClasses>1</concreteClasses>
-              <anonymousFunctions>0</anonymousFunctions>
-              <functions>0</functions>
-              <methods>6</methods>
-              <publicMethods>5</publicMethods>
-              <nonPublicMethods>1</nonPublicMethods>
-              <nonStaticMethods>6</nonStaticMethods>
-              <staticMethods>0</staticMethods>
-              <constants>0</constants>
-              <classConstants>0</classConstants>
-              <globalConstants>0</globalConstants>
-              <ccnByLoc>0.11</ccnByLoc>
-              <ccnByNom>2.8333333333333</ccnByNom>
-              <nclocByNoc>85</nclocByNoc>
-              <nclocByNom>14.166666666667</nclocByNom>
-              <namespaces>1</namespaces>
-            </phploc>
-         */
+        $excludedDirs = $project->getGlobalConfig('excluded_dirs');
+        if ( ! empty($excludedDirs)) {
+            foreach ($excludedDirs as $excludedDir) {
+                $command .= ' --exclude '.escapeshellarg($excludedDir);
+            }
+        }
+
+        $proc = new Process($command.' '.$project->getDir());
+        $proc->run();
+
+        $output = file_get_contents($outputFile);
+        unlink($outputFile);
+        if (0 !== $proc->run()) {
+            throw new ProcessFailedException($proc);
+        }
+
         $doc = XmlUtils::safeParse($output);
-        $file
-            ->measure('loc', (integer) $doc->loc)
-            ->measure('nclocClasses', (integer) $doc->nclocClasses)
-            ->measure('cloc', (integer) $doc->cloc)
-            ->measure('ncloc', (integer) $doc->ncloc)
-            ->measure('ccn', (integer) $doc->ccn)
-            ->measure('ccnMethods', (integer) $doc->ccnMethods)
-            ->measure('interfaces', (integer) $doc->interfaces)
-            ->measure('traits', (integer) $doc->traits)
-            ->measure('classes', (integer) $doc->classes)
-            ->measure('abstractClasses', (integer) $doc->abstractClasses)
-            ->measure('concreteClasses', (integer) $doc->concreteClasses)
-            ->measure('anonymousFunctions', (integer) $doc->anonymousFunctions)
-            ->measure('functions', (integer) $doc->functions)
-            ->measure('methods', (integer) $doc->methods)
-            ->measure('publicMethods', (integer) $doc->publicMethods)
-            ->measure('nonPublicMethods', (integer) $doc->nonPublicMethods)
-            ->measure('nonStaticMethods', (integer) $doc->nonStaticMethods)
-            ->measure('staticMethods', (integer) $doc->staticMethods)
-            ->measure('constants', (integer) $doc->constants)
-            ->measure('classConstants', (integer) $doc->classConstants)
-            ->measure('globalConstants', (integer) $doc->globalConstants)
-        ;
-    }
+        foreach (self::$metrics as $name => $metricData) {
+            $type = isset($metricData['type']) ? $metricData['type'] : 'integer';
+            $key = isset($metricData['key']) ? $metricData['key'] : $name;
 
-    protected function getInfo()
-    {
-        return 'phploc is a tool for quickly measuring the size and analyzing the structure of a PHP project.';
-    }
+            if ( ! isset($doc->$name)) {
+                continue;
+            }
 
-    protected function getDefaultExtensions()
-    {
-        return array('php');
+            $value = $doc->$name;
+            settype($value, $type);
+
+            $project->setSimpleValuedMetric($key, $value);
+        }
     }
 }

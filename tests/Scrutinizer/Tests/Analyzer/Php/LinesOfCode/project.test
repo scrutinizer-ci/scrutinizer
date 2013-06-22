@@ -1,0 +1,75 @@
+<?php
+
+function foo() {
+    echo 'Hello';
+}
+
+$foo = function() {
+
+};
+
+class Foo {
+    public function foo() {
+        echo 'asdf';
+    }
+
+    public static function bar() {
+        echo 'asdf';
+    }
+}
+
+-- FILENAME --
+Foo.php
+
+-- FILE: Bar.php --
+<?php
+
+abstract class Bar {
+    abstract public function bar();
+    abstract protected function baz();
+}
+
+class Baz extends Bar {
+    public function bar() {
+        echo 'asdf';
+        if ('a' == 'b') {
+            echo 'asdf'; echo 'moo';
+        }
+    }
+
+    public function baz() {
+        // no-op
+    }
+}
+
+interface IFace { }
+trait SomeTrait { }
+
+-- FILE: config.yml --
+foo: bar
+
+-- CONFIG --
+tools:
+    php_loc: ~
+
+-- PROJECT-METRICS --
+lines_of_code: 39
+lines_of_comments: 2
+cyclomatic_complexity: 1
+cyclomatic_complexity_in_methods: 1
+interfaces: 1
+traits: 1
+classes: 3
+abstract_classes: 1
+concrete_classes: 2
+functions: 1
+anonymous_functions: 1
+methods: 6
+public_methods: 5
+non_public_methods: 1
+non_static_methods: 5
+static_methods: 1
+constants: 0
+class_constants: 0
+global_constants: 0
+average_cyclomatic_complexity_per_method: 1.1666666666667
