@@ -26,11 +26,6 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface
         return 'php_cpd';
     }
 
-    public function getMetrics()
-    {
-        return array();
-    }
-
     public function buildConfig(ConfigBuilder $builder)
     {
         $builder

@@ -74,11 +74,6 @@ class CodeCoverageAnalyzer implements AnalyzerInterface
         ;
     }
 
-    public function getMetrics()
-    {
-        return array();
-    }
-
     public function getName()
     {
         return 'php_code_coverage';

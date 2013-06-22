@@ -49,11 +49,6 @@ class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
         return 'js_hint';
     }
 
-    public function getMetrics()
-    {
-        return array();
-    }
-
     public function buildConfig(ConfigBuilder $builder)
     {
         $builder

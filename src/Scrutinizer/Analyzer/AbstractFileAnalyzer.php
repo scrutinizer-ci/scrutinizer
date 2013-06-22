@@ -22,11 +22,6 @@ abstract class AbstractFileAnalyzer implements AnalyzerInterface, LoggerAwareInt
 {
     use LoggerAwareTrait;
 
-    public function getMetrics()
-    {
-        return array();
-    }
-
     abstract protected function getInfo();
     abstract protected function getDefaultExtensions();
     abstract public function analyze(Project $project, File $file);

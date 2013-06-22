@@ -145,16 +145,6 @@ class CustomAnalyzer implements AnalyzerInterface, LoggerAwareInterface
     }
 
     /**
-     * Returns metadata for metrics that are measured by this analyzer.
-     *
-     * @return array<Metric>
-     */
-    public function getMetrics()
-    {
-        return array();
-    }
-
-    /**
      * The name of this analyzer.
      *
      * Should be a lower-case string with "_" as separators.
