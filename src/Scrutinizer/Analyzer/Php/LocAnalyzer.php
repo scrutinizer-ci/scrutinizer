@@ -219,7 +219,7 @@ class LocAnalyzer implements AnalyzerInterface
             $value = $doc->$name;
             settype($value, $type);
 
-            $project->setSimpleValuedMetric($key, $value);
+            $project->setSimpleValuedMetric($this->getName().'.'.$key, $value);
         }
     }
 }

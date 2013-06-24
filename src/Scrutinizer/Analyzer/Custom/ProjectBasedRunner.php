@@ -22,7 +22,7 @@ class ProjectBasedRunner extends AbstractRunner
                     ->validate()->always(function($metrics) {
                         $rs = array();
                         foreach ($metrics as $k => $v) {
-                            $rs['my-'.$k] = $v;
+                            $rs['custom.'.$k] = $v;
                         }
 
                         return $rs;

@@ -29,4 +29,4 @@ tools:
             command: php %dir%/Fixture/project_check.php %path% %changed_paths_file%
 
 -- PROJECT-METRICS --
-my-benchmark: 0.123
+custom.benchmark: 0.123
