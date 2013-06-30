@@ -1,0 +1,126 @@
+<?php
+
+namespace Ns;
+
+class Foo
+{
+    public function a()
+    {
+        return 'foo';
+    }
+}
+
+class Bar
+{
+    public function b()
+    {
+        return 'bar';
+    }
+}
+
+-- FILENAME --
+src/classes.php
+
+-- FILE: tests/ClassTest.php --
+<?php
+
+namespace Ns;
+
+class FooTest extends \PHPUnit_Framework_TestCase
+{
+    public function testA()
+    {
+        $foo = new Foo();
+        $this->assertEquals('foo', $foo->a());
+    }
+
+    public function testB()
+    {
+        $bar = new Bar();
+        $this->assertEquals('bar', $bar->b());
+    }
+}
+
+-- FILE: bootstrap.php --
+<?php
+
+require_once __DIR__.'/src/classes.php';
+
+-- FILE: phpunit.xml --
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="bootstrap.php">
+    <testsuites>
+        <testsuite name="Test Suite">
+            <directory>./tests</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
+
+-- CONFIG --
+tools:
+    php_code_coverage: true
+
+-- LINE-ATTRIBUTES --
+Line 7: {"coverage_count":1}
+Line 9: {"coverage_count":1}
+Line 15: {"coverage_count":1}
+Line 17: {"coverage_count":1}
+
+-- PROJECT-METRICS --
+'php_code_coverage.files': 1
+'php_code_coverage.lines_of_code': 18
+'php_code_coverage.non_comment_lines_of_code': 18
+'php_code_coverage.classes': 2
+'php_code_coverage.methods': 2
+'php_code_coverage.covered_methods': 2
+'php_code_coverage.conditionals': 0
+'php_code_coverage.covered_conditionals': 0
+'php_code_coverage.statements': 2
+'php_code_coverage.covered_statements': 2
+'php_code_coverage.elements': 4
+'php_code_coverage.covered_elements': 4
+
+-- CODE-ELEMENTS --
+package(Ns):
+    children:
+        - class(Ns\Foo)
+        - class(Ns\Bar)
+
+class(Ns\Foo):
+    filename: src/classes.php
+    children:
+        - method(Ns\Foo::a)
+    metrics:
+        'php_code_coverage.methods': 1
+        'php_code_coverage.covered_methods': 1
+        'php_code_coverage.conditionals': 0
+        'php_code_coverage.covered_conditionals': 0
+        'php_code_coverage.statements': 1
+        'php_code_coverage.covered_statements': 1
+        'php_code_coverage.elements': 2
+        'php_code_coverage.covered_elements': 2
+
+method(Ns\Foo::a):
+    metrics:
+        'php_code_coverage.change_risk_anti_pattern': 1
+        'php_code_coverage.count': 1
+
+class(Ns\Bar):
+    filename: src/classes.php
+    children:
+        - method(Ns\Bar::b)
+    metrics:
+        'php_code_coverage.methods': 1
+        'php_code_coverage.covered_methods': 1
+        'php_code_coverage.conditionals': 0
+        'php_code_coverage.covered_conditionals': 0
+        'php_code_coverage.statements': 1
+        'php_code_coverage.covered_statements': 1
+        'php_code_coverage.elements': 2
+        'php_code_coverage.covered_elements': 2
+
+method(Ns\Bar::b):
+    metrics:
+        'php_code_coverage.change_risk_anti_pattern': 1
+        'php_code_coverage.count': 1
+

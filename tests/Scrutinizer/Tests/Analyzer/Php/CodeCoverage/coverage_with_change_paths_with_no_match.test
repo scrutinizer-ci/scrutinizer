@@ -81,3 +81,17 @@ src/DoesNotExist.php
 -- CONFIG --
 tools:
     php_code_coverage: true
+
+-- PROJECT-METRICS --
+'php_code_coverage.files': 0
+'php_code_coverage.lines_of_code': 0
+'php_code_coverage.non_comment_lines_of_code': 0
+'php_code_coverage.classes': 0
+'php_code_coverage.methods': 0
+'php_code_coverage.covered_methods': 0
+'php_code_coverage.conditionals': 0
+'php_code_coverage.covered_conditionals': 0
+'php_code_coverage.statements': 0
+'php_code_coverage.covered_statements': 0
+'php_code_coverage.elements': 0
+'php_code_coverage.covered_elements': 0

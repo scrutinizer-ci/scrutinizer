@@ -99,6 +99,97 @@ class CodeCoverageAnalyzer implements AnalyzerInterface
                 }
             );
         }
+
+        // files="3" loc="114" ncloc="114" classes="3" methods="16" coveredmethods="3" conditionals="0" coveredconditionals="0"
+        // statements="38" coveredstatements="5" elements="54" coveredelements="8"
+        foreach ($doc->xpath('descendant-or-self::project/metrics') as $metricsNode) {
+            $metricsAttrs = $metricsNode->attributes();
+
+            $project->setSimpleValuedMetric('php_code_coverage.files', (integer) $metricsAttrs->files);
+            $project->setSimpleValuedMetric('php_code_coverage.lines_of_code', (integer) $metricsAttrs->loc);
+            $project->setSimpleValuedMetric('php_code_coverage.non_comment_lines_of_code', (integer) $metricsAttrs->ncloc);
+            $project->setSimpleValuedMetric('php_code_coverage.classes', (integer) $metricsAttrs->classes);
+            $project->setSimpleValuedMetric('php_code_coverage.methods', (integer) $metricsAttrs->methods);
+            $project->setSimpleValuedMetric('php_code_coverage.covered_methods', (integer) $metricsAttrs->coveredmethods);
+            $project->setSimpleValuedMetric('php_code_coverage.conditionals', (integer) $metricsAttrs->conditionals);
+            $project->setSimpleValuedMetric('php_code_coverage.covered_conditionals', (integer) $metricsAttrs->coveredconditionals);
+            $project->setSimpleValuedMetric('php_code_coverage.statements', (integer) $metricsAttrs->statements);
+            $project->setSimpleValuedMetric('php_code_coverage.covered_statements', (integer) $metricsAttrs->coveredstatements);
+            $project->setSimpleValuedMetric('php_code_coverage.elements', (integer) $metricsAttrs->elements);
+            $project->setSimpleValuedMetric('php_code_coverage.covered_elements', (integer) $metricsAttrs->coveredelements);
+        }
+
+        /**
+         *     <package name="Foo">
+                <file name="/tmp/scrtnzerI2LxkB/src/Bar.php">
+                <class name="Bar" namespace="Foo">
+                <metrics methods="2" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="3"
+         *              coveredstatements="2" elements="5" coveredelements="3"/>
+                </class>
+                <line num="9" type="method" name="__construct" crap="1" count="1"/>
+                <line num="11" type="stmt" count="1"/>
+                <line num="12" type="stmt" count="1"/>
+                <line num="14" type="method" name="getName" crap="2" count="0"/>
+                <line num="16" type="stmt" count="0"/>
+                <metrics loc="17" ncloc="17" classes="1" methods="2" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="2" elements="5" coveredelements="3"/>
+                </file>
+         */
+        foreach ($doc->xpath('//package') as $packageNode) {
+            $packageName = (string) $packageNode->attributes()->name;
+
+            $package = $project->getOrCreateCodeElement('package', $packageName);
+
+            foreach ($packageNode->xpath('./file') as $fileNode) {
+                $filename = substr($fileNode->attributes()->name, strlen($project->getDir()) + 1);
+
+                $addedMethods = 0;
+                foreach ($fileNode->xpath('./class') as $classNode) {
+                    $className = $packageName.'\\'.$classNode->attributes()->name;
+
+                    $class = $project->getOrCreateCodeElement('class', $className);
+                    $package->addChild($class);
+
+                    $class->setLocation($filename);
+
+                    $metricsAttrs = $classNode->metrics->attributes();
+                    $class->setMetric('php_code_coverage.methods', (integer) $metricsAttrs->methods);
+                    $class->setMetric('php_code_coverage.covered_methods', (integer) $metricsAttrs->coveredmethods);
+                    $class->setMetric('php_code_coverage.conditionals', (integer) $metricsAttrs->conditionals);
+                    $class->setMetric('php_code_coverage.covered_conditionals', (integer) $metricsAttrs->coveredconditionals);
+                    $class->setMetric('php_code_coverage.statements', (integer) $metricsAttrs->statements);
+                    $class->setMetric('php_code_coverage.covered_statements', (integer) $metricsAttrs->coveredstatements);
+                    $class->setMetric('php_code_coverage.elements', (integer) $metricsAttrs->elements);
+                    $class->setMetric('php_code_coverage.covered_elements', (integer) $metricsAttrs->coveredelements);
+
+                    $i = -1;
+                    $addedClassMethods = 0;
+                    foreach ($fileNode->xpath('./line') as $lineNode) {
+                        $lineAttrs = $lineNode->attributes();
+
+                        if ((string) $lineAttrs->type !== 'method') {
+                            continue;
+                        }
+                        $i += 1;
+
+                        if ($i < $addedMethods) {
+                            continue;
+                        }
+
+                        if ($addedClassMethods >= (integer) $metricsAttrs->methods) {
+                            break;
+                        }
+
+                        $addedClassMethods += 1;
+                        $addedMethods += 1;
+                        $method = $project->getOrCreateCodeElement('method', $className.'::'.$lineAttrs->name);
+                        $class->addChild($method);
+
+                        $method->setMetric('php_code_coverage.change_risk_anti_pattern', (integer) $lineAttrs->crap);
+                        $method->setMetric('php_code_coverage.count', (integer) $lineAttrs->count);
+                    }
+                }
+            }
+        }
     }
 
     private function modifyListenerConfig($phpunitConfig, $rootDir, array $affectedFiles)

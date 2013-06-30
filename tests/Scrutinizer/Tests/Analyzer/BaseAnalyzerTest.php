@@ -109,7 +109,7 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
                 break;
             }
         }
-        $this->assertEmpty($actualElements);
+        $this->assertEmpty($actualElements, "Unexpected Metrics:\n\n".implode("\n", $actualElements));
     }
 
     private function dumpLineAttributes(array $lineAttributes)
