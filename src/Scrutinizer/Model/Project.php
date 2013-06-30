@@ -23,6 +23,12 @@ class Project
     private $files = array();
     private $analyzerName;
 
+    /**
+     * @Serializer\Expose
+     * @var CodeElement[]
+     */
+    private $codeElements = array();
+
     public function __construct($dir, array $config, array $paths = array())
     {
         $this->dir = $dir;
@@ -76,6 +82,22 @@ class Project
         }
 
         return $files;
+    }
+
+    public function getOrCreateCodeElement($type, $name)
+    {
+        foreach ($this->codeElements as $element) {
+            if ($element->getType() === $type && $element->getName() === $name) {
+                return $element;
+            }
+        }
+
+        return $this->codeElements[] = new CodeElement($type, $name);
+    }
+
+    public function getCodeElements()
+    {
+        return $this->codeElements;
     }
 
     public function isAnalyzerEnabled($name)

@@ -18,6 +18,13 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
         $file = $project->getFile(basename(__FILE__))->get();
         $file->setLineAttribute(1, 'test', 'foo');
 
+        $package = $project->getOrCreateCodeElement('package', 'Foo');
+        $package->setMetric('a', 5);
+
+        $class = $project->getOrCreateCodeElement('class', 'Foo\\Bar');
+        $class->setMetric('b', 10);
+        $package->addChild($class);
+
         $this->assertEquals(
             '{
     "files": [
@@ -38,6 +45,31 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
     ],
     "metrics": [
 
+    ],
+    "code_elements": [
+        {
+            "children": [
+                {
+                    "type": "class",
+                    "name": "Foo\\\\Bar"
+                }
+            ],
+            "type": "package",
+            "name": "Foo",
+            "metrics": {
+                "a": 5
+            }
+        },
+        {
+            "children": [
+
+            ],
+            "type": "class",
+            "name": "Foo\\\\Bar",
+            "metrics": {
+                "b": 10
+            }
+        }
     ]
 }',
             $this->serializer->serialize($project, 'json')

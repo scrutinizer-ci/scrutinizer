@@ -2,6 +2,7 @@
 
 namespace Scrutinizer\Tests\Analyzer;
 
+use Scrutinizer\Model\CodeElement;
 use Scrutinizer\Model\File;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
@@ -77,6 +78,38 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
             $testData['project_metrics'],
             $project->getMetrics()
         );
+
+        $actualElements = $project->getCodeElements();
+        foreach ($testData['code_elements'] as $element) {
+            /** @var CodeElement $element */
+
+            foreach ($actualElements as $k => $actualElement) {
+                /** @var CodeElement $actualElement */
+
+                if ( ! $element->equals($actualElement)) {
+                    continue;
+                }
+
+                unset($actualElements[$k]);
+                $this->assertEquals($element->getMetrics(), $actualElement->getMetrics(), 'Metrics for element '.$element);
+                $this->assertEquals($element->getLocation(), $actualElement->getLocation(), 'Location for element '.$element);
+
+                $formatChildren = function(CodeElement $element) {
+                    $children = array();
+                    foreach ($element->getChildren() as $child) {
+                        $children[] = (string) $child;
+                    }
+
+                    sort($children);
+
+                    return $children;
+                };
+                $this->assertEquals($formatChildren($element), $formatChildren($actualElement), 'Children for element '.$element);
+
+                break;
+            }
+        }
+        $this->assertEmpty($actualElements);
     }
 
     private function dumpLineAttributes(array $lineAttributes)
@@ -136,6 +169,7 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
             'config' => array(),
             'files' => array(),
             'project_metrics' => array(),
+            'code_elements' => array(),
             'fixed_content' => null,
             'line_attributes' => array(),
             'changed_paths' => array(),
@@ -210,6 +244,57 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
                 case 'PROJECT_METRICS':
                 case 'PROJECT-METRICS':
                     $data['project_metrics'] = Yaml::parse($tokens[++$i]);
+                    continue 2;
+
+                case 'CODE ELEMENTS':
+                case 'CODE-ELEMENTS':
+                case 'CODE_ELEMENTS':
+                    /** @var CodeElement[] $elements */
+                    $elements = array();
+                    $relations = array();
+
+                    $getTypeAndName = function($key) {
+                        if ( ! preg_match('/^([^(]+)\((.*)\)$/', $key, $match)) {
+                            throw new \RuntimeException(sprintf('Could not extract type/name from "%s".', $key));
+                        }
+                        list(, $type, $name) = $match;
+
+                        return array($type, $name);
+                    };
+
+                    foreach (Yaml::parse($tokens[++$i]) as $key => $values) {
+                        list($type, $name) = $getTypeAndName($key);
+                        $elements[$key] = $element = new CodeElement($type, $name);
+
+                        if (isset($values['metrics'])) {
+                            foreach ($values['metrics'] as $k => $v) {
+                                $element->setMetric($k, $v);
+                            }
+                        }
+
+                        if (isset($values['filename'])) {
+                            $element->setLocation($values['filename']);
+                        }
+
+                        if (isset($values['children'])) {
+                            $relations[$key] = $values['children'];
+                        }
+                    }
+
+                    foreach ($relations as $key => $children) {
+                        $source = $elements[$key];
+
+                        foreach ($children as $child) {
+                            if ( ! isset($elements[$child])) {
+                                throw new \RuntimeException(sprintf('The child "%s" does not exist.', $child));
+                            }
+
+                            $source->addChild($elements[$child]);
+                        }
+                    }
+
+                    $data['code_elements'] = array_values($elements);
+
                     continue 2;
 
                 case 'CONFIG':
