@@ -80,6 +80,7 @@ class Scrutinizer
 
         foreach ($config['before_commands'] as $cmd) {
             $proc = new LoggableProcess($cmd, $dir);
+            $proc->setTimeout(300);
             $proc->setLogger($this->logger);
             $proc->run();
         }
@@ -96,6 +97,7 @@ class Scrutinizer
 
         foreach ($config['after_commands'] as $cmd) {
             $proc = new LoggableProcess($cmd, $dir);
+            $proc->setTimeout(300);
             $proc->setLogger($this->logger);
             $proc->run();
         }
