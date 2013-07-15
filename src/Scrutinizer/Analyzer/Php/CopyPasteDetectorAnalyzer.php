@@ -88,6 +88,7 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface
         $command = $this->buildCommand($project, $outputFile);
 
         $proc = new Process($command, $project->getDir());
+        $proc->setTimeout(300);
         $proc->run();
 
         $result = file_get_contents($outputFile);
