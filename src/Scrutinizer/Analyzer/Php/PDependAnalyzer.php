@@ -85,6 +85,7 @@ class PDependAnalyzer implements AnalyzerInterface
         }
 
         $proc = new Process($command.' '.$project->getDir());
+        $proc->setTimeout(300);
         $proc->run();
 
         $output = file_get_contents($outputFile);

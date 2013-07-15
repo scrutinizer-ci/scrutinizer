@@ -93,6 +93,7 @@ class CsFixerAnalyzer extends AbstractFileAnalyzer
         $failedProc = null;
         do {
             $proc = new Process($command.' fix '.escapeshellarg($tmpPath).' '.$options);
+            $proc->setTimeout(300);
             if (0 === $proc->run()) {
                 $failedProc = null;
                 break;

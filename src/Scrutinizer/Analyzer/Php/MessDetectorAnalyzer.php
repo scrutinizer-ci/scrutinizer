@@ -92,6 +92,7 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
         file_put_contents($inputFile, $file->getContent());
 
         $proc = new Process($command.' '.escapeshellarg($inputFile).' xml '.escapeshellarg(implode(",", $resolvedRulesets)));
+        $proc->setTimeout(300);
         $exitCode = $proc->run();
 
         if (0 !== $exitCode && 2 !== $exitCode) {
