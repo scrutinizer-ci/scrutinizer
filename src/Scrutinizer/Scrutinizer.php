@@ -91,6 +91,7 @@ class Scrutinizer
                 continue;
             }
 
+            $this->logger->info(sprintf('Running analyzer "%s"...', $analyzer->getName()));
             $project->setAnalyzerName($analyzer->getName());
             $analyzer->scrutinize($project);
         }
