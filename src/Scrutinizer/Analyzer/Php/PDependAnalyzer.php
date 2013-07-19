@@ -9,6 +9,12 @@ use Scrutinizer\Util\XmlUtils;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
+/**
+ * Gathers metrics using PHP PDepend.
+ *
+ * @doc-path tools/php/pdepend/
+ * @display-name PHP PDepend
+ */
 class PDependAnalyzer implements AnalyzerInterface
 {
     public function getName()
