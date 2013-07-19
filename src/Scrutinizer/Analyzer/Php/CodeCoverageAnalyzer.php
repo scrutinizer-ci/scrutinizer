@@ -2,6 +2,8 @@
 
 namespace Scrutinizer\Analyzer\Php;
 
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Scrutinizer\Analyzer\AnalyzerInterface;
 use Scrutinizer\Analyzer\Php\Util\ImpactAnalyzer;
 use Scrutinizer\Config\ConfigBuilder;
@@ -15,8 +17,10 @@ use Symfony\Component\Process\Process;
  * @display-name PHP Code Coverage
  * @doc-path tools/php/code-coverage/
  */
-class CodeCoverageAnalyzer implements AnalyzerInterface
+class CodeCoverageAnalyzer implements AnalyzerInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     private $impactAnalyzer;
 
     public function __construct()
@@ -42,7 +46,9 @@ class CodeCoverageAnalyzer implements AnalyzerInterface
 
         $outputFile = tempnam(sys_get_temp_dir(), 'php-code-coverage');
         $testCommand = $project->getGlobalConfig('test_command').' --coverage-clover '.escapeshellarg($outputFile);
+        $this->logger->info(sprintf('Running command "%s"...', $testCommand));
         $proc = new Process($testCommand, $project->getDir());
+        $proc->setTimeout(300);
         $proc->run();
 
         $output = file_get_contents($outputFile);

@@ -104,6 +104,7 @@ class CsAnalyzer extends AbstractFileAnalyzer
         $cmd .= ' '.escapeshellarg($inputFile);
 
         $proc = new Process($cmd, $project->getDir());
+        $proc->setTimeout(300);
         $proc->run();
 
         $result = file_get_contents($outputFile);
