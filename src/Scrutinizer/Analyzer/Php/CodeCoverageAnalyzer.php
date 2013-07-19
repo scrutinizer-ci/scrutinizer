@@ -187,7 +187,7 @@ class CodeCoverageAnalyzer implements AnalyzerInterface, LoggerAwareInterface
 
                         $addedClassMethods += 1;
                         $addedMethods += 1;
-                        $method = $project->getOrCreateCodeElement('method', $className.'::'.$lineAttrs->name);
+                        $method = $project->getOrCreateCodeElement('operation', $className.'::'.$lineAttrs->name);
                         $class->addChild($method);
 
                         $method->setMetric('php_code_coverage.change_risk_anti_pattern', (integer) $lineAttrs->crap);

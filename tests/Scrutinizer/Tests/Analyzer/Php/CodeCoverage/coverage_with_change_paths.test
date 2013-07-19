@@ -124,15 +124,15 @@ class(Foo\Bar):
 
     filename: src/Bar.php
     children:
-        - method(Foo\Bar::__construct)
-        - method(Foo\Bar::getName)
+        - operation(Foo\Bar::__construct)
+        - operation(Foo\Bar::getName)
 
-method(Foo\Bar::__construct):
+operation(Foo\Bar::__construct):
     metrics:
         'php_code_coverage.change_risk_anti_pattern': 1
         'php_code_coverage.count': 1
 
-method(Foo\Bar::getName):
+operation(Foo\Bar::getName):
     metrics:
         'php_code_coverage.change_risk_anti_pattern': 2
         'php_code_coverage.count': 0
@@ -150,21 +150,21 @@ class(Foo\Foo):
         'php_code_coverage.covered_elements': 5
 
     children:
-        - method(Foo\Foo::__construct)
-        - method(Foo\Foo::getBar)
-        - method(Foo\Foo::getBarName)
+        - operation(Foo\Foo::__construct)
+        - operation(Foo\Foo::getBar)
+        - operation(Foo\Foo::getBarName)
 
-method(Foo\Foo::__construct):
+operation(Foo\Foo::__construct):
     metrics:
         'php_code_coverage.change_risk_anti_pattern': 1
         'php_code_coverage.count': 1
 
-method(Foo\Foo::getBar):
+operation(Foo\Foo::getBar):
     metrics:
         'php_code_coverage.change_risk_anti_pattern': 1
         'php_code_coverage.count': 1
 
-method(Foo\Foo::getBarName):
+operation(Foo\Foo::getBarName):
     metrics:
         'php_code_coverage.change_risk_anti_pattern': 2
         'php_code_coverage.count': 0
