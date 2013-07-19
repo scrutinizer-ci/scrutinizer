@@ -34,6 +34,7 @@ class C {
 tools:
     php_pdepend:
         suffixes: [*.php]
+        excluded_dirs: [vendor/, asdfasdf/]
 
 -- PROJECT-METRICS --
 pdepend.average_hierarchy_height: 0.0

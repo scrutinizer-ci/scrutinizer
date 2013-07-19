@@ -53,6 +53,7 @@ class PDependAnalyzer implements AnalyzerInterface
                 ->end()
                 ->arrayNode('excluded_dirs')
                     ->prototype('scalar')->end()
+                    ->defaultValue(array('vendor'))
                 ->end()
             ->end()
         ;
