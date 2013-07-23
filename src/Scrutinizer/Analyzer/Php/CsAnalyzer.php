@@ -116,6 +116,10 @@ class CsAnalyzer extends AbstractFileAnalyzer
             throw new ProcessFailedException($proc);
         }
 
+        if (empty($result)) {
+            return;
+        }
+
         /*
                 <?xml version="1.0" encoding="UTF-8"?>
                 <checkstyle version="1.0.0">
