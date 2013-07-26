@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "1fd8af2284edb48d08b48ba883b731ce",
+    "hash": "89d45b440775e5a68a73370afc4c0dd2",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -298,6 +298,55 @@
             ],
             "description": "A library for easily creating recursive-descent parsers.",
             "time": "2012-11-18 18:08:43"
+        },
+        {
+            "name": "jms/php-manipulator",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/schmittjoh/php-manipulator.git",
+                "reference": "30945a72edf22aef6923e503b616dce53b048e5f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/schmittjoh/php-manipulator/zipball/30945a72edf22aef6923e503b616dce53b048e5f",
+                "reference": "30945a72edf22aef6923e503b616dce53b048e5f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0",
+                "phpoption/phpoption": "1.*"
+            },
+            "require-dev": {
+                "nikic/php-parser": "0.9.1"
+            },
+            "suggest": {
+                "nikic/php-parser": "If you'd like to have access to an AST"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "JMS\\PhpManipulator\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache2"
+            ],
+            "authors": [
+                {
+                    "name": "Johannes M. Schmitt"
+                }
+            ],
+            "description": "Library for Analyzing or Manipulating PHP files using the TokenStream, AST, or both",
+            "keywords": [
+                "code",
+                "manipulator",
+                "modify",
+                "php",
+                "source"
+            ],
+            "time": "2013-02-05 00:09:37"
         },
         {
             "name": "jms/serializer",
@@ -963,6 +1012,7 @@
         "scrutinizer/utils": 20,
         "phpoption/phpoption": 20,
         "jms/serializer": 20,
+        "jms/php-manipulator": 20,
         "phpcollection/phpcollection": 20,
         "nikic/php-parser": 20
     },

@@ -2,6 +2,7 @@
 
 namespace Scrutinizer\Analyzer\Php;
 
+use JMS\PhpManipulator\TokenStream;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Scrutinizer\Analyzer\AnalyzerInterface;
@@ -21,11 +22,11 @@ class CodeCoverageAnalyzer implements AnalyzerInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    private $impactAnalyzer;
+    private $tokenStream;
 
     public function __construct()
     {
-        $this->impactAnalyzer = new ImpactAnalyzer();
+        $this->tokenStream = new TokenStream();
     }
 
     public function scrutinize(Project $project)
@@ -34,14 +35,8 @@ class CodeCoverageAnalyzer implements AnalyzerInterface, LoggerAwareInterface
             throw new \LogicException('The xdebug extension must be loaded for generating code coverage.');
         }
 
-        if (null !== $phpunitConfig = $this->findPhpUnitConfig($project)) {
-            $paths = $project->getPaths();
-            if ( ! empty($paths)) {
-                $affectedFiles = $this->impactAnalyzer->findAffectedFiles($project->getDir(), $paths);
-                $this->modifyListenerConfig($phpunitConfig, $project->getDir().'/', array_merge($affectedFiles, $paths));
-            } elseif ($project->getGlobalConfig('only_changesets')) {
-                return;
-            }
+        if ($project->getGlobalConfig('only_changesets')) {
+            $this->logger->info('The "only_changesets" option for "php_code_coverage" was deprecated.');
         }
 
         $outputFile = tempnam(sys_get_temp_dir(), 'php-code-coverage');
@@ -73,7 +68,7 @@ class CodeCoverageAnalyzer implements AnalyzerInterface, LoggerAwareInterface
                 ->scalarNode('config_path')->defaultNull()->end()
                 ->scalarNode('test_command')->defaultValue('phpunit')->end()
                 ->booleanNode('only_changesets')
-                    ->info('Whether code coverage information should only be generated for changesets.')
+                    ->info('(deprecated) Whether code coverage information should only be generated for changesets.')
                     ->defaultFalse()
                 ->end()
             ->end()
@@ -96,7 +91,8 @@ class CodeCoverageAnalyzer implements AnalyzerInterface, LoggerAwareInterface
                 continue;
             }
 
-            $project->getFile(substr((string) $xmlFile->attributes()->name, $prefixLength))->map(
+            $filename = substr((string) $xmlFile->attributes()->name, $prefixLength);
+            $project->getFile($filename)->forAll(
                 function(File $modelFile) use ($xmlFile) {
                     foreach ($xmlFile->line as $line) {
                         $attrs = $line->attributes();
@@ -148,122 +144,83 @@ class CodeCoverageAnalyzer implements AnalyzerInterface, LoggerAwareInterface
             foreach ($packageNode->xpath('./file') as $fileNode) {
                 $filename = substr($fileNode->attributes()->name, strlen($project->getDir()) + 1);
 
-                $addedMethods = 0;
-                foreach ($fileNode->xpath('./class') as $classNode) {
-                    $className = $packageName.'\\'.$classNode->attributes()->name;
+                $project->getFile($filename)->forAll(function(File $modelFile) use ($packageName, $project, $fileNode, $package, $filename) {
+                    $this->tokenStream->setCode($modelFile->getContent());
 
-                    $class = $project->getOrCreateCodeElement('class', $className);
-                    $package->addChild($class);
+                    $addedMethods = 0;
+                    foreach ($fileNode->xpath('./class') as $classNode) {
+                        $className = $packageName.'\\'.$classNode->attributes()->name;
 
-                    $class->setLocation($filename);
+                        $class = $project->getOrCreateCodeElement('class', $className);
+                        $package->addChild($class);
 
-                    $metricsAttrs = $classNode->metrics->attributes();
-                    $class->setMetric('php_code_coverage.methods', (integer) $metricsAttrs->methods);
-                    $class->setMetric('php_code_coverage.covered_methods', (integer) $metricsAttrs->coveredmethods);
-                    $class->setMetric('php_code_coverage.conditionals', (integer) $metricsAttrs->conditionals);
-                    $class->setMetric('php_code_coverage.covered_conditionals', (integer) $metricsAttrs->coveredconditionals);
-                    $class->setMetric('php_code_coverage.statements', (integer) $metricsAttrs->statements);
-                    $class->setMetric('php_code_coverage.covered_statements', (integer) $metricsAttrs->coveredstatements);
-                    $class->setMetric('php_code_coverage.elements', (integer) $metricsAttrs->elements);
-                    $class->setMetric('php_code_coverage.covered_elements', (integer) $metricsAttrs->coveredelements);
+                        $class->setLocation($filename);
 
-                    $i = -1;
-                    $addedClassMethods = 0;
-                    foreach ($fileNode->xpath('./line') as $lineNode) {
-                        $lineAttrs = $lineNode->attributes();
+                        $metricsAttrs = $classNode->metrics->attributes();
+                        $methodCount = (integer) $metricsAttrs->methods;
+                        $coveredMethodCount = (integer) $metricsAttrs->coveredmethods;
+                        $class->setMetric('php_code_coverage.conditionals', (integer) $metricsAttrs->conditionals);
+                        $class->setMetric('php_code_coverage.covered_conditionals', (integer) $metricsAttrs->coveredconditionals);
+                        $class->setMetric('php_code_coverage.statements', (integer) $metricsAttrs->statements);
+                        $class->setMetric('php_code_coverage.covered_statements', (integer) $metricsAttrs->coveredstatements);
+                        $class->setMetric('php_code_coverage.elements', (integer) $metricsAttrs->elements);
+                        $class->setMetric('php_code_coverage.covered_elements', (integer) $metricsAttrs->coveredelements);
 
-                        if ((string) $lineAttrs->type !== 'method') {
-                            continue;
+                        $i = -1;
+                        $addedClassMethods = 0;
+                        foreach ($fileNode->xpath('./line') as $lineNode) {
+                            $lineAttrs = $lineNode->attributes();
+
+                            if ((string) $lineAttrs->type !== 'method') {
+                                continue;
+                            }
+
+                            // This is a workaround for a bug in CodeCoverage that displays arguments of closures as
+                            // methods of the declaring class.
+                            $methodName = (string) $lineAttrs->name;
+                            $methodToken = $this->tokenStream->next->findNextToken(function(TokenStream\AbstractToken $token) use ($methodName) {
+                                if ( ! $token->matches(T_FUNCTION)) {
+                                    return false;
+                                }
+
+                                return $token->findNextToken('NO_WHITESPACE_OR_COMMENT')->map(function(TokenStream\AbstractToken $token) use ($methodName) {
+                                    return $token->matches(T_STRING) && $token->getContent() === $methodName;
+                                })->getOrElse(false);
+                            });
+                            if ( ! $methodToken->isDefined()) {
+                                $methodCount -= 1;
+
+                                if ($lineAttrs->count > 0) {
+                                    $coveredMethodCount -= 1;
+                                }
+
+                                continue;
+                            }
+
+                            $i += 1;
+
+                            if ($i < $addedMethods) {
+                                continue;
+                            }
+
+                            if ($addedClassMethods >= (integer) $metricsAttrs->methods) {
+                                break;
+                            }
+
+                            $addedClassMethods += 1;
+                            $addedMethods += 1;
+                            $method = $project->getOrCreateCodeElement('operation', $className.'::'.$methodName);
+                            $class->addChild($method);
+
+                            $method->setMetric('php_code_coverage.change_risk_anti_pattern', (integer) $lineAttrs->crap);
+                            $method->setMetric('php_code_coverage.count', (integer) $lineAttrs->count);
                         }
-                        $i += 1;
 
-                        if ($i < $addedMethods) {
-                            continue;
-                        }
-
-                        if ($addedClassMethods >= (integer) $metricsAttrs->methods) {
-                            break;
-                        }
-
-                        $addedClassMethods += 1;
-                        $addedMethods += 1;
-                        $method = $project->getOrCreateCodeElement('operation', $className.'::'.$lineAttrs->name);
-                        $class->addChild($method);
-
-                        $method->setMetric('php_code_coverage.change_risk_anti_pattern', (integer) $lineAttrs->crap);
-                        $method->setMetric('php_code_coverage.count', (integer) $lineAttrs->count);
+                        $class->setMetric('php_code_coverage.methods', $methodCount);
+                        $class->setMetric('php_code_coverage.covered_methods', $coveredMethodCount);
                     }
-                }
+                });
             }
-        }
-    }
-
-    private function modifyListenerConfig($phpunitConfig, $rootDir, array $affectedFiles)
-    {
-        $doc = new \DOMDocument('1.0', 'utf8');
-        $doc->loadXml(file_get_contents($phpunitConfig));
-        $xpath = new \DOMXPath($doc);
-
-        $phpunitElemList = $xpath->query('//phpunit');
-        if ($phpunitElemList->length === 0) {
-            throw new \LogicException(sprintf('The PHPUnit config file "%s" has no "<phpunit>" element.', $phpunitConfig));
-        }
-        $phpunitElem = $phpunitElemList->item(0);
-
-        $listenersList = $xpath->query('//phpunit/listeners');
-        if (0 === $listenersList->length) {
-            $listenersElem = $doc->createElement('listeners');
-            $phpunitElem->appendChild($listenersElem);
-        } else {
-            $listenersElem = $listenersList->item(0);
-        }
-
-        $listener = $doc->createElement('listener');
-        $listener->setAttribute('class', 'TestSkippingListener');
-        $listener->setAttribute('file', __DIR__.'/Util/TestSkippingListener.php');
-        $listenersElem->appendChild($listener);
-
-        $args = $doc->createElement('arguments');
-        $listener->appendChild($args);
-
-        $rootDir = $doc->createElement('string', $rootDir);
-        $args->appendChild($rootDir);
-
-        $paths = $doc->createElement('array');
-        $args->appendChild($paths);
-
-        foreach ($affectedFiles as $i => $pathname) {
-            $path = $doc->createElement('element');
-            $path->setAttribute('key', $i);
-
-            // There is a bug in PHPUnit which counts the element starting from 1 instead of 0.
-            $path->appendChild($doc->createElement('dummy'));
-
-            $strValue = $doc->createElement('string', $pathname);
-            $path->appendChild($strValue);
-            $paths->appendChild($path);
-        }
-
-        file_put_contents($phpunitConfig, $doc->saveXML());
-    }
-
-    private function findPhpUnitConfig(Project $project)
-    {
-        $dir = $project->getDir();
-        $configPath = $project->getGlobalConfig('config_path');
-
-        if (null !== $configPath) {
-            if ( ! is_file($dir.'/'.$configPath)) {
-                throw new \LogicException(sprintf('The config file "%s" does not exist.', $dir.'/'.$configPath));
-            }
-
-            return $dir.'/'.$configPath;
-        } elseif (is_file($dir.'/phpunit.xml')) {
-            return $dir.'/phpunit.xml';
-        } elseif (is_file($dir.'/phpunit.xml.dist')) {
-            return $dir.'/phpunit.xml.dist';
-        } else {
-            return null;
         }
     }
 }

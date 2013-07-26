@@ -1,0 +1,106 @@
+<?php
+
+namespace Moo;
+
+class FooBar
+{
+    public function foo($a)
+    {
+        $foo = function(Bar $bar) {
+            return 'bar';
+        };
+
+        return $a ? 'foo' : $foo(new Bar);
+    }
+}
+
+-- FILENAME --
+src/Foo.php
+
+-- FILE: src/Bar.php --
+<?php
+
+namespace Moo;
+
+class Bar { }
+
+-- FILE: tests/FooTest.php --
+<?php
+
+namespace Moo;
+
+class FooTest extends \PHPUnit_Framework_TestCase
+{
+    public function testFoo()
+    {
+        $foo = new FooBar();
+        $this->assertEquals('foo', $foo->foo(true));
+        $this->assertEquals('bar', $foo->foo(false));
+    }
+}
+
+-- FILE: bootstrap.php --
+<?php
+
+require_once __DIR__.'/src/Foo.php';
+require_once __DIR__.'/src/Bar.php';
+
+-- FILE: phpunit.xml --
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="bootstrap.php">
+    <testsuites>
+        <testsuite name="Test Suite">
+            <directory>./tests</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
+
+-- CONFIG --
+tools:
+    php_code_coverage: true
+
+-- LINE ATTRIBUTES --
+Line 7: {"coverage_count":1}
+Line 9: {"coverage_count":1}
+Line 10: {"coverage_count":1}
+Line 11: {"coverage_count":1}
+
+-- PROJECT-METRICS --
+'php_code_coverage.files': 1
+'php_code_coverage.lines_of_code': 14
+'php_code_coverage.non_comment_lines_of_code': 14
+'php_code_coverage.classes': 1
+'php_code_coverage.methods': 1
+'php_code_coverage.covered_methods': 1
+'php_code_coverage.conditionals': 0
+'php_code_coverage.covered_conditionals': 0
+'php_code_coverage.statements': 3
+'php_code_coverage.covered_statements': 3
+'php_code_coverage.elements': 4
+'php_code_coverage.covered_elements': 4
+
+-- CODE-ELEMENTS --
+package(Moo):
+    children:
+        - class(Moo\FooBar)
+
+class(Moo\FooBar):
+    filename: src/Foo.php
+    metrics:
+        'php_code_coverage.methods': 1
+        'php_code_coverage.covered_methods': 1
+        'php_code_coverage.conditionals': 0
+        'php_code_coverage.covered_conditionals': 0
+        'php_code_coverage.statements': 6
+        'php_code_coverage.covered_statements': 6
+        'php_code_coverage.elements': 8
+        'php_code_coverage.covered_elements': 8
+
+    children:
+        - operation(Moo\FooBar::foo)
+
+
+operation(Moo\FooBar::foo):
+    metrics:
+        'php_code_coverage.change_risk_anti_pattern': 2
+        'php_code_coverage.count': 1
