@@ -8,16 +8,18 @@ Runs PHPUnit to gather code coverage information, and displays the coverage resu
 Installing Dependencies
 -----------------------
 Often you will need to install the dependencies for your project before you can run the tests. If you are using composer,
-you can do so by adding the following to your configuration:
+you can do so easily by adding the following to your configuration:
 
 .. code-block :: yaml
 
     before_commands:
         - "composer install --prefer-source"
 
+We update the installed composer version every couple of hours.
+
 PHPUnit Configuration
 ---------------------
-By default, a ``phpunit.xml`` or ``phpunit.xml.dist`` file is expected in your project's root folder. If you need a
+By default, a ``phpunit.xml`` or ``phpunit.xml.dist`` file is expected in your project's root folder. However, if you need a
 different configuration, you can change the test command:
 
 .. code-block :: yaml

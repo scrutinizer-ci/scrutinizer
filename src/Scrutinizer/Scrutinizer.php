@@ -9,6 +9,7 @@ use Scrutinizer\Analyzer\LoggerAwareInterface;
 use Scrutinizer\Analyzer;
 use Scrutinizer\Logger\LoggableProcess;
 use Scrutinizer\Model\Project;
+use Symfony\Component\Process\Exception\RuntimeException;
 use Symfony\Component\Yaml\Yaml;
 
 /**

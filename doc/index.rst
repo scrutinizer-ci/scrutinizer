@@ -29,6 +29,7 @@ just `open an issue <https://github.com/scrutinizer-ci/scrutinizer/issues/new>`_
     :hidden:
 
     configuration
+    code_rating_system
 
 .. toctree ::
     :glob:
@@ -38,9 +39,7 @@ just `open an issue <https://github.com/scrutinizer-ci/scrutinizer/issues/new>`_
 
 Configuration
 -------------
-
 Scrutinizer uses configuration in Yaml format; it scans different locations for this data. Most of the time, you will define
 a global base configuration where you only overwrite a few selected settings for each repository.
 
 Learn more in the :doc:`dedicated configuration chapter <configuration>`.
-
