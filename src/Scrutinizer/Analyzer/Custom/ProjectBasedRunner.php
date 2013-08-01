@@ -70,6 +70,7 @@ class ProjectBasedRunner extends AbstractRunner
 
         for ($i=0; $i<$commandData['iterations']; $i++) {
             $proc = new LoggableProcess($cmd);
+            $proc->setTimeout(300);
             $proc->setLogger($this->logger);
             $exitCode = $proc->run();
 

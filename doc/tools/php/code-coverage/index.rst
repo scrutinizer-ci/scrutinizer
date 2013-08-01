@@ -5,17 +5,28 @@ Runs PHPUnit to gather code coverage information, and displays the coverage resu
 
 .. include :: php_code_coverage_configuration.rst
 
-Improving Performance on Bigger Projects
-----------------------------------------
-For bigger projects, generating code coverage information can take a long time. In order to speed up this process,
-scrutinizer only runs unit tests which are affected by code changes. In addition, you can disable coverage generation
-when your entire project is inspected with the ``only_changesets`` flag:
+Installing Dependencies
+-----------------------
+Often you will need to install the dependencies for your project before you can run the tests. If you are using composer,
+you can do so easily by adding the following to your configuration:
+
+.. code-block :: yaml
+
+    before_commands:
+        - "composer install --prefer-source"
+
+We update the installed composer version every couple of hours.
+
+PHPUnit Configuration
+---------------------
+By default, a ``phpunit.xml`` or ``phpunit.xml.dist`` file is expected in your project's root folder. However, if you need a
+different configuration, you can change the test command:
 
 .. code-block :: yaml
 
     tools:
         php_code_coverage:
-            only_changesets: true
+            test_command: phpunit -c tests/my_config.xml
 
 
 .. include :: php_code_coverage_configuration_reference.rst

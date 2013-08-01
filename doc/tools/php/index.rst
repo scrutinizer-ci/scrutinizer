@@ -1,7 +1,8 @@
 PHP
 ===
 
-Support for the following tools has been built-in. In addition you can also run your own PHP scripts.
+In addition to our own private analysis tools, we have released several tools as open-source and also support several
+well-known open-source tools of other authors as listed below:
 
 .. toctree ::
     :glob:

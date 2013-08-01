@@ -83,12 +83,15 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
         foreach ($testData['code_elements'] as $element) {
             /** @var CodeElement $element */
 
+            $found = false;
             foreach ($actualElements as $k => $actualElement) {
                 /** @var CodeElement $actualElement */
 
                 if ( ! $element->equals($actualElement)) {
                     continue;
                 }
+
+                $found = true;
 
                 unset($actualElements[$k]);
                 $this->assertEquals($element->getMetrics(), $actualElement->getMetrics(), 'Metrics for element '.$element);
@@ -108,8 +111,10 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
 
                 break;
             }
+
+            $this->assertTrue($found, 'The code element '.$element.' could not be found in the project, but was expected.');
         }
-        $this->assertEmpty($actualElements, "Unexpected Metrics:\n\n".implode("\n", $actualElements));
+        $this->assertEmpty($actualElements, "Unexpected Metrics:\n\n- ".implode("\n- ", $actualElements)."\n");
     }
 
     private function dumpLineAttributes(array $lineAttributes)

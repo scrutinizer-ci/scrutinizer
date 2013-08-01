@@ -89,7 +89,7 @@ package(Ns):
 class(Ns\Foo):
     filename: src/classes.php
     children:
-        - method(Ns\Foo::a)
+        - operation(Ns\Foo::a)
     metrics:
         'php_code_coverage.methods': 1
         'php_code_coverage.covered_methods': 1
@@ -100,7 +100,7 @@ class(Ns\Foo):
         'php_code_coverage.elements': 2
         'php_code_coverage.covered_elements': 2
 
-method(Ns\Foo::a):
+operation(Ns\Foo::a):
     metrics:
         'php_code_coverage.change_risk_anti_pattern': 1
         'php_code_coverage.count': 1
@@ -108,7 +108,7 @@ method(Ns\Foo::a):
 class(Ns\Bar):
     filename: src/classes.php
     children:
-        - method(Ns\Bar::b)
+        - operation(Ns\Bar::b)
     metrics:
         'php_code_coverage.methods': 1
         'php_code_coverage.covered_methods': 1
@@ -119,7 +119,7 @@ class(Ns\Bar):
         'php_code_coverage.elements': 2
         'php_code_coverage.covered_elements': 2
 
-method(Ns\Bar::b):
+operation(Ns\Bar::b):
     metrics:
         'php_code_coverage.change_risk_anti_pattern': 1
         'php_code_coverage.count': 1

@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "ab2477eb9d726a6ad8764b4d54326be9",
+    "hash": "89d45b440775e5a68a73370afc4c0dd2",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -63,7 +63,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "http://jmsyst.com",
+                    "homepage": "https://github.com/schmittjoh",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -99,7 +99,7 @@
                     "Doctrine\\Common\\Lexer\\": "lib/"
                 }
             },
-            "notification-url": "http://packagist.org/downloads/",
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -192,7 +192,7 @@
                     "Guzzle": "src/"
                 }
             },
-            "notification-url": "http://packagist.org/downloads/",
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -243,7 +243,7 @@
                     "Metadata\\": "src/"
                 }
             },
-            "notification-url": "http://packagist.org/downloads/",
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "Apache"
             ],
@@ -251,7 +251,7 @@
                 {
                     "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -292,7 +292,7 @@
                     "JMS\\": "src/"
                 }
             },
-            "notification-url": "http://packagist.org/downloads/",
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "Apache2"
             ],
@@ -300,22 +300,71 @@
             "time": "2012-11-18 18:08:43"
         },
         {
+            "name": "jms/php-manipulator",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/schmittjoh/php-manipulator.git",
+                "reference": "30945a72edf22aef6923e503b616dce53b048e5f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/schmittjoh/php-manipulator/zipball/30945a72edf22aef6923e503b616dce53b048e5f",
+                "reference": "30945a72edf22aef6923e503b616dce53b048e5f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0",
+                "phpoption/phpoption": "1.*"
+            },
+            "require-dev": {
+                "nikic/php-parser": "0.9.1"
+            },
+            "suggest": {
+                "nikic/php-parser": "If you'd like to have access to an AST"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "JMS\\PhpManipulator\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache2"
+            ],
+            "authors": [
+                {
+                    "name": "Johannes M. Schmitt"
+                }
+            ],
+            "description": "Library for Analyzing or Manipulating PHP files using the TokenStream, AST, or both",
+            "keywords": [
+                "code",
+                "manipulator",
+                "modify",
+                "php",
+                "source"
+            ],
+            "time": "2013-02-05 00:09:37"
+        },
+        {
             "name": "jms/serializer",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/schmittjoh/serializer.git",
-                "reference": "671817081fa768db7c756b858785c8058af18102"
+                "reference": "1e6208ee703bb5785d09810d469d4af39207803b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/schmittjoh/serializer/zipball/671817081fa768db7c756b858785c8058af18102",
-                "reference": "671817081fa768db7c756b858785c8058af18102",
+                "url": "https://api.github.com/repos/schmittjoh/serializer/zipball/1e6208ee703bb5785d09810d469d4af39207803b",
+                "reference": "1e6208ee703bb5785d09810d469d4af39207803b",
                 "shasum": ""
             },
             "require": {
                 "doctrine/annotations": "1.*",
-                "jms/metadata": ">=1.1,<2.0",
+                "jms/metadata": "~1.1",
                 "jms/parser-lib": "1.*",
                 "php": ">=5.3.2",
                 "phpcollection/phpcollection": ">=0.1,<0.3-dev"
@@ -349,7 +398,7 @@
             ],
             "authors": [
                 {
-                    "name": "Johannes Schmitt",
+                    "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
                     "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
@@ -364,7 +413,7 @@
                 "serialization",
                 "xml"
             ],
-            "time": "2013-06-26 13:11:01"
+            "time": "2013-07-16 12:53:55"
         },
         {
             "name": "monolog/monolog",
@@ -402,7 +451,7 @@
                     "Monolog": "src/"
                 }
             },
-            "notification-url": "http://packagist.org/downloads/",
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -482,7 +531,7 @@
                     "PhpCollection": "src/"
                 }
             },
-            "notification-url": "http://packagist.org/downloads/",
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "Apache2"
             ],
@@ -506,16 +555,16 @@
         },
         {
             "name": "phpoption/phpoption",
-            "version": "1.2.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/schmittjoh/php-option.git",
-                "reference": "1.2.0"
+                "reference": "1c7e8016289d17d83ced49c56d0f266fd0568941"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/schmittjoh/php-option/zipball/1.2.0",
-                "reference": "1.2.0",
+                "url": "https://api.github.com/repos/schmittjoh/php-option/zipball/1c7e8016289d17d83ced49c56d0f266fd0568941",
+                "reference": "1c7e8016289d17d83ced49c56d0f266fd0568941",
                 "shasum": ""
             },
             "require": {
@@ -524,7 +573,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.2-dev"
+                    "dev-master": "1.3-dev"
                 }
             },
             "autoload": {
@@ -538,7 +587,7 @@
             ],
             "authors": [
                 {
-                    "name": "Johannes Schmitt",
+                    "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
                     "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
@@ -551,7 +600,7 @@
                 "php",
                 "type"
             ],
-            "time": "2013-03-25 02:51:40"
+            "time": "2013-05-19 11:09:35"
         },
         {
             "name": "psr/log",
@@ -573,7 +622,7 @@
                     "Psr\\Log\\": ""
                 }
             },
-            "notification-url": "http://packagist.org/downloads/",
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -597,18 +646,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/scrutinizer-ci/utils.git",
-                "reference": "b49c7e0117c1bff14b8f99d61a7cbf04b2d8f87c"
+                "reference": "a2f336f59c37bbaa379e86bc1e452d05dd6b94df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scrutinizer-ci/utils/zipball/b49c7e0117c1bff14b8f99d61a7cbf04b2d8f87c",
-                "reference": "b49c7e0117c1bff14b8f99d61a7cbf04b2d8f87c",
+                "url": "https://api.github.com/repos/scrutinizer-ci/utils/zipball/a2f336f59c37bbaa379e86bc1e452d05dd6b94df",
+                "reference": "a2f336f59c37bbaa379e86bc1e452d05dd6b94df",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.4",
-                "symfony/process": ">=2.0,<3.0",
-                "symfony/yaml": ">=2.0,<3.0"
+                "symfony/process": "2.*"
             },
             "type": "library",
             "autoload": {
@@ -617,7 +665,7 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
-            "time": "2013-06-22 16:12:25"
+            "time": "2013-03-05 08:41:33"
         },
         {
             "name": "symfony/config",
@@ -739,7 +787,7 @@
                 "php": ">=5.3.3"
             },
             "require-dev": {
-                "symfony/dependency-injection": ">=2.0,<3.0"
+                "symfony/dependency-injection": "~2.0"
             },
             "suggest": {
                 "symfony/dependency-injection": "",
@@ -962,7 +1010,9 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "scrutinizer/utils": 20,
+        "phpoption/phpoption": 20,
         "jms/serializer": 20,
+        "jms/php-manipulator": 20,
         "phpcollection/phpcollection": 20,
         "nikic/php-parser": 20
     },

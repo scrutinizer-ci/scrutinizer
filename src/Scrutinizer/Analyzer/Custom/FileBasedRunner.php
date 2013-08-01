@@ -67,6 +67,7 @@ class FileBasedRunner extends AbstractRunner
 
                 for ($i=0; $i<$commandData['iterations']; $i++) {
                     $proc = new LoggableProcess(strtr($commandData['command'], $placeholders));
+                    $proc->setTimeout(300);
                     $proc->setLogger($this->logger);
                     $exitCode = $proc->run();
 

@@ -9,6 +9,12 @@ use Scrutinizer\Util\XmlUtils;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
+/**
+ * Gathers metrics using PHP PDepend.
+ *
+ * @doc-path tools/php/pdepend/
+ * @display-name PHP PDepend
+ */
 class PDependAnalyzer implements AnalyzerInterface
 {
     public function getName()
@@ -53,6 +59,7 @@ class PDependAnalyzer implements AnalyzerInterface
                 ->end()
                 ->arrayNode('excluded_dirs')
                     ->prototype('scalar')->end()
+                    ->defaultValue(array('vendor'))
                 ->end()
             ->end()
         ;
@@ -85,6 +92,7 @@ class PDependAnalyzer implements AnalyzerInterface
         }
 
         $proc = new Process($command.' '.$project->getDir());
+        $proc->setTimeout(900);
         $proc->run();
 
         $output = file_get_contents($outputFile);

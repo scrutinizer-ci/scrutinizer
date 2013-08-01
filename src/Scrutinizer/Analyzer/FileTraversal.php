@@ -3,6 +3,7 @@
 namespace Scrutinizer\Analyzer;
 
 use Psr\Log\LoggerInterface;
+use Scrutinizer\Model\File;
 use Scrutinizer\Model\Project;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -84,12 +85,12 @@ class FileTraversal
         foreach ($finder as $finderFile) {
             /** @var $finderFile SplFileInfo */
 
-            $file = $this->project->getFile($finderFile->getRelativePathname())->get();
-
-            if (null !== $this->logger) {
-                $this->logger->debug(sprintf('Analyzing file "%s".', $file->getPath()), array('project' => $this->project, 'file' => $file, 'analyzer' => $this->analyzer));
-            }
-            $this->analyzer->{$this->method}($this->project, $file);
+            $this->project->getFile($finderFile->getRelativePathname())->forAll(function(File $file) {
+                if (null !== $this->logger) {
+                    $this->logger->debug(sprintf('Analyzing file "%s".', $file->getPath()), array('project' => $this->project, 'file' => $file, 'analyzer' => $this->analyzer));
+                }
+                $this->analyzer->{$this->method}($this->project, $file);
+            });
         }
     }
 }
