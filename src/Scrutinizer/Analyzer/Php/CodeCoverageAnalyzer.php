@@ -48,11 +48,11 @@ class CodeCoverageAnalyzer implements AnalyzerInterface
         $output = file_get_contents($outputFile);
         unlink($outputFile);
 
-        if ($proc->getExitCode() >= 1 && empty($output)) {
-            throw new ProcessFailedException($proc);
-        }
-
         if (empty($output)) {
+            if ($proc->getExitCode() > 0) {
+                throw new ProcessFailedException($proc);
+            }
+
             return;
         }
 

@@ -1,0 +1,172 @@
+<?php
+
+namespace Foo;
+
+class Foo
+{
+    private $bar;
+
+    public function __construct(Bar $bar)
+    {
+        $this->bar = $bar;
+    }
+
+    public function getBar()
+    {
+        return $this->bar;
+    }
+
+    public function getBarName()
+    {
+        return $this->bar->getName();
+    }
+}
+
+-- FILENAME --
+src/Foo.php
+
+-- FILE: src/Bar.php --
+<?php
+
+namespace Foo;
+
+class Bar
+{
+    private $name;
+
+    public function __construct($name)
+    {
+        $this->name = $name;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+}
+
+-- FILE: tests/FooTest.php --
+<?php
+
+namespace Foo;
+
+class FooTest extends \PHPUnit_Framework_TestCase
+{
+    public function testGetBar()
+    {
+        $foo = new Foo($bar = new Bar('Foo'));
+        $this->assertSame($bar, $foo->getBar());
+    }
+
+    public function testErrors()
+    {
+        $this->assertEquals('foo', 'bar');
+    }
+}
+
+-- FILE: bootstrap.php --
+<?php
+
+require_once __DIR__.'/src/Bar.php';
+require_once __DIR__.'/src/Foo.php';
+
+-- FILE: phpunit.xml --
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="bootstrap.php">
+    <testsuites>
+        <testsuite name="Test Suite">
+            <directory>./tests</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
+
+-- CONFIG --
+tools:
+    php_code_coverage: true
+
+-- LINE ATTRIBUTES --
+Line 9: {"coverage_count":1}
+Line 11: {"coverage_count":1}
+Line 12: {"coverage_count":1}
+Line 14: {"coverage_count":1}
+Line 16: {"coverage_count":1}
+Line 19: {"coverage_count":0}
+Line 21: {"coverage_count":0}
+
+-- PROJECT-METRICS --
+'php_code_coverage.files': 2
+'php_code_coverage.lines_of_code': 39
+'php_code_coverage.non_comment_lines_of_code': 39
+'php_code_coverage.classes': 2
+'php_code_coverage.methods': 5
+'php_code_coverage.covered_methods': 3
+'php_code_coverage.conditionals': 0
+'php_code_coverage.covered_conditionals': 0
+'php_code_coverage.statements': 7
+'php_code_coverage.covered_statements': 5
+'php_code_coverage.elements': 12
+'php_code_coverage.covered_elements': 8
+
+-- CODE-ELEMENTS --
+package(Foo):
+    children:
+        - 'class(Foo\Bar)'
+        - 'class(Foo\Foo)'
+
+class(Foo\Bar):
+    metrics:
+        'php_code_coverage.methods': 2
+        'php_code_coverage.covered_methods': 1
+        'php_code_coverage.conditionals': 0
+        'php_code_coverage.covered_conditionals': 0
+        'php_code_coverage.statements': 3
+        'php_code_coverage.covered_statements': 2
+        'php_code_coverage.elements': 5
+        'php_code_coverage.covered_elements': 3
+
+    filename: src/Bar.php
+    children:
+        - method(Foo\Bar::__construct)
+        - method(Foo\Bar::getName)
+
+method(Foo\Bar::__construct):
+    metrics:
+        'php_code_coverage.change_risk_anti_pattern': 1
+        'php_code_coverage.count': 1
+
+method(Foo\Bar::getName):
+    metrics:
+        'php_code_coverage.change_risk_anti_pattern': 2
+        'php_code_coverage.count': 0
+
+class(Foo\Foo):
+    filename: src/Foo.php
+    metrics:
+        'php_code_coverage.methods': 3
+        'php_code_coverage.covered_methods': 2
+        'php_code_coverage.conditionals': 0
+        'php_code_coverage.covered_conditionals': 0
+        'php_code_coverage.statements': 4
+        'php_code_coverage.covered_statements': 3
+        'php_code_coverage.elements': 7
+        'php_code_coverage.covered_elements': 5
+
+    children:
+        - method(Foo\Foo::__construct)
+        - method(Foo\Foo::getBar)
+        - method(Foo\Foo::getBarName)
+
+method(Foo\Foo::__construct):
+    metrics:
+        'php_code_coverage.change_risk_anti_pattern': 1
+        'php_code_coverage.count': 1
+
+method(Foo\Foo::getBar):
+    metrics:
+        'php_code_coverage.change_risk_anti_pattern': 1
+        'php_code_coverage.count': 1
+
+method(Foo\Foo::getBarName):
+    metrics:
+        'php_code_coverage.change_risk_anti_pattern': 2
+        'php_code_coverage.count': 0
