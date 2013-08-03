@@ -2,6 +2,8 @@
 
 namespace Scrutinizer\Analyzer\Php;
 
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Scrutinizer\Analyzer\AbstractFileAnalyzer;
 use Scrutinizer\Analyzer\AnalyzerInterface;
 use Scrutinizer\Analyzer\Parser\CheckstyleParser;
@@ -19,8 +21,10 @@ use Symfony\Component\Process\Process;
  * @display-name PHP Copy/Paste Detector
  * @doc-path tools/php/copy-paste-detector/
  */
-class CopyPasteDetectorAnalyzer implements AnalyzerInterface
+class CopyPasteDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     public function getName()
     {
         return 'php_cpd';
@@ -60,7 +64,7 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface
     private function buildCommand(Project $project, $outputFile)
     {
         $command = sprintf(
-            '%s --log-pmd %s --min-lines %d --min-tokens %d --names %s',
+            '%s --progress --log-pmd %s --min-lines %d --min-tokens %d --names %s',
             $project->getGlobalConfig('command'),
             escapeshellarg($outputFile),
             $project->getGlobalConfig('min_lines'),
@@ -87,9 +91,12 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface
 
         $command = $this->buildCommand($project, $outputFile);
 
+        $this->logger->info('$ '.$command."\n");
         $proc = new Process($command, $project->getDir());
         $proc->setTimeout(300);
-        $proc->run();
+        $proc->run(function($_, $data) {
+            $this->logger->info($data);
+        });
 
         $result = file_get_contents($outputFile);
         unlink($outputFile);
