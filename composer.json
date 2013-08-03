@@ -12,7 +12,7 @@
         "scrutinizer/utils": "dev-master",
         "symfony/config": "2.*",
         "symfony/console": "2.*",
-        "symfony/process": "2.1.*",
+        "symfony/process": "~2.1@dev",
         "symfony/finder": "2.1.*",
         "symfony/yaml": "2.*",
         "symfony/filesystem": "2.*",

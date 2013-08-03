@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "89d45b440775e5a68a73370afc4c0dd2",
+    "hash": "3d0743c7d4a32d95f1e722eacd502596",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -99,7 +99,7 @@
                     "Doctrine\\Common\\Lexer\\": "lib/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "notification-url": "http://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -116,7 +116,7 @@
                 {
                     "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -192,7 +192,7 @@
                     "Guzzle": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "notification-url": "http://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -531,7 +531,7 @@
                     "PhpCollection": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "notification-url": "http://packagist.org/downloads/",
             "license": [
                 "Apache2"
             ],
@@ -539,7 +539,7 @@
                 {
                     "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -913,26 +913,31 @@
         },
         {
             "name": "symfony/process",
-            "version": "v2.1.11",
+            "version": "dev-master",
             "target-dir": "Symfony/Component/Process",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Process.git",
-                "reference": "v2.1.11"
+                "reference": "c40a7806f9433154d541b81ddfea100492c9d1d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Process/zipball/v2.1.11",
-                "reference": "v2.1.11",
+                "url": "https://api.github.com/repos/symfony/Process/zipball/c40a7806f9433154d541b81ddfea100492c9d1d9",
+                "reference": "c40a7806f9433154d541b81ddfea100492c9d1d9",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.4-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
-                    "Symfony\\Component\\Process": ""
+                    "Symfony\\Component\\Process\\": ""
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -951,7 +956,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "http://symfony.com",
-            "time": "2013-05-06 10:21:56"
+            "time": "2013-08-03 06:07:42"
         },
         {
             "name": "symfony/yaml",
@@ -1010,6 +1015,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "scrutinizer/utils": 20,
+        "symfony/process": 20,
         "phpoption/phpoption": 20,
         "jms/serializer": 20,
         "jms/php-manipulator": 20,
