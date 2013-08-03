@@ -43,8 +43,11 @@ class CodeCoverageAnalyzer implements AnalyzerInterface, LoggerAwareInterface
         $testCommand = $project->getGlobalConfig('test_command').' --coverage-clover '.escapeshellarg($outputFile);
         $this->logger->info(sprintf('Running command "%s"...', $testCommand));
         $proc = new Process($testCommand, $project->getDir());
-        $proc->setTimeout(300);
-        $proc->run();
+        $proc->setTimeout(1800);
+        $proc->setIdleTimeout(300);
+        $proc->run(function($_, $data) {
+            $this->logger->info($data);
+        });
 
         $output = file_get_contents($outputFile);
         unlink($outputFile);

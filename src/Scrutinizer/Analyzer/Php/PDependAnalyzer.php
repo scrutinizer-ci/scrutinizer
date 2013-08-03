@@ -2,6 +2,8 @@
 
 namespace Scrutinizer\Analyzer\Php;
 
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Scrutinizer\Analyzer\AnalyzerInterface;
 use Scrutinizer\Config\ConfigBuilder;
 use Scrutinizer\Model\Project;
@@ -15,8 +17,10 @@ use Symfony\Component\Process\Process;
  * @doc-path tools/php/pdepend/
  * @display-name PHP PDepend
  */
-class PDependAnalyzer implements AnalyzerInterface
+class PDependAnalyzer implements AnalyzerInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     public function getName()
     {
         return 'php_pdepend';
@@ -92,8 +96,11 @@ class PDependAnalyzer implements AnalyzerInterface
         }
 
         $proc = new Process($command.' '.$project->getDir());
-        $proc->setTimeout(900);
-        $proc->run();
+        $proc->setTimeout(1800);
+        $proc->setIdleTimeout(300);
+        $proc->run(function($_, $data) {
+            $this->logger->info($data);
+        });
 
         $output = file_get_contents($outputFile);
         unlink($outputFile);

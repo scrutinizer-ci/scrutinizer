@@ -84,7 +84,8 @@ class Scrutinizer
             foreach ($config['before_commands'] as $cmd) {
                 $this->logger->info(sprintf('Running "%s"...', $cmd));
                 $proc = new LoggableProcess($cmd, $dir);
-                $proc->setTimeout(300);
+                $proc->setTimeout(900);
+                $proc->setIdleTimeout(300);
                 $proc->setLogger($this->logger);
                 $proc->run();
             }
@@ -106,7 +107,8 @@ class Scrutinizer
             foreach ($config['after_commands'] as $cmd) {
                 $this->logger->info(sprintf('Running "%s"...', $cmd));
                 $proc = new LoggableProcess($cmd, $dir);
-                $proc->setTimeout(300);
+                $proc->setTimeout(900);
+                $proc->setIdleTimeout(300);
                 $proc->setLogger($this->logger);
                 $proc->run();
             }
