@@ -12,10 +12,9 @@ inspection is triggered, scrutinizer does not scan your entire project, but only
 you with highly relevant information. Furthermore, scrutinizer ci employs algorithms to filter out noise that you have
 previously ignored.
 
-In the future, we also plan to add support for collecting code metrics. This can be information like how many classes
-your project has, lines of code, but also opens up possibilities to track things like how your application's performance
-has developed over-time, or how the amount of database queries changed. The latter can for example help you to identify
-code that introduced certain performance degradations.
+Scrutinizer also collects code metrics like the cyclomatic complexity, or the length of your classes. It uses these
+metrics to calculate a ranking for the different elements of your code. This helps for example in finding the areas
+with the highest technical debt in your code. Learn more about :doc:`code rating <code_rating_system>`.
 
 Supported Languages and Tools
 -----------------------------
@@ -30,6 +29,7 @@ just `open an issue <https://github.com/scrutinizer-ci/scrutinizer/issues/new>`_
 
     configuration
     code_rating_system
+    api/index
 
 .. toctree ::
     :glob:
@@ -43,3 +43,8 @@ Scrutinizer uses configuration in Yaml format; it scans different locations for 
 a global base configuration where you only overwrite a few selected settings for each repository.
 
 Learn more in the :doc:`dedicated configuration chapter <configuration>`.
+
+API
+---
+Scrutinizer provides an API which you can for example use to retrieve information about your projects in a programmatic
+fashion: Learn more in the :doc:`API Documentation <api/index>`.
