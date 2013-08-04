@@ -36,12 +36,12 @@ class CodeCoverageAnalyzer implements AnalyzerInterface, LoggerAwareInterface
         }
 
         if ($project->getGlobalConfig('only_changesets')) {
-            $this->logger->info('The "only_changesets" option for "php_code_coverage" was deprecated.');
+            $this->logger->info('The "only_changesets" option for "php_code_coverage" was deprecated.'."\n");
         }
 
         $outputFile = tempnam(sys_get_temp_dir(), 'php-code-coverage');
         $testCommand = $project->getGlobalConfig('test_command').' --coverage-clover '.escapeshellarg($outputFile);
-        $this->logger->info(sprintf('Running command "%s"...', $testCommand));
+        $this->logger->info(sprintf('Running command "%s"...'."\n", $testCommand));
         $proc = new Process($testCommand, $project->getDir());
         $proc->setTimeout(1800);
         $proc->setIdleTimeout(300);

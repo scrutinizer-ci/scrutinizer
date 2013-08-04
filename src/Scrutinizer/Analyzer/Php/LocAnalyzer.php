@@ -2,6 +2,8 @@
 
 namespace Scrutinizer\Analyzer\Php;
 
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Scrutinizer\Analyzer\AnalyzerInterface;
 use Scrutinizer\Util\XmlUtils;
 use Scrutinizer\Config\ConfigBuilder;
@@ -17,8 +19,10 @@ use Symfony\Component\Process\Process;
  * @doc-path tools/php/lines-of-code/
  * @display-name PHP Lines Of Code
  */
-class LocAnalyzer implements AnalyzerInterface
+class LocAnalyzer implements AnalyzerInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     private static $metrics = array(
         'files' => array(),
         'loc' => array(
@@ -184,7 +188,7 @@ class LocAnalyzer implements AnalyzerInterface
     public function scrutinize(Project $project)
     {
         $outputFile = tempnam(sys_get_temp_dir(), 'phploc-output');
-        $command = $project->getGlobalConfig('command').' --log-xml '.escapeshellarg($outputFile);
+        $command = $project->getGlobalConfig('command').' --progress --log-xml '.escapeshellarg($outputFile);
 
         $names = $project->getGlobalConfig('names');
         if ( ! empty($names)) {
@@ -198,9 +202,13 @@ class LocAnalyzer implements AnalyzerInterface
             }
         }
 
+        $this->logger->info('$ '.$command."\n");
         $proc = new Process($command.' '.$project->getDir());
-        $proc->setTimeout(300);
-        $proc->run();
+        $proc->setTimeout(600);
+        $proc->setIdleTimeout(180);
+        $proc->run(function($_, $data) {
+            $this->logger->info($data);
+        });
 
         $output = file_get_contents($outputFile);
         unlink($outputFile);

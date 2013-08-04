@@ -22,6 +22,6 @@ class OutputLogger extends AbstractLogger
             return;
         }
 
-        $this->output->writeln($message);
+        $this->output->write($message);
     }
 }

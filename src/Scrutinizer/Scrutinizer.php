@@ -80,9 +80,9 @@ class Scrutinizer
         $config = $this->getConfiguration()->process($rawConfig);
 
         if ( ! empty($config['before_commands'])) {
-            $this->logger->info('Executing before commands');
+            $this->logger->info('Executing before commands'."\n");
             foreach ($config['before_commands'] as $cmd) {
-                $this->logger->info(sprintf('Running "%s"...', $cmd));
+                $this->logger->info(sprintf('Running "%s"...'."\n", $cmd));
                 $proc = new LoggableProcess($cmd, $dir);
                 $proc->setTimeout(900);
                 $proc->setIdleTimeout(300);
@@ -97,15 +97,15 @@ class Scrutinizer
                 continue;
             }
 
-            $this->logger->info(sprintf('Running analyzer "%s"...', $analyzer->getName()));
+            $this->logger->info(sprintf('Running analyzer "%s"...'."\n", $analyzer->getName()));
             $project->setAnalyzerName($analyzer->getName());
             $analyzer->scrutinize($project);
         }
 
         if ( ! empty($config['after_commands'])) {
-            $this->logger->info('Executing after commands');
+            $this->logger->info('Executing after commands'."\n");
             foreach ($config['after_commands'] as $cmd) {
-                $this->logger->info(sprintf('Running "%s"...', $cmd));
+                $this->logger->info(sprintf('Running "%s"...'."\n", $cmd));
                 $proc = new LoggableProcess($cmd, $dir);
                 $proc->setTimeout(900);
                 $proc->setIdleTimeout(300);
