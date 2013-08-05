@@ -206,6 +206,7 @@ class LocAnalyzer implements AnalyzerInterface, LoggerAwareInterface
         $proc = new Process($command.' '.$project->getDir());
         $proc->setTimeout(600);
         $proc->setIdleTimeout(180);
+        $proc->setPty(true);
         $proc->run(function($_, $data) {
             $this->logger->info($data);
         });
