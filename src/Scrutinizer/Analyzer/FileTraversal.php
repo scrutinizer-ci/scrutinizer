@@ -87,7 +87,7 @@ class FileTraversal
 
             $this->project->getFile($finderFile->getRelativePathname())->forAll(function(File $file) {
                 if (null !== $this->logger) {
-                    $this->logger->debug(sprintf('Analyzing file "%s".', $file->getPath()), array('project' => $this->project, 'file' => $file, 'analyzer' => $this->analyzer));
+                    $this->logger->debug(sprintf('Analyzing file "%s".'."\n", $file->getPath()), array('project' => $this->project, 'file' => $file, 'analyzer' => $this->analyzer));
                 }
                 $this->analyzer->{$this->method}($this->project, $file);
             });
