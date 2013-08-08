@@ -98,6 +98,7 @@ class PDependAnalyzer implements AnalyzerInterface, LoggerAwareInterface
         $proc = new Process($command.' '.$project->getDir());
         $proc->setTimeout(1800);
         $proc->setIdleTimeout(300);
+        $proc->setPty(true);
         $proc->run(function($_, $data) {
             $this->logger->info($data);
         });

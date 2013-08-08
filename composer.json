@@ -4,7 +4,8 @@
     "license": "Apache2",
 
     "repositories": [
-        {"type": "git", "url": "git://github.com/schmittjoh/PHP-Parser"}
+        {"type": "git", "url": "git://github.com/schmittjoh/PHP-Parser"},
+        {"type": "git", "url": "git://github.com/schmittjoh/Process"}
     ],
 
     "require": {

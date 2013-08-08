@@ -86,6 +86,7 @@ class Scrutinizer
                 $proc = new LoggableProcess($cmd, $dir);
                 $proc->setTimeout(900);
                 $proc->setIdleTimeout(300);
+                $proc->setPty(true);
                 $proc->setLogger($this->logger);
                 $proc->run();
             }
@@ -109,6 +110,7 @@ class Scrutinizer
                 $proc = new LoggableProcess($cmd, $dir);
                 $proc->setTimeout(900);
                 $proc->setIdleTimeout(300);
+                $proc->setPty(true);
                 $proc->setLogger($this->logger);
                 $proc->run();
             }
