@@ -53,6 +53,10 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
                             ->info('A built-in ruleset, or a XML filename relative to the project\'s root directory.')
                             ->beforeNormalization()
                                 ->ifTrue(function($v) {
+                                    if ( ! is_string($v)) {
+                                        return false;
+                                    }
+
                                     return 0 === strpos($v, './');
                                 })
                                 ->then(function($v) {
