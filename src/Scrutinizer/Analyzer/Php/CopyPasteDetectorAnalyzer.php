@@ -49,7 +49,15 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterfa
                 ->end()
                 ->arrayNode('excluded_dirs')
                     ->info('A list of excluded directories.')
-                    ->prototype('scalar')->end()
+                    ->prototype('scalar')
+                        ->validate()->always(function($v) {
+                            if (substr($v, -2) === '/*') {
+                                return substr($v, 0, -2);
+                            }
+
+                            return $v;
+                        })->end()
+                    ->end()
                 ->end()
                 ->arrayNode('names')
                     ->info('A list of names that should be scanned (default: *.php)')
@@ -103,8 +111,12 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterfa
         $result = file_get_contents($outputFile);
         unlink($outputFile);
 
-        if ($proc->getExitCode() > 1) {
-            throw new ProcessFailedException($proc);
+        if (empty($result)) {
+            if ($proc->getExitCode() !== 0) {
+                throw new ProcessFailedException($proc);
+            }
+
+            return;
         }
 
         $doc = XmlUtils::safeParse($result);
