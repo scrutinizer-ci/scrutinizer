@@ -10,6 +10,5 @@ PHP LOC
 .. note:: PHP LOC does not respect the global filter, but you need to pass the excluded directories via the ``excluded_dirs``
     config option (see below).
 
-
 .. include :: php_loc_configuration_reference.rst
 
