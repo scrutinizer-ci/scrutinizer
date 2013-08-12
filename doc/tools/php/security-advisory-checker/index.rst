@@ -10,4 +10,4 @@ SensioLabs Security Checker
 
 .. include :: sensiolabs_security_checker_configuration.rst
 
-.. note:: Enabling this tools, will transmit the ``composer.lock`` file of your project to a server operated by SensioLabs.
+.. note:: Enabling this tool, will transmit the ``composer.lock`` file of your project to a server operated by SensioLabs.
