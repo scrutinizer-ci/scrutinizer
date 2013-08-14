@@ -7,8 +7,11 @@ use Psr\Log\NullLogger;
 use Scrutinizer\Analyzer\AnalyzerInterface;
 use Scrutinizer\Analyzer\LoggerAwareInterface;
 use Scrutinizer\Analyzer;
+use Scrutinizer\Event\ProjectEvent;
 use Scrutinizer\Logger\LoggableProcess;
 use Scrutinizer\Model\Project;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Process\Exception\RuntimeException;
 use Symfony\Component\Yaml\Yaml;
 
@@ -23,15 +26,16 @@ class Scrutinizer
 {
     const REVISION = '@revision@';
 
+    const EVENT_POST_ANALYSIS = 'post_analysis';
+
     private $logger;
     private $analyzers = array();
+    private $dispatcher;
 
     public function __construct(LoggerInterface $logger = null)
     {
-        if (null === $logger) {
-            $logger = new NullLogger();
-        }
-        $this->logger = $logger;
+        $this->logger = $logger ?: new NullLogger();
+        $this->dispatcher = new EventDispatcher();
 
         $this->registerAnalyzer(new Analyzer\Javascript\JsHintAnalyzer());
         $this->registerAnalyzer(new Analyzer\Php\MessDetectorAnalyzer());
@@ -44,6 +48,13 @@ class Scrutinizer
         $this->registerAnalyzer(new Analyzer\Php\LocAnalyzer());
         $this->registerAnalyzer(new Analyzer\Php\PDependAnalyzer());
         $this->registerAnalyzer(new Analyzer\CustomAnalyzer());
+
+        $this->registerSubscriber(new Event\Php\LocationCompletionSubscriber());
+    }
+
+    public function registerSubscriber(EventSubscriberInterface $subscriber)
+    {
+        $this->dispatcher->addSubscriber($subscriber);
     }
 
     public function registerAnalyzer(AnalyzerInterface $analyzer)
@@ -102,6 +113,8 @@ class Scrutinizer
             $project->setAnalyzerName($analyzer->getName());
             $analyzer->scrutinize($project);
         }
+
+        $this->dispatcher->dispatch(self::EVENT_POST_ANALYSIS, new ProjectEvent($project));
 
         if ( ! empty($config['after_commands'])) {
             $this->logger->info('Executing after commands'."\n");

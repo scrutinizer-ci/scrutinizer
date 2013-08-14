@@ -4,7 +4,6 @@
     "license": "Apache2",
 
     "repositories": [
-        {"type": "git", "url": "git://github.com/schmittjoh/PHP-Parser"},
         {"type": "git", "url": "git://github.com/schmittjoh/Process"}
     ],
 
@@ -17,6 +16,7 @@
         "symfony/finder": "2.1.*",
         "symfony/yaml": "2.*",
         "symfony/filesystem": "2.*",
+        "symfony/event-dispatcher": "~2.0",
         "monolog/monolog": "1.2.*",
         "psr/log": "1.0.0",
         "phpoption/phpoption": "~1.0@dev",

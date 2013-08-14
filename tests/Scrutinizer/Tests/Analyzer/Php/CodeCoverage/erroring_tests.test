@@ -124,7 +124,11 @@ class(Foo\Bar):
         'php_code_coverage.elements': 5
         'php_code_coverage.covered_elements': 3
 
-    filename: src/Bar.php
+    location:
+        filename: src/Bar.php
+        start_line: 5
+        end_line: 18
+
     children:
         - operation(Foo\Bar::__construct)
         - operation(Foo\Bar::getName)
@@ -134,13 +138,27 @@ operation(Foo\Bar::__construct):
         'php_code_coverage.change_risk_anti_pattern': 1
         'php_code_coverage.count': 1
 
+    location:
+        filename: src/Bar.php
+        start_line: 9
+        end_line: 12
+
 operation(Foo\Bar::getName):
     metrics:
         'php_code_coverage.change_risk_anti_pattern': 2
         'php_code_coverage.count': 0
 
+    location:
+        filename: src/Bar.php
+        start_line: 14
+        end_line: 17
+
 class(Foo\Foo):
-    filename: src/Foo.php
+    location:
+        filename: src/Foo.php
+        start_line: 5
+        end_line: 23
+
     metrics:
         'php_code_coverage.methods': 3
         'php_code_coverage.covered_methods': 2
@@ -161,12 +179,27 @@ operation(Foo\Foo::__construct):
         'php_code_coverage.change_risk_anti_pattern': 1
         'php_code_coverage.count': 1
 
+    location:
+        filename: src/Foo.php
+        start_line: 9
+        end_line: 12
+
 operation(Foo\Foo::getBar):
     metrics:
         'php_code_coverage.change_risk_anti_pattern': 1
         'php_code_coverage.count': 1
 
+    location:
+        filename: src/Foo.php
+        start_line: 14
+        end_line: 17
+
 operation(Foo\Foo::getBarName):
     metrics:
         'php_code_coverage.change_risk_anti_pattern': 2
         'php_code_coverage.count': 0
+
+    location:
+        filename: src/Foo.php
+        start_line: 19
+        end_line: 22

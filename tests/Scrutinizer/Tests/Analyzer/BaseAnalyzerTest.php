@@ -4,6 +4,7 @@ namespace Scrutinizer\Tests\Analyzer;
 
 use Scrutinizer\Model\CodeElement;
 use Scrutinizer\Model\File;
+use Scrutinizer\Model\Location;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Finder\Finder;
@@ -278,7 +279,15 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
                         }
 
                         if (isset($values['filename'])) {
-                            $element->setLocation($values['filename']);
+                            $element->setLocation(new Location($values['filename']));
+                        }
+
+                        if (isset($values['location'])) {
+                            $element->setLocation(new Location(
+                                $values['location']['filename'],
+                                isset($values['location']['start_line']) ? $values['location']['start_line'] : null,
+                                isset($values['location']['end_line']) ? $values['location']['end_line'] : null
+                            ));
                         }
 
                         if (isset($values['children'])) {

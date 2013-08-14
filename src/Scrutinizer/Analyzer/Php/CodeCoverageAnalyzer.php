@@ -9,6 +9,7 @@ use Scrutinizer\Analyzer\AnalyzerInterface;
 use Scrutinizer\Analyzer\Php\Util\ImpactAnalyzer;
 use Scrutinizer\Config\ConfigBuilder;
 use Scrutinizer\Model\File;
+use Scrutinizer\Model\Location;
 use Scrutinizer\Model\Project;
 use Scrutinizer\Util\XmlUtils;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -158,7 +159,8 @@ class CodeCoverageAnalyzer implements AnalyzerInterface, LoggerAwareInterface
                         $class = $project->getOrCreateCodeElement('class', $className);
                         $package->addChild($class);
 
-                        $class->setLocation($filename);
+                        $location = new Location($filename);
+                        $class->setLocation($location);
 
                         $metricsAttrs = $classNode->metrics->attributes();
                         $methodCount = (integer) $metricsAttrs->methods;
@@ -214,6 +216,7 @@ class CodeCoverageAnalyzer implements AnalyzerInterface, LoggerAwareInterface
                             $addedClassMethods += 1;
                             $addedMethods += 1;
                             $method = $project->getOrCreateCodeElement('operation', $className.'::'.$methodName);
+                            $method->setLocation($location);
                             $class->addChild($method);
 
                             $method->setMetric('php_code_coverage.change_risk_anti_pattern', (integer) $lineAttrs->crap);

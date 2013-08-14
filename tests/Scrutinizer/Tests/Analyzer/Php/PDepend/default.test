@@ -98,7 +98,11 @@ class(Foo\Bar):
         'pdepend.inherited_weighted_method_count': 1
         'pdepend.non_private_weighted_method_count': 1
 
-    filename: Foo/Bar.php
+    location:
+        filename: Foo/Bar.php
+        start_line: 5
+        end_line: 8
+
     children:
         - operation(Foo\Bar::foobar)
 
@@ -113,6 +117,10 @@ operation(Foo\Bar::foobar):
         'pdepend.non_comment_lines_of_code': 2
         'pdepend.npath_complexity': 1
 
+    location:
+        filename: Foo/Bar.php
+        start_line: 6
+        end_line: 7
 
 package(Foo\Bar):
     metrics:
@@ -153,7 +161,11 @@ class(Foo\Bar\Baz):
         'pdepend.inherited_weighted_method_count': 2
         'pdepend.non_private_weighted_method_count': 1
 
-    filename: Baz.php
+    location:
+        filename: Baz.php
+        start_line: 5
+        end_line: 11
+
     children:
         - operation(Foo\Bar\Baz::a)
         - operation(Foo\Bar\Baz::b)
@@ -169,6 +181,11 @@ operation(Foo\Bar\Baz::a):
         'pdepend.non_comment_lines_of_code': 1
         'pdepend.npath_complexity': 1
 
+    location:
+        filename: Baz.php
+        start_line: 7
+        end_line: 7
+
 operation(Foo\Bar\Baz::b):
     metrics:
         'pdepend.cyclomatic_complexity_number': 1
@@ -180,4 +197,7 @@ operation(Foo\Bar\Baz::b):
         'pdepend.non_comment_lines_of_code': 3
         'pdepend.npath_complexity': 1
 
-
+    location:
+        filename: Baz.php
+        start_line: 8
+        end_line: 10

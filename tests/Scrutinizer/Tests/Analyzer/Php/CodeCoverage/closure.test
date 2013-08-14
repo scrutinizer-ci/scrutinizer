@@ -86,7 +86,11 @@ package(Moo):
         - class(Moo\FooBar)
 
 class(Moo\FooBar):
-    filename: src/Foo.php
+    location:
+        filename: src/Foo.php
+        start_line: 5
+        end_line: 15
+
     metrics:
         'php_code_coverage.methods': 1
         'php_code_coverage.covered_methods': 1
@@ -105,3 +109,8 @@ operation(Moo\FooBar::foo):
     metrics:
         'php_code_coverage.change_risk_anti_pattern': 2
         'php_code_coverage.count': 1
+
+    location:
+        filename: src/Foo.php
+        start_line: 7
+        end_line: 14

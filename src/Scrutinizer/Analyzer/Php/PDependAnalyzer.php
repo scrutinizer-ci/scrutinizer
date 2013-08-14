@@ -6,6 +6,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Scrutinizer\Analyzer\AnalyzerInterface;
 use Scrutinizer\Config\ConfigBuilder;
+use Scrutinizer\Model\Location;
 use Scrutinizer\Model\Project;
 use Scrutinizer\Util\XmlUtils;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -173,7 +174,8 @@ class PDependAnalyzer implements AnalyzerInterface, LoggerAwareInterface
                 $package->addChild($class);
 
                 $filename = $xpath->query('./file', $classNode)->item(0)->getAttribute('name');
-                $class->setLocation(substr($filename, strlen($project->getDir()) + 1));
+                $location = new Location(substr($filename, strlen($project->getDir()) + 1));
+                $class->setLocation($location);
 
                 $class->setMetric('pdepend.afferent_coupling', (integer) $classNode->getAttribute('ca'));
                 $class->setMetric('pdepend.coupling_between_calls', (integer) $classNode->getAttribute('cbo'));
@@ -206,6 +208,7 @@ class PDependAnalyzer implements AnalyzerInterface, LoggerAwareInterface
 
                     $methodName = $className.'::'.$methodNode->getAttribute('name');
                     $method = $project->getOrCreateCodeElement('operation', $methodName);
+                    $method->setLocation($location);
                     $class->addChild($method);
 
                     $method->setMetric('pdepend.cyclomatic_complexity_number', (integer) $methodNode->getAttribute('ccn'));

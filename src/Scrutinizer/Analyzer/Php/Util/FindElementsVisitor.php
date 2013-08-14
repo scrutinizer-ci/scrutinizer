@@ -6,6 +6,8 @@ class FindElementsVisitor extends \PHPParser_NodeVisitorAbstract
 {
     private $classes = array();
     private $functions = array();
+    private $classNodes = array();
+    private $functionNodes = array();
 
     public function getClasses()
     {
@@ -17,18 +19,27 @@ class FindElementsVisitor extends \PHPParser_NodeVisitorAbstract
         return $this->functions;
     }
 
+    public function getResult()
+    {
+        return new ElementResult($this->classNodes, $this->functionNodes);
+    }
+
     public function enterNode(\PHPParser_Node $node)
     {
         if ($node instanceof \PHPParser_Node_Stmt_Class
                 || $node instanceof \PHPParser_Node_Stmt_Trait
                 || $node instanceof \PHPParser_Node_Stmt_Interface) {
-            $this->classes[] = implode("\\", $node->namespacedName->parts);
+            $className = implode("\\", $node->namespacedName->parts);
+            $this->classes[] = $className;
+            $this->classNodes[$className] = $node;
 
             return;
         }
 
         if ($node instanceof \PHPParser_Node_Stmt_Function) {
-            $this->functions[] = implode("\\", $node->namespacedName->parts);
+            $functionName = implode("\\", $node->namespacedName->parts);
+            $this->functions[] = $functionName;
+            $this->functionNodes[$functionName] = $node;
 
             return;
         }
