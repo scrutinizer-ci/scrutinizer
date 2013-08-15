@@ -163,12 +163,15 @@ class CodeCoverageAnalyzer implements AnalyzerInterface, LoggerAwareInterface
                         $metricsAttrs = $classNode->metrics->attributes();
                         $methodCount = (integer) $metricsAttrs->methods;
                         $coveredMethodCount = (integer) $metricsAttrs->coveredmethods;
+                        $statements = (integer) $metricsAttrs->statements;
+                        $coveredStatements = (integer) $metricsAttrs->coveredstatements;
                         $class->setMetric('php_code_coverage.conditionals', (integer) $metricsAttrs->conditionals);
                         $class->setMetric('php_code_coverage.covered_conditionals', (integer) $metricsAttrs->coveredconditionals);
-                        $class->setMetric('php_code_coverage.statements', (integer) $metricsAttrs->statements);
-                        $class->setMetric('php_code_coverage.covered_statements', (integer) $metricsAttrs->coveredstatements);
+                        $class->setMetric('php_code_coverage.statements', $statements);
+                        $class->setMetric('php_code_coverage.covered_statements', $coveredStatements);
                         $class->setMetric('php_code_coverage.elements', (integer) $metricsAttrs->elements);
                         $class->setMetric('php_code_coverage.covered_elements', (integer) $metricsAttrs->coveredelements);
+                        $class->setMetric('php_code_coverage.coverage', $statements > 0 ? $coveredStatements / $statements : 1.0);
 
                         $i = -1;
                         $addedClassMethods = 0;
