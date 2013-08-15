@@ -63,8 +63,8 @@ class ImpactAnalyzer
         foreach (Finder::create()->in($dir)->files()->filter($filter) as $file) {
             /** @var $file SplFileInfo */
 
-            $lexer = new \PHPParser_Lexer($file->getContents());
-            $phpFiles[$file->getRelativePathname()] = $resolver->traverse((new \PHPParser_Parser)->parse($lexer));
+            $parser = new \PHPParser_Parser(new \PHPParser_Lexer());
+            $phpFiles[$file->getRelativePathname()] = $resolver->traverse($parser->parse($file->getContents()));
         }
 
         return $phpFiles;

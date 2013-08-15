@@ -66,9 +66,17 @@ class CodeElement
         return $this->metrics;
     }
 
+    /**
+     * @return Location|null
+     */
     public function getLocation()
     {
         return $this->location;
+    }
+
+    public function hasLocation()
+    {
+        return null !== $this->location;
     }
 
     public function addChild(CodeElement $child)
@@ -87,11 +95,9 @@ class CodeElement
         return $this->type === $that->type && $this->name === $that->name;
     }
 
-    public function setLocation($filename)
+    public function setLocation(Location $location)
     {
-        $this->location = array(
-            'filename' => $filename,
-        );
+        $this->location = $location;
     }
 
     public function __toString()

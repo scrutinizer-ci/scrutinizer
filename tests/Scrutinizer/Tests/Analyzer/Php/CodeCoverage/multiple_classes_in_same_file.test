@@ -87,7 +87,11 @@ package(Ns):
         - class(Ns\Bar)
 
 class(Ns\Foo):
-    filename: src/classes.php
+    location:
+        filename: src/classes.php
+        start_line: 5
+        end_line: 11
+
     children:
         - operation(Ns\Foo::a)
     metrics:
@@ -105,8 +109,17 @@ operation(Ns\Foo::a):
         'php_code_coverage.change_risk_anti_pattern': 1
         'php_code_coverage.count': 1
 
+    location:
+        filename: src/classes.php
+        start_line: 7
+        end_line: 10
+
 class(Ns\Bar):
-    filename: src/classes.php
+    location:
+        filename: src/classes.php
+        start_line: 13
+        end_line: 19
+
     children:
         - operation(Ns\Bar::b)
     metrics:
@@ -124,3 +137,7 @@ operation(Ns\Bar::b):
         'php_code_coverage.change_risk_anti_pattern': 1
         'php_code_coverage.count': 1
 
+    location:
+        filename: src/classes.php
+        start_line: 15
+        end_line: 18
