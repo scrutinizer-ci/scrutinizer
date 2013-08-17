@@ -103,6 +103,7 @@ class(Ns\Foo):
         'php_code_coverage.covered_statements': 1
         'php_code_coverage.elements': 2
         'php_code_coverage.covered_elements': 2
+        'php_code_coverage.coverage': 1
 
 operation(Ns\Foo::a):
     metrics:
@@ -131,6 +132,7 @@ class(Ns\Bar):
         'php_code_coverage.covered_statements': 1
         'php_code_coverage.elements': 2
         'php_code_coverage.covered_elements': 2
+        'php_code_coverage.coverage': 1
 
 operation(Ns\Bar::b):
     metrics:

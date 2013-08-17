@@ -118,6 +118,7 @@ class(Foo\Bar):
         'php_code_coverage.covered_statements': 2
         'php_code_coverage.elements': 5
         'php_code_coverage.covered_elements': 3
+        'php_code_coverage.coverage': 0.66666666666667
 
     location:
         filename: src/Bar.php
@@ -163,6 +164,7 @@ class(Foo\Foo):
         'php_code_coverage.covered_statements': 3
         'php_code_coverage.elements': 7
         'php_code_coverage.covered_elements': 5
+        'php_code_coverage.coverage': 0.75
 
     children:
         - operation(Foo\Foo::__construct)

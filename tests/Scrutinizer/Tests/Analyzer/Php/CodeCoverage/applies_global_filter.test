@@ -17,12 +17,14 @@ class FooBar
 -- FILENAME --
 src/Foo.php
 
--- FILE: src/Bar.php --
+-- FILE: lib/Bar.php --
 <?php
 
 namespace Moo;
 
-class Bar { }
+class Bar {
+    public function __construct() { }
+}
 
 -- FILE: tests/FooTest.php --
 <?php
@@ -43,7 +45,7 @@ class FooTest extends \PHPUnit_Framework_TestCase
 <?php
 
 require_once __DIR__.'/src/Foo.php';
-require_once __DIR__.'/src/Bar.php';
+require_once __DIR__.'/lib/Bar.php';
 
 -- FILE: phpunit.xml --
 <?xml version="1.0" encoding="UTF-8"?>
@@ -56,6 +58,9 @@ require_once __DIR__.'/src/Bar.php';
 </phpunit>
 
 -- CONFIG --
+filter:
+    excluded_paths: [lib/*]
+
 tools:
     php_code_coverage: true
 

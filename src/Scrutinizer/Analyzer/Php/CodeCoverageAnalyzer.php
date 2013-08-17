@@ -11,6 +11,7 @@ use Scrutinizer\Config\ConfigBuilder;
 use Scrutinizer\Model\File;
 use Scrutinizer\Model\Location;
 use Scrutinizer\Model\Project;
+use Scrutinizer\Util\PathUtils;
 use Scrutinizer\Util\XmlUtils;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -107,24 +108,9 @@ class CodeCoverageAnalyzer implements AnalyzerInterface, LoggerAwareInterface
             );
         }
 
-        // files="3" loc="114" ncloc="114" classes="3" methods="16" coveredmethods="3" conditionals="0" coveredconditionals="0"
-        // statements="38" coveredstatements="5" elements="54" coveredelements="8"
-        foreach ($doc->xpath('descendant-or-self::project/metrics') as $metricsNode) {
-            $metricsAttrs = $metricsNode->attributes();
-
-            $project->setSimpleValuedMetric('php_code_coverage.files', (integer) $metricsAttrs->files);
-            $project->setSimpleValuedMetric('php_code_coverage.lines_of_code', (integer) $metricsAttrs->loc);
-            $project->setSimpleValuedMetric('php_code_coverage.non_comment_lines_of_code', (integer) $metricsAttrs->ncloc);
-            $project->setSimpleValuedMetric('php_code_coverage.classes', (integer) $metricsAttrs->classes);
-            $project->setSimpleValuedMetric('php_code_coverage.methods', (integer) $metricsAttrs->methods);
-            $project->setSimpleValuedMetric('php_code_coverage.covered_methods', (integer) $metricsAttrs->coveredmethods);
-            $project->setSimpleValuedMetric('php_code_coverage.conditionals', (integer) $metricsAttrs->conditionals);
-            $project->setSimpleValuedMetric('php_code_coverage.covered_conditionals', (integer) $metricsAttrs->coveredconditionals);
-            $project->setSimpleValuedMetric('php_code_coverage.statements', (integer) $metricsAttrs->statements);
-            $project->setSimpleValuedMetric('php_code_coverage.covered_statements', (integer) $metricsAttrs->coveredstatements);
-            $project->setSimpleValuedMetric('php_code_coverage.elements', (integer) $metricsAttrs->elements);
-            $project->setSimpleValuedMetric('php_code_coverage.covered_elements', (integer) $metricsAttrs->coveredelements);
-        }
+        $filteredFiles = $filteredLoc = $filteredNcloc = $filteredClasses = $filteredMethods = $filteredCoveredMethods
+            = $filteredConditionals = $filteredCoveredConditionals = $filteredStatements = $filteredCoveredStatements
+            = $filteredElements = $filteredCoveredElements = 0;
 
         /**
          *     <package name="Foo">
@@ -141,13 +127,33 @@ class CodeCoverageAnalyzer implements AnalyzerInterface, LoggerAwareInterface
                 <metrics loc="17" ncloc="17" classes="1" methods="2" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="3" coveredstatements="2" elements="5" coveredelements="3"/>
                 </file>
          */
+
+        $filter = $project->getGlobalConfig('filter');
         foreach ($doc->xpath('//package') as $packageNode) {
-            $packageName = (string) $packageNode->attributes()->name;
-
-            $package = $project->getOrCreateCodeElement('package', $packageName);
-
             foreach ($packageNode->xpath('./file') as $fileNode) {
                 $filename = substr($fileNode->attributes()->name, strlen($project->getDir()) + 1);
+
+                if (PathUtils::isFiltered($filename, $filter)) {
+                    $metricsAttrs = $fileNode->metrics->attributes();
+
+                    $filteredFiles += 1;
+                    $filteredLoc += (integer) $metricsAttrs->loc;
+                    $filteredNcloc += (integer) $metricsAttrs->ncloc;
+                    $filteredClasses += (integer) $metricsAttrs->classes;
+                    $filteredMethods += (integer) $metricsAttrs->methods;
+                    $filteredCoveredMethods += (integer) $metricsAttrs->coveredmethods;
+                    $filteredConditionals += (integer) $metricsAttrs->conditionals;
+                    $filteredCoveredConditionals += (integer) $metricsAttrs->coveredconditionals;
+                    $filteredStatements += (integer) $metricsAttrs->statements;
+                    $filteredCoveredStatements += (integer) $metricsAttrs->coveredstatements;
+                    $filteredElements += (integer) $metricsAttrs->elements;
+                    $filteredCoveredElements += (integer) $metricsAttrs->coveredelements;
+
+                    continue;
+                }
+
+                $packageName = (string) $packageNode->attributes()->name;
+                $package = $project->getOrCreateCodeElement('package', $packageName);
 
                 $project->getFile($filename)->forAll(function(File $modelFile) use ($packageName, $project, $fileNode, $package, $filename) {
                     $this->tokenStream->setCode($modelFile->getContent());
@@ -231,6 +237,25 @@ class CodeCoverageAnalyzer implements AnalyzerInterface, LoggerAwareInterface
                     }
                 });
             }
+        }
+
+        // files="3" loc="114" ncloc="114" classes="3" methods="16" coveredmethods="3" conditionals="0" coveredconditionals="0"
+        // statements="38" coveredstatements="5" elements="54" coveredelements="8"
+        foreach ($doc->xpath('descendant-or-self::project/metrics') as $metricsNode) {
+            $metricsAttrs = $metricsNode->attributes();
+
+            $project->setSimpleValuedMetric('php_code_coverage.files', (integer) $metricsAttrs->files - $filteredFiles);
+            $project->setSimpleValuedMetric('php_code_coverage.lines_of_code', (integer) $metricsAttrs->loc - $filteredLoc);
+            $project->setSimpleValuedMetric('php_code_coverage.non_comment_lines_of_code', (integer) $metricsAttrs->ncloc - $filteredNcloc);
+            $project->setSimpleValuedMetric('php_code_coverage.classes', (integer) $metricsAttrs->classes - $filteredClasses);
+            $project->setSimpleValuedMetric('php_code_coverage.methods', (integer) $metricsAttrs->methods - $filteredMethods);
+            $project->setSimpleValuedMetric('php_code_coverage.covered_methods', (integer) $metricsAttrs->coveredmethods - $filteredCoveredMethods);
+            $project->setSimpleValuedMetric('php_code_coverage.conditionals', (integer) $metricsAttrs->conditionals - $filteredConditionals);
+            $project->setSimpleValuedMetric('php_code_coverage.covered_conditionals', (integer) $metricsAttrs->coveredconditionals - $filteredCoveredConditionals);
+            $project->setSimpleValuedMetric('php_code_coverage.statements', (integer) $metricsAttrs->statements - $filteredStatements);
+            $project->setSimpleValuedMetric('php_code_coverage.covered_statements', (integer) $metricsAttrs->coveredstatements - $filteredCoveredStatements);
+            $project->setSimpleValuedMetric('php_code_coverage.elements', (integer) $metricsAttrs->elements - $filteredElements);
+            $project->setSimpleValuedMetric('php_code_coverage.covered_elements', (integer) $metricsAttrs->coveredelements - $filteredCoveredElements);
         }
     }
 }
