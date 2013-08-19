@@ -2,7 +2,6 @@
 
 namespace Scrutinizer;
 
-use Scrutinizer\Analyzer\Custom\CustomAnalyzer;
 use Scrutinizer\Config\ConfigBuilder;
 use Scrutinizer\Analyzer\AnalyzerInterface;
 use Scrutinizer\Config\NodeBuilder;
@@ -52,7 +51,7 @@ class Configuration
     {
         $tb = new TreeBuilder();
 
-        $rootNode = $tb->root('{root}', 'array');
+        $rootNode = $tb->root('{root}', 'array', new NodeBuilder());
         $rootNode
             ->attribute('artificial', true)
             ->fixXmlConfig('before_command')
@@ -79,11 +78,11 @@ class Configuration
                         ->arrayNode('paths')
                             ->example("[src/*, tests/*]")
                             ->info('Patterns must match the entire path to apply; "src/" will not match "src/foo".')
-                            ->prototype('scalar')->end()
+                            ->prototype('file_pattern')->end()
                         ->end()
                         ->arrayNode('excluded_paths')
                             ->example("[tests/*/Fixture/*]")
-                            ->prototype('scalar')->end()
+                            ->prototype('file_pattern')->end()
                         ->end()
                     ->end()
                 ->end()

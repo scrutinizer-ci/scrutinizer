@@ -2,7 +2,7 @@
 
 namespace Scrutinizer\Config;
 
-use Symfony\Component\Config\Definition\Builder\NodeBuilder;
+use Scrutinizer\Config\NodeBuilder;
 use Symfony\Component\Config\Definition\PrototypedArrayNode;
 use Symfony\Component\Config\Definition\BooleanNode;
 use Symfony\Component\Config\Definition\ArrayNode;
@@ -100,10 +100,10 @@ class ConfigBuilder extends ArrayNodeDefinition
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->arrayNode('paths')
-                            ->prototype('scalar')->end()
+                            ->prototype('file_pattern')->end()
                         ->end()
                         ->arrayNode('excluded_paths')
-                            ->prototype('scalar')->end()
+                            ->prototype('file_pattern')->end()
                         ->end()
                     ->end()
                 ;
@@ -122,7 +122,7 @@ class ConfigBuilder extends ArrayNodeDefinition
                     ->children()
                         ->arrayNode('paths')
                             ->requiresAtLeastOneElement()
-                            ->prototype('scalar')->end()
+                            ->prototype('file_pattern')->end()
                         ->end()
                         ->booleanNode('enabled')
                             ->defaultTrue()
