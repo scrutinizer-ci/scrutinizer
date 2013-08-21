@@ -157,6 +157,9 @@ class PDependAnalyzer implements AnalyzerInterface, LoggerAwareInterface
         foreach ($xpath->query('//package') as $packageNode) {
             /** @var \DOMElement $packageName */
             $packageName = (string) $packageNode->getAttribute('name');
+            if (empty($packageName)) {
+                $packageName = '+global';
+            }
 
             $package = $project->getOrCreateCodeElement('package', $packageName);
             $package->setMetric('pdepend.code_rank', (double) $packageNode->getAttribute('cr'));

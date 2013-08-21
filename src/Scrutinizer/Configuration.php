@@ -77,7 +77,6 @@ class Configuration
                     ->children()
                         ->arrayNode('paths')
                             ->example("[src/*, tests/*]")
-                            ->info('Patterns must match the entire path to apply; "src/" will not match "src/foo".')
                             ->prototype('file_pattern')->end()
                         ->end()
                         ->arrayNode('excluded_paths')
