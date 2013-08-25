@@ -11,6 +11,7 @@ use Scrutinizer\Config\ConfigBuilder;
 use Scrutinizer\Model\Comment;
 use Scrutinizer\Model\File;
 use Scrutinizer\Model\Project;
+use Scrutinizer\Util\PathUtils;
 use Scrutinizer\Util\XmlUtils;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -34,7 +35,6 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterfa
     {
         $builder
             ->info('Runs PHP Copy/Paste Detector')
-            ->disableDefaultFilter()
             ->globalConfig()
                 ->scalarNode('command')
                     ->defaultValue('phpcpd')
@@ -120,49 +120,166 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterfa
         }
 
         $doc = XmlUtils::safeParse($result);
-        foreach ($doc->xpath('//duplication') as $duplicationElem) {
-            $duplication = array();
+        $duplications = $this->extractDuplications($project, $doc);
+        $combinedDuplications = $this->combineDuplications($duplications);
+        $filter = $project->getGlobalConfig('filter');
 
-            foreach ($duplicationElem->xpath('file') as $fileElem) {
-                $path = substr($fileElem->attributes()->path, strlen($project->getDir()) + 1);
+        foreach ($combinedDuplications as $duplication) {
+            foreach ($duplication['locations'] as $location) {
+                if (PathUtils::isFiltered($location['path'], $filter)) {
+                    continue;
+                }
+                if ( ! $project->isAnalyzed($location['path'])) {
+                    continue;
+                }
 
-                /** @var $errorElem \SimpleXMLElement */
-                $duplication[] = array(
-                    'line' => (int) $fileElem->attributes()->line,
-                    'path' => $path,
-                    'file' => $project->getFile($path),
-                );
-            }
+                $project->getFile($location['path'])->forAll(function(File $file) use ($duplication, $location) {
+                    $otherLocations = array();
+                    foreach ($duplication['locations'] as $otherLocation) {
+                        if ( ! $this->equalsLocation($location, $otherLocation)) {
+                            $otherLocations[] = $otherLocation;
+                        }
+                    }
 
-            // PHP CPD seems to only support two elements at the moment.
-            $entryA = reset($duplication);
-            $entryB = end($duplication);
+                    $file->setLineAttribute($location['line'], 'duplication', $duplication);
 
-            if ($project->isAnalyzed($entryA['path'])) {
-                $this->addDuplicationComment($duplicationElem, $entryA, $entryB);
-            }
+                    switch (count($otherLocations)) {
+                        case 0:
+                            throw new \LogicException('Should never be reached.');
 
-            if ($project->isAnalyzed($entryB['path'])) {
-                $this->addDuplicationComment($duplicationElem, $entryB, $entryA);
+                        case 1:
+                            $file->addComment($location['line'], new Comment(
+                                $this->getName(),
+                                'php_cpd.duplication',
+                                'This and the next {duplicateLines} lines are the same as lines {otherStartingLine} to {otherEndingLine} in {otherPath}.',
+                                array(
+                                    'duplicateLines' => $duplication['lines'],
+                                    'otherPath' => $otherLocations[0]['path'],
+                                    'otherStartingLine' => $otherLocations[0]['line'],
+                                    'otherEndingLine' => $otherLocations[0]['line'] + $duplication['lines'],
+                                )
+                            ));
+                            break;
+
+                        default:
+                            $locations = implode(", ", array_map(function(array $location) {
+                                return $location['path'].' (line: '.$location['line'].')';
+                            }, $otherLocations));
+
+                            $file->addComment($location['line'], new Comment(
+                                $this->getName(),
+                                'php_cpd.multiple_duplications',
+                                'This and the next {duplicateLines} lines duplicated in {nbDuplications} other locations: {locations}',
+                                array(
+                                    'duplicateLines' => $duplication['lines'],
+                                    'nbDuplications' => count($otherLocations),
+                                    'locations' => $locations,
+                                )
+                            ));
+                            break;
+                    }
+                });
             }
         }
     }
 
-    private function addDuplicationComment(\SimpleXMLElement $duplicationElem, array $fileEntry, array $otherEntry)
+    private function equalsLocation(array $a, array $b)
     {
-        /** @var $file File */
-        $file = $fileEntry['file']->get();
+        return $a['line'] === $b['line'] && $a['path'] === $b['path'];
+    }
 
-        $file->addComment($fileEntry['line'], new Comment(
-            $this->getName(),
-            'php_cpd.duplication',
-            'This and the next {duplicateLines} lines are the same as lines {otherStartingLine} to {otherEndingLine} in {otherPath}.',
-            array(
-                'duplicateLines' => (int) $duplicationElem->attributes()->lines,
-                'otherPath' => $otherEntry['path'],
-                'otherStartingLine' => $otherEntry['line'],
-                'otherEndingLine' => $otherEntry['line'] + (int) $duplicationElem->attributes()->lines,
-            )
-        ));
+    private function equalsDuplication(array $a, array $b)
+    {
+        if ($a['lines'] !== $b['lines']) {
+            return false;
+        }
+
+        foreach ($a['locations'] as $aFile) {
+            foreach ($b['locations'] as $bFile) {
+                if ($this->equalsLocation($aFile, $bFile)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private function combineDuplications(array $duplications)
+    {
+        $combinedDuplications = array();
+
+        foreach ($duplications as $duplication) {
+            foreach ($combinedDuplications as &$combinedDuplication) {
+                if ( ! $this->equalsDuplication($duplication, $combinedDuplication)) {
+                    continue;
+                }
+
+                foreach ($duplication['locations'] as $file) {
+                    $found = false;
+                    foreach ($combinedDuplication['locations'] as $combinedFile) {
+                        if ($this->equalsLocation($combinedFile, $file)) {
+                            $found = true;
+                            break;
+                        }
+                    }
+
+                    if ( ! $found) {
+                        $combinedDuplication['locations'][] = $file;
+                    }
+                }
+
+                continue 2;
+            }
+
+            $combinedDuplications[] = $duplication;
+        }
+
+        foreach ($duplications as &$duplication) {
+            $duplication['locations'] = $this->sortFiles($duplication['locations']);
+        }
+
+        return $combinedDuplications;
+    }
+
+    private function extractDuplications(Project $project, \SimpleXMLElement $doc)
+    {
+        $duplications = array();
+        foreach ($doc->xpath('//duplication') as $duplicationElem) {
+            $files = $this->extractFiles($project->getDir(), $duplicationElem);
+
+            $duplications[] = array(
+                'lines' => (int) $duplicationElem->attributes()->lines,
+                'locations' => $files,
+            );
+        }
+
+        return $duplications;
+    }
+
+    private function sortFiles(array $files)
+    {
+        usort($files, function($a, $b) {
+            return strcasecmp($a['path'], $b['path']);
+        });
+
+        return $files;
+    }
+
+    private function extractFiles($projectDir, \SimpleXMLElement $duplicationElem)
+    {
+        $files = array();
+        foreach ($duplicationElem->xpath('file') as $fileElem) {
+            $path = substr($fileElem->attributes()->path, strlen($projectDir) + 1);
+
+            /** @var $errorElem \SimpleXMLElement */
+
+            $files[] = array(
+                'path' => $path,
+                'line' => (int) $fileElem->attributes()->line,
+            );
+        }
+
+        return $files;
     }
 }
