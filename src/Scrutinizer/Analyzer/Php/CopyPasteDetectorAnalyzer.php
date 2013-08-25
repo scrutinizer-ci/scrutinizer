@@ -235,7 +235,7 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterfa
             $combinedDuplications[] = $duplication;
         }
 
-        foreach ($duplications as &$duplication) {
+        foreach ($combinedDuplications as &$duplication) {
             $duplication['locations'] = $this->sortFiles($duplication['locations']);
         }
 
