@@ -169,7 +169,7 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterfa
                             $file->addComment($location['line'], new Comment(
                                 $this->getName(),
                                 'php_cpd.multiple_duplications',
-                                'This and the next {duplicateLines} lines duplicated in {nbDuplications} other locations: {locations}',
+                                'This and the next {duplicateLines} lines are duplicated in {nbDuplications} other locations: {locations}',
                                 array(
                                     'duplicateLines' => $duplication['lines'],
                                     'nbDuplications' => count($otherLocations),
