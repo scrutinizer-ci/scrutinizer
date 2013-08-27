@@ -36,7 +36,11 @@ class LocationCompletionSubscriber implements EventSubscriberInterface
             }
 
             $project->getFile($location->getFilename())->forAll(function(File $file) use ($element, $location) {
-                $nodes = $this->getElementNodes($file);
+                try {
+                    $nodes = $this->getElementNodes($file);
+                } catch (\PHPParser_Error $parseError) {
+                    return;
+                }
 
                 if ($element->getType() === 'class') {
                     $className = $element->getName();
