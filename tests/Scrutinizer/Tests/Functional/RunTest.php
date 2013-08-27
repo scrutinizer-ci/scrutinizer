@@ -12,18 +12,9 @@ class RunTest extends \PHPUnit_Framework_TestCase
         $proc = $this->runCmd('run', array(__DIR__.'/Fixture/JsProject'));
 
         $this->assertSame(0, $proc->getExitCode(), $proc->getOutput().$proc->getErrorOutput());
-        $this->assertEquals(<<<'TEXT'
-Running analyzer "js_hint"...
-Running analyzer "custom_commands"...
-some_file.js
-============
-Line 1: Unused variable: 'foo'
-Line 2: Unused variable: 'x'
 
-Scanned Files: 1, Comments: 2
-
-TEXT
-            , $proc->getOutput());
+        $expectedOutput = "Running analyzer \"js_hint\"...\n\n\r    Files 1/1 [............................................................] 100%\n\nRunning analyzer \"custom_commands\"...\nsome_file.js\n============\nLine 1: Unused variable: 'foo'\nLine 2: Unused variable: 'x'\n\nScanned Files: 1, Comments: 2\n";
+        $this->assertEquals($expectedOutput, $proc->getOutput());
     }
 
     private function runCmd($command, array $args = array())

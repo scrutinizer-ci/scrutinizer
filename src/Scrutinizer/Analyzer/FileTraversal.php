@@ -3,8 +3,12 @@
 namespace Scrutinizer\Analyzer;
 
 use Psr\Log\LoggerInterface;
+use Scrutinizer\Cli\OutputLogger;
 use Scrutinizer\Model\File;
 use Scrutinizer\Model\Project;
+use Symfony\Component\Console\Helper\ProgressHelper;
+use Symfony\Component\Console\Output\NullOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Scrutinizer\Util\PathUtils;
@@ -58,6 +62,41 @@ class FileTraversal
             return;
         }
 
+        $files = $this->locateFiles();
+        $progressOutput = $this->getProgressOutput();
+        $progressOutput->writeln('');
+        $progress = $this->createProgress($files, $progressOutput);
+        foreach ($files as $finderFile) {
+            /** @var $finderFile SplFileInfo */
+
+            $this->project->getFile($finderFile->getRelativePathname())->forAll(function(File $file) {
+                if (null !== $this->logger) {
+                    $this->logger->debug(sprintf('Analyzing file "%s".'."\n", $file->getPath()), array('project' => $this->project, 'file' => $file, 'analyzer' => $this->analyzer));
+                }
+
+                try {
+                    $this->analyzer->{$this->method}($this->project, $file);
+                } catch (\Exception $ex) {
+                    throw new \RuntimeException(
+                        sprintf('An exception occurred while analyzing "%s": %s', $file->getPath(), $ex->getMessage()),
+                        0,
+                        $ex
+                    );
+                }
+            });
+
+            $progress->advance();
+        }
+        $progressOutput->writeln("\n");
+    }
+
+    private function getProgressOutput()
+    {
+        return $this->logger instanceof OutputLogger && ! $this->logger->isVerbose() ? $this->logger->getOutput() : new NullOutput();
+    }
+
+    private function locateFiles()
+    {
         $finder = Finder::create()
             ->in($this->project->getDir())
             ->files()
@@ -81,16 +120,20 @@ class FileTraversal
                 return true;
             })
         ;
+        $files = iterator_to_array($finder);
 
-        foreach ($finder as $finderFile) {
-            /** @var $finderFile SplFileInfo */
+        return $files;
+    }
 
-            $this->project->getFile($finderFile->getRelativePathname())->forAll(function(File $file) {
-                if (null !== $this->logger) {
-                    $this->logger->debug(sprintf('Analyzing file "%s".'."\n", $file->getPath()), array('project' => $this->project, 'file' => $file, 'analyzer' => $this->analyzer));
-                }
-                $this->analyzer->{$this->method}($this->project, $file);
-            });
-        }
+    private function createProgress(array $files, OutputInterface $output)
+    {
+        $progress = new ProgressHelper();
+        $progress->setFormat('    Files %current%/%max% [%bar%] %percent%%');
+        $progress->setBarCharacter('.');
+        $progress->setEmptyBarCharacter(' ');
+        $progress->setBarWidth(60);
+        $progress->start($output, count($files));
+
+        return $progress;
     }
 }

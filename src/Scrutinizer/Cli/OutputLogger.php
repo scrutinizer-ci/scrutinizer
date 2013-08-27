@@ -16,6 +16,16 @@ class OutputLogger extends AbstractLogger
         $this->verbose = $verbose;
     }
 
+    public function getOutput()
+    {
+        return $this->output;
+    }
+
+    public function isVerbose()
+    {
+        return $this->verbose;
+    }
+
     public function log($level, $message, array $context = array())
     {
         if ( ! $this->verbose && $level === 'debug') {
