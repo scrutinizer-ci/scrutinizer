@@ -1,0 +1,21 @@
+Foobar
+
+-- FILENAME --
+design/README
+
+-- FILE: src/Foo.php --
+<?php
+
+class Foo
+{
+    public function
+}
+
+-- CONFIG --
+filter:
+    paths: [src/*]
+
+tools:
+    php_mess_detector:
+        config:
+            rulesets: [design]

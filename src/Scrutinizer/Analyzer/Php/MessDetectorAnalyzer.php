@@ -20,6 +20,8 @@ use Symfony\Component\Process\Process;
  */
 class MessDetectorAnalyzer extends AbstractFileAnalyzer
 {
+    private $tmpCwdDir;
+
     public function getName()
     {
         return 'php_mess_detector';
@@ -70,6 +72,29 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
         ;
     }
 
+    public function scrutinize(Project $project)
+    {
+        // We temporarily switch the working directory to workaround a bug in PHPMD which causes weird configuration
+        // errors, see https://github.com/phpmd/phpmd/issues/47
+        $this->tmpCwdDir = tempnam(sys_get_temp_dir(), 'phpmd_tmp');
+        unlink($this->tmpCwdDir);
+        if (false === @mkdir($this->tmpCwdDir, 0777, true)) {
+            throw new \LogicException('Could not create temporary directory.');
+        }
+
+        $cwd = getcwd();
+        chdir($this->tmpCwdDir);
+
+        try {
+            parent::scrutinize($project);
+            chdir($cwd);
+        } catch (\Exception $ex) {
+            chdir($cwd);
+
+            throw $ex;
+        }
+    }
+
     public function analyze(Project $project, File $file)
     {
         $command = $project->getGlobalConfig('command');
@@ -95,7 +120,7 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
         $inputFile = tempnam(sys_get_temp_dir(), 'phpmd_input');
         file_put_contents($inputFile, $file->getContent());
 
-        $proc = new Process($command.' '.escapeshellarg($inputFile).' xml '.escapeshellarg(implode(",", $resolvedRulesets)));
+        $proc = new Process($command.' '.escapeshellarg($inputFile).' xml '.escapeshellarg(implode(",", $resolvedRulesets)), $this->tmpCwdDir);
         $proc->setTimeout(300);
         $exitCode = $proc->run();
 

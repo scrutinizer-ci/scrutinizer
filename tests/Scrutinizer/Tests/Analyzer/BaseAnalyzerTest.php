@@ -39,7 +39,10 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
         }
         file_put_contents($tmpDir.'/.scrutinizer.yml', json_encode($testData['config']));
 
+        $cwd = getcwd();
+        chdir($tmpDir);
         $project = $this->scrutinizer->scrutinize($tmpDir, $testData['changed_paths']);
+        chdir($cwd);
 
         /** @var $file File */
         $file = $project->getFile($testData['filename'])->get();
