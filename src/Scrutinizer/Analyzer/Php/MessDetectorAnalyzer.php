@@ -76,6 +76,26 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
     {
         // We temporarily switch the working directory to workaround a bug in PHPMD which causes weird configuration
         // errors, see https://github.com/phpmd/phpmd/issues/47
+        $previousCwd = $this->useEmptyWorkingDir();
+
+        try {
+            parent::scrutinize($project);
+            $this->restoreWorkingDir($previousCwd);
+        } catch (\Exception $ex) {
+            $this->restoreWorkingDir($previousCwd);
+
+            throw $ex;
+        }
+    }
+
+    private function restoreWorkingDir($dir)
+    {
+        chdir($dir);
+        rmdir($this->tmpCwdDir);
+    }
+
+    private function useEmptyWorkingDir()
+    {
         $this->tmpCwdDir = tempnam(sys_get_temp_dir(), 'phpmd_tmp');
         unlink($this->tmpCwdDir);
         if (false === @mkdir($this->tmpCwdDir, 0777, true)) {
@@ -85,14 +105,7 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
         $cwd = getcwd();
         chdir($this->tmpCwdDir);
 
-        try {
-            parent::scrutinize($project);
-            chdir($cwd);
-        } catch (\Exception $ex) {
-            chdir($cwd);
-
-            throw $ex;
-        }
+        return $cwd;
     }
 
     public function analyze(Project $project, File $file)
