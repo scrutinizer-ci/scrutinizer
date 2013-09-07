@@ -6,6 +6,9 @@ use JMS\Serializer\Annotation as Serializer;
 
 class CodeElement
 {
+    const FLAG_SIMPLE_GETTER = 'simple_getter';
+    const FLAG_SIMPLE_SETTER = 'simple_setter';
+
     private $type;
     private $name;
     private $metrics;
@@ -16,6 +19,7 @@ class CodeElement
      */
     private $children = array();
     private $location;
+    private $flags = array();
 
     public function __construct($type, $name, array $metrics = array())
     {
@@ -32,6 +36,16 @@ class CodeElement
     public function getName()
     {
         return $this->name;
+    }
+
+    public function addFlag($flag)
+    {
+        $this->flags[] = $flag;
+    }
+
+    public function getFlags()
+    {
+        return $this->flags;
     }
 
     public function setMetric($key, $value)

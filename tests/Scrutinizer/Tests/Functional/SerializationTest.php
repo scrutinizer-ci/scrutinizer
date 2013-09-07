@@ -58,7 +58,10 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
             "name": "Foo",
             "metrics": {
                 "a": 5
-            }
+            },
+            "flags": [
+
+            ]
         },
         {
             "children": [
@@ -68,7 +71,10 @@ class SerializationTest extends \PHPUnit_Framework_TestCase
             "name": "Foo\\\\Bar",
             "metrics": {
                 "b": 10
-            }
+            },
+            "flags": [
+
+            ]
         }
     ]
 }',

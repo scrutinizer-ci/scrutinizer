@@ -67,6 +67,12 @@ class LocationCompletionSubscriber implements EventSubscriberInterface
 
                             $this->updateLocation($element, $location, $stmt);
 
+                            if ($this->isSimpleGetter($stmt)) {
+                                $element->addFlag(CodeElement::FLAG_SIMPLE_GETTER);
+                            } elseif ($this->isSimpleSetter($stmt)) {
+                                $element->addFlag(CodeElement::FLAG_SIMPLE_SETTER);
+                            }
+
                             return;
                         }
                     } else {
@@ -79,6 +85,77 @@ class LocationCompletionSubscriber implements EventSubscriberInterface
                 }
             });
         }
+    }
+
+    private function isSimpleGetter(\PHPParser_Node_Stmt_ClassMethod $method)
+    {
+        if (count($method->params) > 0 || $method->byRef === true || count($method->stmts) !== 1) {
+            return false;
+        }
+
+        if ( ! $method->stmts[0] instanceof \PHPParser_Node_Stmt_Return) {
+            return false;
+        }
+
+        $returnExpr = $method->stmts[0]->expr;
+
+        return $this->isSimpleProperty($returnExpr) || $this->isSimpleStaticProperty($returnExpr);
+    }
+
+    private function isThis(\PHPParser_Node $node = null)
+    {
+        return $node instanceof \PHPParser_Node_Expr_Variable && $node->name === 'this';
+    }
+
+    private function isSimpleSetter(\PHPParser_Node_Stmt_ClassMethod $method)
+    {
+        if (count($method->params) !== 1 || $method->byRef === true || count($method->stmts) !== 1
+                || $method->name === '__construct') {
+            return false;
+        }
+
+        if ( ! $method->stmts[0] instanceof \PHPParser_Node_Expr_Assign) {
+            return false;
+        }
+
+        if ( ! $this->isSimpleVariable($method->stmts[0]->expr)) {
+            return false;
+        }
+
+        $var = $method->stmts[0]->var;
+
+        return $this->isSimpleProperty($var) || $this->isSimpleStaticProperty($var);
+    }
+
+    private function isSimpleStaticProperty(\PHPParser_Node $node = null)
+    {
+        if ( ! $node instanceof \PHPParser_Node_Expr_StaticPropertyFetch) {
+            return false;
+        }
+
+        if ( ! $node->class instanceof \PHPParser_Node_Name) {
+            return false;
+        }
+
+        return is_string($node->name);
+    }
+
+    private function isSimpleProperty(\PHPParser_Node $node = null)
+    {
+        if ( ! $node instanceof \PHPParser_Node_Expr_PropertyFetch) {
+            return false;
+        }
+
+        if ( ! $this->isThis($node->var)) {
+            return false;
+        }
+
+        return is_string($node->name);
+    }
+
+    private function isSimpleVariable(\PHPParser_Node $node = null)
+    {
+        return $node instanceof \PHPParser_Node_Expr_Variable && is_string($node->name);
     }
 
     private function updateLocation(CodeElement $element, Location $location, \PHPParser_NodeAbstract $node)
