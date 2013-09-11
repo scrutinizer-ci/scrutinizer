@@ -49,7 +49,7 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
                 ->addDefaultsIfNotSet()
                 ->children()
                     ->arrayNode('rulesets')
-                        ->defaultValue(array('codesize', 'design', 'unusedcode'))
+                        ->defaultValue(array('codesize', 'design'))
                         ->requiresAtLeastOneElement()
                         ->prototype('scalar')
                             ->info('A built-in ruleset, or a XML filename relative to the project\'s root directory.')
