@@ -48,7 +48,11 @@ class PDependAnalyzer implements AnalyzerInterface, LoggerAwareInterface
             ->disableDefaultFilter()
             ->globalConfig()
                 ->scalarNode('command')->defaultValue('pdepend')->end()
-                ->scalarNode('configuration_file')->defaultNull()->end()
+                ->scalarNode('configuration_file')
+                    ->attribute('show_in_editor', false)
+                    ->attribute('help_inline', 'Path to a pdepend configuration file if available (relative to your project\'s root directory).')
+                    ->defaultNull()
+                ->end()
                 ->arrayNode('suffixes')
                     ->validate()->always(function(array $v) {
                         foreach ($v as $k => $suffix) {
@@ -59,10 +63,14 @@ class PDependAnalyzer implements AnalyzerInterface, LoggerAwareInterface
 
                         return array_unique($v);
                     })->end()
+                    ->attribute('show_in_editor', false)
+                    ->attribute('help_block', 'One suffix without preceding "*." per line.')
                     ->defaultValue(array('php'))
                     ->prototype('scalar')->end()
                 ->end()
                 ->arrayNode('excluded_dirs')
+                    ->attribute('label', 'Excluded Directories')
+                    ->attribute('help_block', 'A single directory without path or ending "/" per line.')
                     ->prototype('scalar')->end()
                     ->defaultValue(array('vendor'))
                 ->end()

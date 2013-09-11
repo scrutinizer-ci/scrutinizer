@@ -95,6 +95,7 @@ class ConfigBuilder extends ArrayNodeDefinition
 
             if ($this->addDefaultFilter) {
                 $filterDef = new ArrayNodeDefinition('filter');
+                $filterDef->attribute('show_in_editor', false);
                 $filterDef->setBuilder(new NodeBuilder());
                 $filterDef
                     ->addDefaultsIfNotSet()
@@ -115,6 +116,7 @@ class ConfigBuilder extends ArrayNodeDefinition
             $node->addChild($this->perFileConfigDef->getNode());
 
             $pathConfigDef = new ArrayNodeDefinition('path_configs');
+            $pathConfigDef->attribute('show_in_editor', false);
             $pathConfigDef->setBuilder(new NodeBuilder());
 
             $pathConfigDef
