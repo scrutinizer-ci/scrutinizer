@@ -70,6 +70,7 @@ class CsFixerAnalyzer extends AbstractFileAnalyzer
                     ->end()
                     ->arrayNode('fixers')
                         ->attribute('type', 'choice')
+                        ->attribute('depends_on', array('level' => 'custom'))
                         ->beforeNormalization()->always(function($v) {
                             if (is_array($v) && ! empty($v) && is_string($v[0])) {
                                 return array_combine($v, array_fill(0, count($v), true));
