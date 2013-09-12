@@ -40,7 +40,7 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
     protected function buildConfigInternal(ConfigBuilder $builder)
     {
         $rewriteBooleanArray = function($v) {
-            if (is_array($v) && ! empty($v) && is_string($v[0])) {
+            if (is_array($v) && ! empty($v) && is_string(reset($v))) {
                 return array_combine($v, array_fill(0, count($v), true));
             }
 
@@ -189,6 +189,7 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
                         ->canBeUnset()
                         ->attribute('label', 'Design Rules')
                         ->attribute('type', 'choice')
+                        ->attribute('depends_on', array('ruleset' => ''))
                         ->beforeNormalization()->always($rewriteBooleanArray)->end()
                         ->children()
                             ->booleanNode('exit_expression')
@@ -222,6 +223,7 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
                         ->canBeUnset()
                         ->attribute('label', 'Unused Code Rules')
                         ->attribute('type', 'choice')
+                        ->attribute('depends_on', array('ruleset' => ''))
                         ->beforeNormalization()->always($rewriteBooleanArray)->end()
                         ->children()
                             ->booleanNode('unused_private_field')
@@ -247,6 +249,7 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
                         ->canBeUnset()
                         ->attribute('label', 'Naming Rules')
                         ->attribute('type', 'choice')
+                        ->attribute('depends_on', array('ruleset' => ''))
                         ->beforeNormalization()->always($rewriteBooleanArray)->end()
                         ->children()
                             ->booleanNode('short_variable')
@@ -280,6 +283,7 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
                         ->canBeUnset()
                         ->attribute('label', 'Controversial Rules')
                         ->attribute('type', 'choice')
+                        ->attribute('depends_on', array('ruleset' => ''))
                         ->beforeNormalization()->always($rewriteBooleanArray)->end()
                         ->children()
                             ->booleanNode('superglobals')
