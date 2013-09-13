@@ -14,7 +14,11 @@ Foo.php
 tools:
     php_code_sniffer:
         config:
-            standard: PSR1
+            standard: custom
+            sniffs:
+                psr1:
+                    classes:
+                        class_declaration_sniff: true
 
 -- COMMENTS --
 Line 3: Each class must be in a namespace of at least one level (a top-level vendor name)
