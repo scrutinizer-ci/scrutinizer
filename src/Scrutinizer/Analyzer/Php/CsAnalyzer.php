@@ -64,8 +64,9 @@ class CsAnalyzer extends AbstractFileAnalyzer
                             'PSR2'  => 'PSR2 Standard',
                             'Squiz' => 'Squiz Standard',
                             'Zend' => 'Zend Standard',
+                            'WordPress' => 'WordPress Standard',
                         ))
-                        ->values(array('custom', 'PEAR', 'PHPCS', 'PSR1', 'PSR2', 'Squiz', 'Zend'))
+                        ->values(array('custom', 'PEAR', 'PHPCS', 'PSR1', 'PSR2', 'Squiz', 'Zend', 'WordPress'))
                         ->defaultValue('custom')
                     ->end()
                     ->arrayNode('sniffs')
