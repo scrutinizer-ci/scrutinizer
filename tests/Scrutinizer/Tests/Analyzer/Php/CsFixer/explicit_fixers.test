@@ -24,6 +24,5 @@ class Foo {
 tools:
     php_cs_fixer:
         config:
-            # Fixers have precedence before levels.
-            level: psr2
-            fixers: [visibility]
+            level: custom
+            fixers: { visibility: true }

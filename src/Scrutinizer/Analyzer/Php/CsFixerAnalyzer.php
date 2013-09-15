@@ -73,8 +73,10 @@ class CsFixerAnalyzer extends AbstractFileAnalyzer
                         ->attribute('type', 'choice')
                         ->attribute('depends_on', array('level' => 'custom'))
                         ->beforeNormalization()->always(function($v) {
-                            if (is_array($v) && ! empty($v) && is_string($v[0])) {
-                                return array_combine($v, array_fill(0, count($v), true));
+                            if (is_array($v) && ! empty($v) && is_string(reset($v))) {
+                                $values = array_combine($v, array_fill(0, count($v), true));
+
+                                return $values;
                             }
 
                             return $v;
@@ -197,7 +199,7 @@ class CsFixerAnalyzer extends AbstractFileAnalyzer
                 throw new \RuntimeException(sprintf('The fixing level was set to "custom", but not fixers were selected.'));
             }
 
-            return '--fixers='.implode(',', $filters);
+            return '--fixers='.implode(',', array_keys($filters));
         }
 
         return '--level='.$level;
