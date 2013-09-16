@@ -47,6 +47,7 @@ class Scrutinizer
         $this->registerAnalyzer(new Analyzer\Php\CopyPasteDetectorAnalyzer());
         $this->registerAnalyzer(new Analyzer\Php\LocAnalyzer());
         $this->registerAnalyzer(new Analyzer\Php\PDependAnalyzer());
+        $this->registerAnalyzer(new Analyzer\ExternalCodeCoverageAnalyzer());
         $this->registerAnalyzer(new Analyzer\CustomAnalyzer());
 
         $this->registerSubscriber(new Event\Php\LocationCompletionSubscriber());
