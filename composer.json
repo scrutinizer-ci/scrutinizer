@@ -7,6 +7,8 @@
         {"type": "git", "url": "git://github.com/schmittjoh/Process"}
     ],
 
+    "bin": ["bin/scrutinizer"],
+
     "require": {
         "php": ">=5.4",
         "scrutinizer/utils": "dev-master",
