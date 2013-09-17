@@ -27,7 +27,17 @@ class ExternalCodeCoverageAnalyzer implements AnalyzerInterface
             ->info('Allows to incorporate code coverage information provided by an external service.')
             ->disableDefaultSettings()
             ->globalConfig()
-                ->scalarNode('timeout')->defaultValue(300)->end()
+                ->scalarNode('timeout')
+                    ->validate()->always(function($v) {
+                        $v = (integer) $v;
+                        if ($v < 60 || $v > 3600) {
+                            throw new \Exception('The timeout must be in the interval [60,3600].');
+                        }
+
+                        return $v;
+                    })->end()
+                    ->defaultValue(300)
+                ->end()
             ->end()
         ;
     }
