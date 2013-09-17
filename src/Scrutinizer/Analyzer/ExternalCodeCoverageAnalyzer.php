@@ -24,7 +24,11 @@ class ExternalCodeCoverageAnalyzer implements AnalyzerInterface
     public function buildConfig(ConfigBuilder $builder)
     {
         $builder
-            ->canBeEnabled()
+            ->info('Allows to incorporate code coverage information provided by an external service.')
+            ->disableDefaultSettings()
+            ->globalConfig()
+                ->scalarNode('timeout')->defaultValue(300)->end()
+            ->end()
         ;
     }
 
