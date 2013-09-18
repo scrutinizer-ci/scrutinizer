@@ -25,7 +25,7 @@
         "jms/serializer": "dev-master",
         "jms/php-manipulator": "dev-master",
         "phpcollection/phpcollection": "0.2.*@dev",
-        "guzzle/guzzle": "3.0.*",
+        "guzzle/guzzle": "~3.0",
         "nikic/php-parser": "dev-master"
     },
     "autoload": {
