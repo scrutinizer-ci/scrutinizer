@@ -3,14 +3,22 @@
 
 use Scrutinizer\Cli\Application;
 
-if ( ! is_file($autoloadFile = __DIR__.'/../vendor/autoload.php')) {
-    echo 'Could not find autoload.php. Did you forget to run "composer install --dev"?'.PHP_EOL;
-    exit(1);
-}
+call_user_func(function() {
+    require_once call_user_func(function() {
+        if (is_file($autoloadFile = __DIR__.'/../vendor/autoload.php')) {
+            return $autoloadFile;
+        }
 
-require_once $autoloadFile;
+        if (is_file($autoloadFile = __DIR__.'/../../../autoload.php')) {
+            return $autoloadFile;
+        }
 
-\Doctrine\Common\Annotations\AnnotationRegistry::registerLoader('class_exists');
+        echo 'Could not find autoload.php. Did you forget to run "composer install --dev"?'.PHP_EOL;
+        exit(1);
+    });
 
-$app = new Application();
-$app->run();
+    \Doctrine\Common\Annotations\AnnotationRegistry::registerLoader('class_exists');
+
+    $app = new Application();
+    $app->run();
+});
