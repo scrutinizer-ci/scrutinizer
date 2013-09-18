@@ -1,6 +1,10 @@
 PHP Code Coverage
 =================
 
+.. tip ::
+    If the set-up of your test-suite is complex and you continuously integrate your code, you can also send us
+    :doc:`code coverage data from an external service </tools/external-code-coverage/index>`.
+
 Runs PHPUnit to gather code coverage information, and displays the coverage results inline in the change-set.
 
 .. include :: php_code_coverage_configuration.rst
