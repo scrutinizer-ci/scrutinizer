@@ -25,14 +25,42 @@ class ExternalCodeCoverageAnalyzer implements AnalyzerInterface
     {
         $builder
             ->info('Allows to incorporate code coverage information provided by an external service.')
-            ->disableDefaultSettings()
             ->globalConfig()
-                ->scalarNode('timeout')->defaultValue(300)->end()
+                ->scalarNode('timeout')
+                    ->validate()->always(function($v) {
+                        $v = (integer) $v;
+                        if ($v < 60 || $v > 3600) {
+                            throw new \Exception('The timeout must be in the interval [60,3600].');
+                        }
+
+                        return $v;
+                    })->end()
+                    ->defaultValue(300)
+                ->end()
             ->end()
         ;
     }
 
     public function scrutinize(Project $project)
     {
+        $project->getFile('.scrutinizer/coverage/format')->forAll(function(File $file) use ($project) {
+            $format = $file->getContent();
+
+            $project->getFile('.scrutinizer/coverage/data')->forAll(function(File $file) use ($project, $format) {
+                $this->processCodeCoverage($project, $format, $file->getContent());
+            });
+        });
+    }
+
+    private function processCodeCoverage(Project $project, $format, $data)
+    {
+        switch ($format) {
+            case 'php-clover':
+                (new Php\Util\CodeCoverageProcessor())->processCloverFile($project, $data);
+                break;
+
+            default:
+                throw new \LogicException(sprintf('The coverage format "%s" is unknown.', $format));
+        }
     }
 }
