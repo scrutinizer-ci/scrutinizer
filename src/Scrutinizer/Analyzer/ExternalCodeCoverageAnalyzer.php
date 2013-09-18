@@ -27,6 +27,7 @@ class ExternalCodeCoverageAnalyzer implements AnalyzerInterface
             ->info('Allows to incorporate code coverage information provided by an external service.')
             ->globalConfig()
                 ->scalarNode('timeout')
+                    ->attribute('help_inline', 'The amount of time to wait for coverage data (in seconds).')
                     ->validate()->always(function($v) {
                         $v = (integer) $v;
                         if ($v < 60 || $v > 3600) {
