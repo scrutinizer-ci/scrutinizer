@@ -37,6 +37,8 @@ class CsAnalyzer extends AbstractFileAnalyzer
 
     public function buildConfigInternal(ConfigBuilder $builder)
     {
+        $availableStandards = array('custom', 'PEAR', 'PHPCS', 'PSR1', 'PSR2', 'Squiz', 'Zend', 'WordPress');
+
         $builder
             ->globalConfig()
                 ->scalarNode('command')
@@ -45,6 +47,14 @@ class CsAnalyzer extends AbstractFileAnalyzer
             ->end()
             ->perFileConfig()
                 ->addDefaultsIfNotSet()
+                ->beforeNormalization()->always(function($v) use ($availableStandards) {
+                    if (isset($v['standard']) && ! in_array($v['standard'], $availableStandards, true)) {
+                        $v['ruleset'] = $v['standard'];
+                        $v['standard'] = 'custom';
+                    }
+
+                    return $v;
+                })->end()
                 ->children()
                     ->scalarNode('tab_width')
                         ->attribute('label', 'Tab Width')
@@ -54,6 +64,9 @@ class CsAnalyzer extends AbstractFileAnalyzer
                     ->scalarNode('encoding')
                         ->attribute('label', 'File Encoding')
                         ->defaultValue('utf8')
+                    ->end()
+                    ->scalarNode('ruleset')
+                        ->attribute('show_in_editor', false)
                     ->end()
                     ->enumNode('standard')
                         ->attribute('choices', array(
@@ -66,7 +79,7 @@ class CsAnalyzer extends AbstractFileAnalyzer
                             'Zend' => 'Zend Standard',
                             'WordPress' => 'WordPress Standard',
                         ))
-                        ->values(array('custom', 'PEAR', 'PHPCS', 'PSR1', 'PSR2', 'Squiz', 'Zend', 'WordPress'))
+                        ->values($availableStandards)
                         ->defaultValue('custom')
                     ->end()
                     ->arrayNode('sniffs')
@@ -1187,14 +1200,18 @@ class CsAnalyzer extends AbstractFileAnalyzer
 
         $standardsDir = null;
         if ($config['standard'] === 'custom') {
-            $standardsDir = tempnam(sys_get_temp_dir(), 'cs-ruleset');
-            unlink($standardsDir);
-            if (false === @mkdir($standardsDir, 0777, true)) {
-                throw new \RuntimeException('Could not create standards dir.');
-            }
+            if (isset($config['ruleset'])) {
+                $cmd .= ' --standard='.escapeshellarg($config['ruleset']);
+            } else {
+                $standardsDir = tempnam(sys_get_temp_dir(), 'cs-ruleset');
+                unlink($standardsDir);
+                if (false === @mkdir($standardsDir, 0777, true)) {
+                    throw new \RuntimeException('Could not create standards dir.');
+                }
 
-            $this->createRuleset($standardsDir, $project, $file);
-            $cmd .= ' --standard='.escapeshellarg($standardsDir);
+                $this->createRuleset($standardsDir, $project, $file);
+                $cmd .= ' --standard='.escapeshellarg($standardsDir);
+            }
         } else {
             $cmd .= ' --standard='.escapeshellarg($config['standard']);
         }

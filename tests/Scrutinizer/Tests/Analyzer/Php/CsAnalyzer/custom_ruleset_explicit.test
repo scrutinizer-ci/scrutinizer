@@ -1,0 +1,69 @@
+<?php
+
+class Foo
+{
+    public function foo() {
+        echo 'foo';
+    }
+}
+
+-- FILENAME --
+Foo.php
+
+-- FILE: phpcs/ruleset.xml --
+<?xml version="1.0"?>
+<ruleset name="NOS">
+    <description>Coding standard for Novius-OS</description>
+
+    <exclude-pattern>vendor/*</exclude-pattern>
+    <exclude-pattern>fuel-core/*</exclude-pattern>
+    <exclude-pattern>packages/*</exclude-pattern>
+    <exclude-pattern>static/*</exclude-pattern>
+    <exclude-pattern>hooks/*</exclude-pattern>
+    <exclude-pattern>logs/*</exclude-pattern>
+    <exclude-pattern>ci/*</exclude-pattern>
+    <exclude-pattern>framework/vendor/*</exclude-pattern>
+    <exclude-pattern>local/config/*</exclude-pattern>
+    <exclude-pattern>local/metadata/*</exclude-pattern>
+
+    <!-- Include the whole PSR-2 standard -->
+    <rule ref="PSR2">
+        <exclude name="Squiz.Classes.ValidClassName"/>
+        <exclude name="Generic.NamingConventions.CamelCapsFunctionName"/>
+        <exclude name="PEAR.Functions.FunctionCallSignature"/>
+        <exclude name="PSR1.Files.SideEffects"/>
+        <exclude name="PSR1.Classes.ClassDeclaration"/>
+    </rule>
+
+    <!-- Classes -->
+    <rule ref="PEAR.Classes.ClassDeclaration"/>
+    <rule ref="Squiz.Classes.LowercaseClassKeywords"/>
+
+
+    <!-- Files -->
+
+    <!-- Formatting -->
+    <rule ref="Generic.Formatting.SpaceAfterCast"/>
+
+    <!-- Functions -->
+    <rule ref="Generic.Functions.OpeningFunctionBraceBsdAllman"/>
+
+    <rule ref="PSR2.Namespaces.NamespaceDeclaration"/>
+
+
+
+    <rule ref="Squiz.Scope.MemberVarScope"/>
+
+</ruleset>
+
+-- CONFIG --
+tools:
+    php_code_sniffer:
+        config:
+            standard: custom
+            ruleset: phpcs/ruleset.xml
+
+-- COMMENTS --
+Line 5: Opening brace should be on a new line
+Line 5: Opening brace should be on a new line
+Line 8: Expected 1 newline at end of file; 0 found
