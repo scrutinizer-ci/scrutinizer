@@ -95,7 +95,7 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterfa
         }
 
         // Scan the current directory.
-        $command .= ' .';
+        $command .= ' '.$project->getDir();
 
         return $command;
     }
