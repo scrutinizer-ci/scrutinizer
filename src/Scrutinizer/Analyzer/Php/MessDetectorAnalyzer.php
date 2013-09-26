@@ -176,7 +176,7 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
                             ->end()
                             ->booleanNode('too_many_methods')
                                 ->attribute('label', 'Check whether a class has too many methods.')
-                                ->defaultTrue()
+                                ->defaultFalse()
                             ->end()
                             ->booleanNode('excessive_class_complexity')
                                 ->attribute('label', 'Check whether a class exceeds the allowed class complexity.')
