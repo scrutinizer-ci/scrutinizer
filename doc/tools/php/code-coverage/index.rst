@@ -30,7 +30,8 @@ different configuration, you can change the test command:
 
     tools:
         php_code_coverage:
-            test_command: phpunit -c tests/my_config.xml
+            # A phpunit.xml/phpunit.xml.dist is expected in tests/
+            test_command: phpunit -c tests/
 
 
 .. include :: php_code_coverage_configuration_reference.rst
