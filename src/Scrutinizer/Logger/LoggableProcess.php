@@ -10,7 +10,7 @@ class LoggableProcess extends Process
     /** @var LoggerInterface */
     private $logger;
 
-    public function setLogger(LoggerInterface $logger)
+    public function setLogger(LoggerInterface $logger = null)
     {
         $this->logger = $logger;
     }
