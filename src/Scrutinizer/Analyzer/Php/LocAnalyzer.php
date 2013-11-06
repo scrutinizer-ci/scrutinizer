@@ -227,7 +227,7 @@ class LocAnalyzer implements AnalyzerInterface, LoggerAwareInterface
         }
 
         // Report
-        if ($project->getGlobalConfig('report.enabled')) {
+        if ($project->getGlobalConfig('report.enabled', false)) {
             copy($outputFile, $project->getReportDirectory().'/'.$project->getGlobalConfig('report.file'));
         }
 
