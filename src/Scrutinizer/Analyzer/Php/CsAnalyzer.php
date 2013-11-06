@@ -44,6 +44,16 @@ class CsAnalyzer extends AbstractFileAnalyzer
                 ->scalarNode('command')
                     ->defaultValue('phpcs')
                 ->end()
+                ->arrayNode('report')
+                    ->children()
+                        ->booleanNode('enabled')->defaultValue(false)->end()
+                        ->scalarNode('dir')->defaultValue('build/logs')->end()
+                        ->scalarNode('file')->defaultValue('checkstyle.xml')->end()
+                        ->scalarNode('prepend')->defaultValue('<?xml version="1.0" encoding="UTF-8" ?><checkstyle>')->end()
+                        ->scalarNode('append')->defaultValue('</checkstyle>')->end()
+                        ->scalarNode('pattern')->defaultValue('/^.+(<file name=".+">.+<\/file>).+$/ms')->end()
+                    ->end()
+                ->end()
             ->end()
             ->perFileConfig()
                 ->addDefaultsIfNotSet()
@@ -1270,6 +1280,8 @@ class CsAnalyzer extends AbstractFileAnalyzer
                 html_entity_decode((string) $errorElem->attributes()->message, ENT_QUOTES, 'UTF-8')
             ));
         }
+
+        return $result;
     }
 
     private function createRuleset($standardsDir, Project $project, File $file)

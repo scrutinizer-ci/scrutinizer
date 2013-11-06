@@ -74,6 +74,13 @@ class PDependAnalyzer implements AnalyzerInterface, LoggerAwareInterface
                     ->prototype('scalar')->end()
                     ->defaultValue(array('vendor'))
                 ->end()
+                ->arrayNode('report')
+                    ->children()
+                        ->booleanNode('enabled')->defaultValue(false)->end()
+                        ->scalarNode('dir')->defaultValue('build/logs')->end()
+                        ->scalarNode('file')->defaultValue('jdepend.xml')->end()
+                    ->end()
+                ->end()
             ->end()
         ;
     }
@@ -111,6 +118,11 @@ class PDependAnalyzer implements AnalyzerInterface, LoggerAwareInterface
         $proc->run(function($_, $data) {
             $this->logger->info($data);
         });
+
+        // Report
+        if ($project->getGlobalConfig('report.enabled')) {
+            copy($outputFile, $project->getReportDirectory().'/'.$project->getGlobalConfig('report.file'));
+        }
 
         $output = file_get_contents($outputFile);
         unlink($outputFile);

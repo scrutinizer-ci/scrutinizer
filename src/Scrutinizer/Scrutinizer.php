@@ -110,8 +110,15 @@ class Scrutinizer
                 continue;
             }
 
-            $this->logger->info(sprintf('Running analyzer "%s"...'."\n", $analyzer->getName()));
+            // Set current analyzer
             $project->setAnalyzerName($analyzer->getName());
+
+            // Create analyzer report directory
+            if ($project->getGlobalConfig('report.enabled', false)) {
+                $project->createReportDirectory();
+            }
+
+            $this->logger->info(sprintf('Running analyzer "%s"...'."\n", $analyzer->getName()));
             $analyzer->scrutinize($project);
         }
 
