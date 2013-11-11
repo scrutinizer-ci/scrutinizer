@@ -1,0 +1,27 @@
+<?php
+
+class Foo extends Bar implements ABCDEF {
+    use FooBar;
+
+    public function foo() {
+        echo 'foo';
+    }
+}
+
+new Baz();
+
+-- FILENAME --
+Foo.php
+
+-- CONFIG --
+tools:
+    php_hhvm:
+        config:
+            unknown_class: true
+            unknown_base_class: true
+            unknown_trait: true
+
+-- COMMENTS --
+Line 3: The base class ``ABCDEF`` could not be found. Did you maybe forget to install all vendors?
+Line 3: One of the traits used in this class is unknown. Did you maybe forget to install all vendors?
+Line 11: The class ``new Baz()`` could not be found. Did you maybe forget to install all vendors?

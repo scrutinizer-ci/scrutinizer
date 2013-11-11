@@ -97,29 +97,7 @@ class FileTraversal
 
     private function locateFiles()
     {
-        $finder = Finder::create()
-            ->in($this->project->getDir())
-            ->files()
-            ->filter(function (SplFileInfo $file) {
-                if ( ! $this->project->isAnalyzed($file->getRelativePathname())) {
-                    return false;
-                }
-
-                if ( PathUtils::isFiltered($file->getRelativePathname(), $this->project->getGlobalConfig('filter'))) {
-                    return false;
-                }
-
-                if ($this->extensions && ! in_array($file->getExtension(), $this->extensions, true)) {
-                    return false;
-                }
-
-                if ( ! $this->project->getPathConfig($file->getRelativePath(), 'enabled', true)) {
-                    return false;
-                }
-
-                return true;
-            })
-        ;
+        $finder = (new ProjectIteratorFactory())->createFileIterator($this->project, $this->extensions);
         $files = iterator_to_array($finder);
 
         return $files;

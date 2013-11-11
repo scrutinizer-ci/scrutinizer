@@ -1,0 +1,18 @@
+<?php
+
+class Foo extends Bar implements ABCDEF {
+    use FooBar;
+
+    public function foo() {
+        echo 'foo';
+    }
+}
+
+new Baz();
+
+-- FILENAME --
+Foo.php
+
+-- CONFIG --
+tools:
+    php_hhvm: true
