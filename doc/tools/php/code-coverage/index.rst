@@ -1,11 +1,13 @@
 PHP Code Coverage
 =================
 
-.. tip ::
-    If the set-up of your test-suite is complex and you continuously integrate your code, you can also send us
+.. note ::
+    Generating code coverage on our servers is only recommended for small libraries. If you need other services
+    like MySQL, RabbitMQ, etc., we strongly recommend to send your
     :doc:`code coverage data from an external service </tools/external-code-coverage/index>`.
 
-Runs PHPUnit to gather code coverage information, and displays the coverage results inline in the change-set.
+Runs PHPUnit to gather code coverage information, and displays the coverage results inline in the change-set. Code
+coverage results are also used by our code rating algorithm.
 
 .. include :: php_code_coverage_configuration.rst
 
