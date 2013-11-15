@@ -108,7 +108,7 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterfa
 
         $this->logger->info('$ '.$command."\n");
         $proc = new Process($command, $project->getDir());
-        $proc->setTimeout(900);
+        $proc->setTimeout(1800);
         $proc->setIdleTimeout(180);
         $proc->setPty(true);
         $proc->run(function($_, $data) {
