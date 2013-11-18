@@ -4,6 +4,8 @@ namespace Scrutinizer\Analyzer\Php;
 
 use Guzzle\Http\Client;
 use Guzzle\Plugin\Backoff\BackoffPlugin;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Scrutinizer\Analyzer\AnalyzerInterface;
 use Scrutinizer\Config\ConfigBuilder;
 use Scrutinizer\Model\File;
@@ -14,13 +16,16 @@ use Scrutinizer\Model\Comment;
  * @display-name Security Advisory Checker
  * @doc-path tools/php/security-advisory-checker/
  */
-class SecurityAdvisoryAnalyzer implements AnalyzerInterface
+class SecurityAdvisoryAnalyzer implements AnalyzerInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     private $client;
 
     public function __construct()
     {
         $this->client = new Client('https://security.sensiolabs.org');
+        $this->client->setDefaultOption('timeout', 5);
         $this->client->addSubscriber(BackoffPlugin::getExponentialBackoff());
     }
 
@@ -39,7 +44,13 @@ class SecurityAdvisoryAnalyzer implements AnalyzerInterface
 
         $project->getFile('composer.lock')
             ->map(function(File $file) {
-                $data = $this->retrieveAdvisories($file);
+                try {
+                    $data = $this->retrieveAdvisories($file);
+                } catch (\Exception $ex) {
+                    $this->logger->error('Failed to retrieve advisories: '.$ex->getMessage());
+
+                    return;
+                }
 
                 $content = $file->getContent();
                 $getLine = function($packageName) use ($content) {
