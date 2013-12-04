@@ -32,6 +32,16 @@ class OutputLogger extends AbstractLogger
             return;
         }
 
-        $this->output->write($message);
+        $map = array();
+        foreach ($context as $k => $v) {
+            if ( ! is_scalar($v) && $v !== null
+                    && ( ! is_object($v) || ! method_exists($v, '__toString'))) {
+                continue;
+            }
+
+            $map['{'.$k.'}'] = (string) $v;
+        }
+
+        $this->output->write(strtr($message, $map));
     }
 }
