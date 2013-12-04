@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "977b6a88cd9e67bbb787cd5455fc5d3d",
+    "hash": "cd7b843d0d8e130974e871bbb4a10f0d",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -666,12 +666,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/scrutinizer-ci/utils.git",
-                "reference": "b49c7e0117c1bff14b8f99d61a7cbf04b2d8f87c"
+                "reference": "98cc347a0a25c19e776511889c4c46c1a66cb2f9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scrutinizer-ci/utils/zipball/b49c7e0117c1bff14b8f99d61a7cbf04b2d8f87c",
-                "reference": "b49c7e0117c1bff14b8f99d61a7cbf04b2d8f87c",
+                "url": "https://api.github.com/repos/scrutinizer-ci/utils/zipball/98cc347a0a25c19e776511889c4c46c1a66cb2f9",
+                "reference": "98cc347a0a25c19e776511889c4c46c1a66cb2f9",
                 "shasum": ""
             },
             "require": {
@@ -686,7 +686,7 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
-            "time": "2013-06-22 16:12:25"
+            "time": "2013-12-04 09:42:34"
         },
         {
             "name": "symfony/config",
