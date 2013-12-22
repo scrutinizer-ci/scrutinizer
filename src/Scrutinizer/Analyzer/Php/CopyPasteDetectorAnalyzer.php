@@ -79,7 +79,7 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterfa
     private function buildCommand(Project $project, $outputFile)
     {
         $command = sprintf(
-            '%s --progress --log-pmd %s --min-lines %d --min-tokens %d --names %s',
+            '%s --log-pmd %s --min-lines %d --min-tokens %d --names %s',
             $project->getGlobalConfig('command'),
             escapeshellarg($outputFile),
             $project->getGlobalConfig('min_lines'),
