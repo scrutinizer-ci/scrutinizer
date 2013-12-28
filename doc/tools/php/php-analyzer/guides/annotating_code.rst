@@ -1,17 +1,25 @@
-Annotating Code for Better Type Inference
-=========================================
+Supported Doc Comments by PHP Analyzer
+======================================
 
 Introduction
 ------------
 During analysis, we use type information in your code to enhance checks. PHP
-offers limited support for declaring types of parameters. However, that only
-covers a small amount of cases.
+offers already offers some support for type-hinting. You can enhance PHP's
+built-in type-hints using doc comments.
 
-Therefore, we use additional information provided by doc comments. Generally,
-doc comments are always useful when a type cannot be inferred from your code.
+Supported Doc Comments
+----------------------
+PHP Analyzer currently reads the following doc comments:
 
+- ``@param [type] $[paramName]`` for functions/methods
+- ``@return [type]`` for functions/methods
+- ``@var [type] $[variableName]`` everywhere
+
+
+Recommendations
+---------------
 Interfaces
-----------
+~~~~~~~~~~
 Since interfaces have no code from which a type can be inferred. Methods should
 always be annotated. For parameters, a comment is not strictly necessary if it
 is already covered by a type hint. Return types should always be specified via
@@ -19,7 +27,7 @@ a comment, even if the method does not have a return value in which case you
 can use the ``void`` type.
 
 Arrays
-------
+~~~~~~
 PHP itself provides the generic ``array`` type hint. Unfortunately, that does
 not allow to specify what the types of its values are. Therefore, we encourage
 to specify a more specific type via comments using either the ``Type[]`` syntax,
@@ -72,3 +80,7 @@ This is a reference of which types are supported in doc comments.
 | ``mixed``, or ``*``             | Value is of any available type. We encourage  |
 |                                 | you to avoid this type whenever you can.      |
 +---------------------------------+-----------------------------------------------+
+
+If a certain type that you use in your code is not yet supported and you feel that it
+is widely used, please open an issue on `scrutinizer-ci/php-analyzer
+<https://github.com/scrutinizer-ci/php-analyzer>`_.

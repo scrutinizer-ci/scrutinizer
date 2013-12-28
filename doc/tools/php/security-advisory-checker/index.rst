@@ -1,4 +1,4 @@
-SensioLabs Security Checker
+Security Advisory Checker
 ===========================
 
     The SensioLabs Security Checker is a command line tool that checks if your application uses dependencies with known

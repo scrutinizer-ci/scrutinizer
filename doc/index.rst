@@ -16,8 +16,8 @@ Scrutinizer also collects code metrics like the cyclomatic complexity, or the le
 metrics to calculate a ranking for the different elements of your code. This helps for example in finding the areas
 with the highest technical debt in your code. Learn more about :doc:`code rating <code_rating_system>`.
 
-Supported Languages and Tools
------------------------------
+Supported Languages and Analyses
+--------------------------------
 Below, is the list of languages that we support at the moment. In addition, you can also always run custom commands as
 long as their output format is among our supported formats.
 
@@ -31,11 +31,37 @@ just `open an issue <https://github.com/scrutinizer-ci/scrutinizer/issues/new>`_
     code_rating_system
     api/index
 
+General Analyses
+~~~~~~~~~~~~~~~~
+
+.. toctree ::
+    :titlesonly:
+
+    code_rating_system
+    tools/change-tracking/index
+    tools/external-code-coverage/index
+    tools/automated-fixes/index
+    tools/custom-commands/index
+
+Javascript
+~~~~~~~~~~
+
 .. toctree ::
     :glob:
     :titlesonly:
 
-    tools/*/index
+    tools/javascript/*/index
+
+
+PHP
+~~~
+
+.. toctree ::
+    :glob:
+    :titlesonly:
+
+    tools/php/*/index
+
 
 Configuration
 -------------
