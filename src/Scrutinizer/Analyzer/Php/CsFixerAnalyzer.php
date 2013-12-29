@@ -36,7 +36,7 @@ class CsFixerAnalyzer extends AbstractFileAnalyzer
 
     protected function getInfo()
     {
-        return 'Runs the PHP CS Fixer (http://http://cs.sensiolabs.org/).';
+        return 'Runs the PHP CS Fixer (http://cs.sensiolabs.org/).';
     }
 
     protected function getDefaultExtensions()
