@@ -11,7 +11,7 @@ In our rating system, we take into account common design problems which manifest
 complex code. These criteria are measured in the form of software metrics that we collect for your code (see below for
 which analysis tools must be enabled for each language).
 
-All code elements are rated on a scale from **A (worst)** to **10 (best)**. Besides we also use the following grades:
+All code elements are rated on a scale from **0 (worst)** to **10 (best)**. Besides we also use the following grades:
 
 +-----------------+---------------------+
 | Class           | Interval            |
