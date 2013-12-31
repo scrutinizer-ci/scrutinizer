@@ -33,6 +33,8 @@ For an overview of all options, see the :doc:`configuration reference <config_re
     config_reference
     checks
     fixes
+    metrics
 
 .. include :: checks_include.rst
 .. include :: fixes_include.rst
+.. include :: metrics_include.rst
