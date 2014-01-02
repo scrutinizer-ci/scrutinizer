@@ -1,5 +1,5 @@
-Supported Doc Comments by PHP Analyzer
-======================================
+Enhancing Type Inference with Doc Comments
+==========================================
 
 Introduction
 ------------
