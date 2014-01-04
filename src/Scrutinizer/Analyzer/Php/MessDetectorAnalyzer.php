@@ -52,6 +52,16 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
                 ->scalarNode('command')
                     ->defaultValue('phpmd')
                 ->end()
+                ->arrayNode('report')
+                    ->children()
+                        ->booleanNode('enabled')->defaultValue(false)->end()
+                        ->scalarNode('dir')->defaultValue('build/logs')->end()
+                        ->scalarNode('file')->defaultValue('pmd.xml')->end()
+                        ->scalarNode('prepend')->defaultValue('<?xml version="1.0" encoding="UTF-8" ?><pmd>')->end()
+                        ->scalarNode('append')->defaultValue('</pmd>')->end()
+                        ->scalarNode('pattern')->defaultValue('/^.+(<file name=".+">.+<\/file>).+$/ms')->end()
+                    ->end()
+                ->end()
             ->end()
             ->perFileConfig('array')
                 ->addDefaultsIfNotSet()
@@ -397,6 +407,8 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
             $rule = preg_replace_callback('#[A-Z]#', function($v) { return '_'.strtolower($v[0]); }, lcfirst((string) $attrs->rule));
             $file->addComment((integer) $attrs->beginline, new Comment($this->getName(), 'php_md.'.$rule, trim((string) $violation)));
         }
+
+        return $output;
     }
 
     private function createRulesetFile(Project $project, File $file, $rulesetFile)

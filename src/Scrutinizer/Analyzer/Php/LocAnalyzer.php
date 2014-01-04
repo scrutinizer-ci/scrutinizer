@@ -179,6 +179,12 @@ class LocAnalyzer implements AnalyzerInterface, LoggerAwareInterface
                     ->attribute('help_block', 'A single directory per line.')
                     ->prototype('scalar')->end()
                 ->end()
+                ->arrayNode('report')
+                    ->children()
+                        ->booleanNode('enabled')->defaultValue(false)->end()
+                        ->scalarNode('dir')->defaultValue('build/logs')->end()
+                        ->scalarNode('file')->defaultValue('phploc.xml')->end()
+                    ->end()
             ->end()
         ;
     }    /**
@@ -218,6 +224,11 @@ class LocAnalyzer implements AnalyzerInterface, LoggerAwareInterface
         unlink($outputFile);
         if (0 !== $proc->run()) {
             throw new ProcessFailedException($proc);
+        }
+
+        // Report
+        if ($project->getGlobalConfig('report.enabled', false)) {
+            copy($outputFile, $project->getReportDirectory().'/'.$project->getGlobalConfig('report.file'));
         }
 
         $doc = XmlUtils::safeParse($output);

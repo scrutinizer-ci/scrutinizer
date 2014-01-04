@@ -39,6 +39,13 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterfa
                 ->scalarNode('command')
                     ->defaultValue('phpcpd')
                 ->end()
+                ->arrayNode('report')
+                    ->children()
+                        ->booleanNode('enabled')->defaultValue(false)->end()
+                        ->scalarNode('dir')->defaultValue('build/logs')->end()
+                        ->scalarNode('file')->defaultValue('pmd-cpd.xml')->end()
+                    ->end()
+                ->end()
                 ->arrayNode('excluded_dirs')
                     ->info('A list of excluded directories.')
                     ->attribute('label', 'Excluded Directories')
@@ -114,6 +121,11 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterfa
         $proc->run(function($_, $data) {
             $this->logger->info($data);
         });
+
+        // Report
+        if ($project->getGlobalConfig('report.enabled', false)) {
+            copy($outputFile, $project->getReportDirectory().'/'.$project->getGlobalConfig('report.file'));
+        }
 
         $result = file_get_contents($outputFile);
         unlink($outputFile);

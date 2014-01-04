@@ -48,9 +48,21 @@ abstract class AbstractFileAnalyzer implements AnalyzerInterface, LoggerAwareInt
 
     public function scrutinize(Project $project)
     {
+        // Start report
+        if ($project->getGlobalConfig('report.enabled', false))
+        {
+            $project->startReport($project->getGlobalConfig('report'));
+        }
+
         FileTraversal::create($project, $this, 'analyze')
             ->setExtensions($project->getGlobalConfig('extensions'))
             ->setLogger($this->logger)
             ->traverse();
+
+        // Finalize report
+        if ($project->getGlobalConfig('report.enabled', false))
+        {
+            $project->endReport($project->getGlobalConfig('report'));
+        }
     }
 }

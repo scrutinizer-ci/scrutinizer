@@ -206,14 +206,15 @@ class Project
      * Returns a global configuration setting.
      *
      * @param string $configPath
+     * @param bool   $throw          Throw an exception when config is not found ?
      *
      * @return mixed
      */
-    public function getGlobalConfig($configPath)
+    public function getGlobalConfig($configPath, $throw = true)
     {
         $segments = explode('.', $configPath);
 
-        return $this->walkConfig($this->config['tools'][$this->analyzerName], $segments, $this->analyzerName);
+        return $this->walkConfig($this->config['tools'][$this->analyzerName], $segments, $this->analyzerName, $throw);
     }
 
     public function getAnalyzerConfig()
@@ -264,7 +265,7 @@ class Project
         return false;
     }
 
-    private function walkConfig($config, array $segments, $relPath = null)
+    private function walkConfig($config, array $segments, $relPath = null, $throw = true)
     {
         $fullPath = ($relPath ? $relPath.'.' : '').implode('.', $segments);
 
@@ -273,12 +274,85 @@ class Project
             $walked .= $walked ? '.'.$segment : $segment;
 
             if ( ! array_key_exists($segment, $config)) {
-                throw new \InvalidArgumentException(sprintf('There is no config at path "%s"; walked path: "%s".', $fullPath, $walked));
+                if ($throw) {
+                    throw new \InvalidArgumentException(sprintf('There is no config at path "%s"; walked path: "%s".', $fullPath, $walked));
+                } else {
+                    return false;
+                }
             }
 
             $config = $config[$segment];
         }
 
         return $config;
+    }
+
+    public function createReportDirectory()
+    {
+        if (!is_dir($this->getReportDirectory())) {
+            $success = mkdir($this->getReportDirectory(), 0777, true);
+            if (!$success) {
+                throw new RuntimeException('Report directory "%s" could not be created', $this->getReportDirectory());
+            }
+        }
+
+        return true;
+    }
+
+    public function getReportDirectory()
+    {
+        // Directory path is not absolute
+        if (0 !== strpos($this->getGlobalConfig('report.dir'), '/')) {
+            $directory = $this->getDir().'/'.$this->getGlobalConfig('report.dir');
+        } else {
+            $directory = $this->getGlobalConfig('report.dir');
+        }
+
+        return $directory;
+    }
+
+    public function extractReportData($result, $analyzedFile)
+    {
+        // Extract data using configured pattern
+        $matches = array();
+        $success = preg_match($this->getGlobalConfig('report.pattern'), $result, $matches);
+
+        // Append to report
+        if (!$success) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Could not extract data from raw results using regex "%s"',
+                    $this->getGlobalConfig('report.pattern')
+                )
+            );
+        } else {
+            // Fix file name
+            $data = preg_replace(
+                '/<file name=".+">/',
+                sprintf('<file name="%s">', $analyzedFile),
+                $matches[1]
+            );
+        }
+
+        return $data;
+    }
+
+    public function openReport($mode = 'r')
+    {
+        return new \SplFileObject($this->getReportDirectory().'/'.$this->getGlobalConfig('report.file'), $mode);
+    }
+
+    public function startReport(array $reportConfig)
+    {
+        $report = $this->openReport('w+');
+        $report->fwrite($this->getGlobalConfig('report.prepend'));
+        $report = null;
+    }
+
+    public function endReport($reportFile)
+    {
+        $report = $this->openReport('a+');
+        $report->fwrite($this->getGlobalConfig('report.append'));
+        $report = null;
     }
 }

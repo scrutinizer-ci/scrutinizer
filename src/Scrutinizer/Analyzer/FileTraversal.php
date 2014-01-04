@@ -75,7 +75,20 @@ class FileTraversal
                 }
 
                 try {
-                    $this->analyzer->{$this->method}($this->project, $file);
+                    $rawResult = $this->analyzer->{$this->method}($this->project, $file);
+
+                    // Append results to report
+                    if ($this->project->getGlobalConfig('report.enabled', false)) {
+                        try {
+                            $report = $this->project->openReport('a');
+                            $report->fwrite($this->project->extractReportData($rawResult, $file->getPath()));
+                            $report = null;
+                        } catch (\InvalidArgumentException $e) {
+                            if (null !== $this->logger) {
+                                $this->logger->debug($e->getMessage());
+                            }
+                        }
+                    }
                 } catch (\Exception $ex) {
                     throw new \RuntimeException(
                         sprintf('An exception occurred while analyzing "%s": %s', $file->getPath(), $ex->getMessage()),
