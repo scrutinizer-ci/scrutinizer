@@ -11,6 +11,25 @@ All configuration for scrutinizer ci is written in Yaml. Scrutinizer looks in se
 3. Repository Configuration
 4. Global Configuration
 
+Getting Started with Default Configuration
+------------------------------------------
+Scrutinizer provides you with several `default configurations <https://github.com/scrutinizer-ci/scrutinizer/tree/master/res/default-configs>`_
+for different languages/projects, which you can import and override for your repository. To import a configuration, simply use the
+``imports`` directive:
+
+.. code-block :: yaml
+
+    # .scrutinizer.yml
+    imports:
+        - javascript
+        - php
+
+    ## Overwrite as needed here.
+
+.. tip ::
+    If you would like to share a configuration for your project, simply open a pull request/issue on
+    `scrutinizer-ci/scrutinizer <https://github.com/scrutinizer-ci/scrutinizer>`_.
+
 Configuration Cascade
 ---------------------
 

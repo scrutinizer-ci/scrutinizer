@@ -1,0 +1,14 @@
+filter:
+    excluded_paths: [vendor/*, tests/*, app/*, bin/*, library/*]
+
+tools:
+    # Copy/Paste Detector
+    php_cpd:
+        excluded_dirs: [vendor, tests, app, bin, library]
+
+    # Metrics
+    php_pdepend:
+        excluded_dirs: [vendor, tests, app, bin, library]
+
+    # Some Metrics + Bug Detection/Auto-Fixes
+    php_analyzer: true

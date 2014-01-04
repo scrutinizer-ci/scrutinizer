@@ -1,0 +1,3 @@
+tools:
+    # Coding-Style / Bug Detection
+    js_hint: true
