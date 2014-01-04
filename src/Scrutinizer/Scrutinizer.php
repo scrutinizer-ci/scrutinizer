@@ -73,9 +73,9 @@ class Scrutinizer
         return $this->analyzers;
     }
 
-    public function getConfiguration()
+    public function getConfiguration(DefaultConfigRegistry $configRegistry = null)
     {
-        return new Configuration($this->analyzers);
+        return new Configuration($this->analyzers, $configRegistry);
     }
 
     public function scrutinize($dir, array $paths = array())

@@ -8,6 +8,8 @@ use Scrutinizer\Config\NodeBuilder;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * Lays out the structure of the configuration.
@@ -17,11 +19,12 @@ use Symfony\Component\Config\Definition\Processor;
 class Configuration
 {
     private $builders = array();
+    private $configRegistry;
 
     /**
      * @param AnalyzerInterface[] $analyzers
      */
-    public function __construct(array $analyzers)
+    public function __construct(array $analyzers, DefaultConfigRegistry $configRegistry = null)
     {
         foreach ($analyzers as $analyzer) {
             assert($analyzer instanceof AnalyzerInterface);
@@ -29,6 +32,8 @@ class Configuration
             $this->builders[] = $configBuilder = new ConfigBuilder($analyzer->getName());
             $analyzer->buildConfig($configBuilder);
         }
+
+        $this->configRegistry = $configRegistry ?: new DefaultConfigRegistry();
     }
 
     public function processConfigs(array $configs)
@@ -69,6 +74,27 @@ class Configuration
             })->end()
             ->children()
                 ->booleanNode('inherit')->defaultFalse()->end()
+                ->arrayNode('imports')
+                    ->prototype('scalar')
+                        ->validate()->always(function($filename) {
+                            if (substr($filename, -4) === '.yml') {
+                                $filename = substr($filename, 0, -4);
+                            }
+
+                            $availableConfigs = $this->configRegistry->getAvailableConfigs();
+
+                            if ( ! in_array($filename, $availableConfigs, true)) {
+                                throw new \Exception(sprintf(
+                                    'The default config "%s" does not exist. Available configs: %s',
+                                    $filename,
+                                    implode(', ', $availableConfigs)
+                                ));
+                            }
+
+                            return $filename;
+                        })->end()
+                    ->end()
+                ->end()
                 ->arrayNode('filter')
                     ->info('Allows you to filter which files are included in the review; by default, all files.')
                     ->fixXmlConfig('path')
