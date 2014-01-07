@@ -30,6 +30,10 @@ class FindElementsVisitor extends \PHPParser_NodeVisitorAbstract
                 || $node instanceof \PHPParser_Node_Stmt_Trait
                 || $node instanceof \PHPParser_Node_Stmt_Interface) {
             $className = implode("\\", $node->namespacedName->parts);
+            if (false === strpos($className, '\\')) {
+                $className = '+global\\'.$className;
+            }
+
             $this->classes[] = $className;
             $this->classNodes[$className] = $node;
 

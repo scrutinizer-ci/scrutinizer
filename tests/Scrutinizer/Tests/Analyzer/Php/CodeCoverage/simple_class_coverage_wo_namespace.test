@@ -1,0 +1,196 @@
+<?php
+
+class Foo
+{
+    private $bar;
+
+    public function __construct(Bar $bar)
+    {
+        $this->bar = $bar;
+    }
+
+    public function getBar()
+    {
+        return $this->bar;
+    }
+
+    public function getBarName()
+    {
+        return $this->bar->getName();
+    }
+}
+
+-- FILENAME --
+src/Foo.php
+
+-- FILE: src/Bar.php --
+<?php
+
+class Bar
+{
+    private $name;
+
+    public function __construct($name)
+    {
+        $this->name = $name;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+}
+
+-- FILE: tests/FooTest.php --
+<?php
+
+class FooTest extends \PHPUnit_Framework_TestCase
+{
+    public function testGetBar()
+    {
+        $foo = new Foo($bar = new Bar('Foo'));
+        $this->assertSame($bar, $foo->getBar());
+    }
+}
+
+-- FILE: bootstrap.php --
+<?php
+
+require_once __DIR__.'/src/Bar.php';
+require_once __DIR__.'/src/Foo.php';
+
+-- FILE: phpunit.xml --
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="bootstrap.php">
+    <testsuites>
+        <testsuite name="Test Suite">
+            <directory>./tests</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
+
+-- CONFIG --
+tools:
+    php_code_coverage: true
+
+-- LINE ATTRIBUTES --
+Line 7: {"coverage_count":1}
+Line 9: {"coverage_count":1}
+Line 10: {"coverage_count":1}
+Line 12: {"coverage_count":1}
+Line 14: {"coverage_count":1}
+Line 17: {"coverage_count":0}
+Line 19: {"coverage_count":0}
+
+-- PROJECT-METRICS --
+'php_code_coverage.files': 2
+'php_code_coverage.lines_of_code': 35
+'php_code_coverage.non_comment_lines_of_code': 35
+'php_code_coverage.classes': 2
+'php_code_coverage.methods': 5
+'php_code_coverage.covered_methods': 3
+'php_code_coverage.conditionals': 0
+'php_code_coverage.covered_conditionals': 0
+'php_code_coverage.statements': 7
+'php_code_coverage.covered_statements': 5
+'php_code_coverage.elements': 12
+'php_code_coverage.covered_elements': 8
+
+-- CODE-ELEMENTS --
+package(+global):
+    children:
+        - 'class(+global\Bar)'
+        - 'class(+global\Foo)'
+
+class(+global\Bar):
+    metrics:
+        'php_code_coverage.methods': 2
+        'php_code_coverage.covered_methods': 1
+        'php_code_coverage.conditionals': 0
+        'php_code_coverage.covered_conditionals': 0
+        'php_code_coverage.statements': 3
+        'php_code_coverage.covered_statements': 2
+        'php_code_coverage.elements': 5
+        'php_code_coverage.covered_elements': 3
+        'php_code_coverage.coverage': 0.66666666666667
+
+    location:
+        filename: src/Bar.php
+        start_line: 3
+        end_line: 16
+
+    children:
+        - operation(+global\Bar::__construct)
+        - operation(+global\Bar::getName)
+
+operation(+global\Bar::__construct):
+    metrics:
+        'php_code_coverage.change_risk_anti_pattern': 1
+        'php_code_coverage.count': 1
+
+    location:
+        filename: src/Bar.php
+        start_line: 7
+        end_line: 10
+
+operation(+global\Bar::getName):
+    metrics:
+        'php_code_coverage.change_risk_anti_pattern': 2
+        'php_code_coverage.count': 0
+
+    location:
+        filename: src/Bar.php
+        start_line: 12
+        end_line: 15
+
+class(+global\Foo):
+    location:
+        filename: src/Foo.php
+        start_line: 3
+        end_line: 21
+
+    metrics:
+        'php_code_coverage.methods': 3
+        'php_code_coverage.covered_methods': 2
+        'php_code_coverage.conditionals': 0
+        'php_code_coverage.covered_conditionals': 0
+        'php_code_coverage.statements': 4
+        'php_code_coverage.covered_statements': 3
+        'php_code_coverage.elements': 7
+        'php_code_coverage.covered_elements': 5
+        'php_code_coverage.coverage': 0.75
+
+    children:
+        - operation(+global\Foo::__construct)
+        - operation(+global\Foo::getBar)
+        - operation(+global\Foo::getBarName)
+
+operation(+global\Foo::__construct):
+    metrics:
+        'php_code_coverage.change_risk_anti_pattern': 1
+        'php_code_coverage.count': 1
+
+    location:
+        filename: src/Foo.php
+        start_line: 7
+        end_line: 10
+
+operation(+global\Foo::getBar):
+    metrics:
+        'php_code_coverage.change_risk_anti_pattern': 1
+        'php_code_coverage.count': 1
+
+    location:
+        filename: src/Foo.php
+        start_line: 12
+        end_line: 15
+
+operation(+global\Foo::getBarName):
+    metrics:
+        'php_code_coverage.change_risk_anti_pattern': 2
+        'php_code_coverage.count': 0
+
+    location:
+        filename: src/Foo.php
+        start_line: 17
+        end_line: 20
