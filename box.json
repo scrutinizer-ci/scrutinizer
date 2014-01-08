@@ -4,6 +4,7 @@
         "vendor/"
     ],
     "directories-bin": [
+        "res/",
         "src/Scrutinizer/Model/",
         "vendor/jms/serializer/src/JMS/Serializer/Annotation/",
         "vendor/doctrine/annotations/lib/Doctrine/Common/Annotations/Annotation/"
