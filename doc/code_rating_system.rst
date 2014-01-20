@@ -1,31 +1,12 @@
 Code Rating System
 ==================
-Scrutinizer uses a language agnostic algorithm to rate different elements of your code such as classes, methods, or
-functions with grades A-F and also computes a weighted average for your entire project. These ratings are instrumental
-in pinpointing the parts of your software that require your attention most and also allow to measure the progress of your
-project both for developers and project managers easily.
+Scrutinizer uses a rating algorithm for the different elements of your code such as classes, methods or functions
+which combines their different metrics (such as complexity, coupling, cohesion, etc.) in a single rating score.
 
-Criteria and Scores
--------------------
-In our rating system, we take into account common design problems which manifest themselves in duplicated, unclear or
-complex code. These criteria are measured in the form of software metrics that we collect for your code (see below for
-which analysis tools must be enabled for each language).
+This allows you to track changes in metrics for your project very easily without verifying each individual metric,
+but only diving in deeper when and where needed.
 
-All code elements are rated on a scale from **0 (worst)** to **10 (best)**. Besides we also use the following grades:
-
-+-----------------+---------------------+
-| Class           | Interval            |
-+=================+=====================+
-| A               | [8, 10]             |
-+-----------------+---------------------+
-| B               | [6, 8)              |
-+-----------------+---------------------+
-| C               | [4, 6)              |
-+-----------------+---------------------+
-| D               | [2, 4)              |
-+-----------------+---------------------+
-| F               | [0, 2)              |
-+-----------------+---------------------+
+The rating is done with the grades A-F; A being the best rating and F the worst.
 
 Configuration
 -------------
@@ -39,8 +20,8 @@ For PHP, data from the following tools is being used. At least one must be enabl
 - :doc:`PHP PDepend <tools/php/pdepend/index>`
 - :doc:`PHP Copy/Paste Detector <tools/php/copy-paste-detector/index>`
 - :doc:`PHP CodeCoverage <tools/php/code-coverage/index>`
+- :doc:`PHP Analyzer <tools/php/php-analyzer/index>`
 
 Others
 ~~~~~~
-Unfortunately, only PHP is supported at this point. If you would like to see another language, let us know at
-support@scrutinizer-ci.com.
+We always love to add support for more languages, contact us at support@scrutinizer-ci.com.
