@@ -29,6 +29,8 @@ class Scrutinizer
     const EVENT_POST_ANALYSIS = 'post_analysis';
 
     private $logger;
+
+    /** @var AnalyzerInterface[] */
     private $analyzers = array();
     private $dispatcher;
 
@@ -111,7 +113,10 @@ class Scrutinizer
                 continue;
             }
 
-            $this->logger->info(sprintf('Running analyzer "%s"...'."\n", $analyzer->getName()));
+            if ( ! $analyzer instanceof Analyzer\CustomAnalyzer) {
+                $this->logger->info(sprintf('Running analyzer "%s"...'."\n", $analyzer->getName()));
+            }
+
             $project->setAnalyzerName($analyzer->getName());
             $analyzer->scrutinize($project);
         }

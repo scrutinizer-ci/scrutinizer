@@ -13,7 +13,7 @@ class RunTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame(0, $proc->getExitCode(), $proc->getOutput().$proc->getErrorOutput());
 
-        $expectedOutput = "Running analyzer \"js_hint\"...\n\n\r    Files 1/1 [............................................................] 100%\n\nRunning analyzer \"custom_commands\"...\nsome_file.js\n============\nLine 1: Unused variable: 'foo'\nLine 2: Unused variable: 'x'\n\nScanned Files: 1, Comments: 2\n";
+        $expectedOutput = "Running analyzer \"js_hint\"...\n\n\r    Files 1/1 [............................................................] 100%\n\nsome_file.js\n============\nLine 1: Unused variable: 'foo'\nLine 2: Unused variable: 'x'\n\nScanned Files: 1, Comments: 2\n";
         $this->assertEquals($expectedOutput, $proc->getOutput());
     }
 
