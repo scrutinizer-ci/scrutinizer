@@ -52,6 +52,8 @@ This is a reference of which types are supported in doc comments.
 +---------------------------------+-----------------------------------------------+
 | ``float``, or ``double``        | Value is a float.                             |
 +---------------------------------+-----------------------------------------------+
+| ``string``                      | Value is a string.                            |
++---------------------------------+-----------------------------------------------+
 | ``null``                        | Value is null. This only makes sense in       |
 |                                 | combination with another type, e.g.           |
 |                                 | ``string|null``.                              |
