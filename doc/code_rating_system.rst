@@ -17,10 +17,9 @@ PHP
 ~~~
 For PHP, data from the following tools is being used. At least one must be enabled in your build config:
 
-- :doc:`PHP PDepend <tools/php/pdepend/index>`
-- :doc:`PHP Copy/Paste Detector <tools/php/copy-paste-detector/index>`
-- :doc:`PHP CodeCoverage <tools/php/code-coverage/index>`
-- :doc:`PHP Analyzer <tools/php/php-analyzer/index>`
+- :doc:`PHP PDepend <tools/php/pdepend/index>` (complexity, size)
+- :doc:`PHP Copy/Paste Detector <tools/php/copy-paste-detector/index>` (duplication)
+- :doc:`PHP Analyzer <tools/php/php-analyzer/index>` (coupling, cohesion)
 
 Others
 ~~~~~~
