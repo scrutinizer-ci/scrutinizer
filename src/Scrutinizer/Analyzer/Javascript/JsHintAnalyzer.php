@@ -132,7 +132,7 @@ class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
         while ($path !== $newPath = dirname($path)) {
             $path = $newPath;
 
-            $configFile = $project->getFile($path.'/.jshintrc');
+            $configFile = $project->getFile('.jshintrc');
             if ($configFile->isDefined()) {
                 return $configFile->get()->getContent();
             }

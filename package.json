@@ -1,0 +1,8 @@
+{
+  "name": "scrutinizer",
+  "description": "Library for abstracting the invocation of analysis tools https://scrutinizer-ci.com/docs",
+  "repository": "https://github.com/scrutinizer-ci/scrutinizer",
+  "devDependencies": {
+        "jshint" : "2.4.3"
+  }
+}
