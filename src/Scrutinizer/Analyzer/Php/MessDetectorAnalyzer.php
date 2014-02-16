@@ -402,7 +402,10 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
     private function createRulesetFile(Project $project, File $file, $rulesetFile)
     {
         if (null !== $ruleset = $project->getFileConfig($file, 'ruleset')) {
-            file_put_contents($rulesetFile, $project->getFile($ruleset)->map(function(File $file) { return $file->getContent(); })->get());
+            $rulesetContents = $project->getFile($ruleset)->map(function(File $file) { return $file->getContent(); })
+                ->getOrThrow(new \RuntimeException(sprintf('The ruleset file "%s" could not be found in the repository.', $ruleset)));
+
+            file_put_contents($rulesetFile, $rulesetContents);
 
             return;
         }
