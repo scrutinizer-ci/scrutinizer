@@ -99,6 +99,7 @@ class Configuration
                     ->info('Allows you to filter which files are included in the review; by default, all files.')
                     ->fixXmlConfig('path')
                     ->fixXmlConfig('excluded_path')
+                    ->performNoDeepMerging()
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->arrayNode('paths')
