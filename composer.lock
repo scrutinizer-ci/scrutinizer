@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "025635198714bdbdc3e219299135403d",
+    "hash": "f0bd2a3946647e53a4a64eadd5c10dc2",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1314,14 +1314,8 @@
             "version": "1.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/sebastianbergmann/finder-facade.git",
-                "reference": "1e396fda3449fce9df032749fa4fa2619e0347e0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/finder-facade/zipball/1e396fda3449fce9df032749fa4fa2619e0347e0",
-                "reference": "1e396fda3449fce9df032749fa4fa2619e0347e0",
-                "shasum": ""
+                "url": "git://github.com/scrutinizer-ci/finder-facade",
+                "reference": "173c6034008b50a7283c1e8a9b8320ae62fdcd68"
             },
             "require": {
                 "symfony/finder": ">=2.2.0",
@@ -1333,7 +1327,6 @@
                     "src/"
                 ]
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
@@ -1346,6 +1339,9 @@
             ],
             "description": "FinderFacade is a convenience wrapper for Symfony's Finder component.",
             "homepage": "https://github.com/sebastianbergmann/finder-facade",
+            "support": {
+                "issues": "https://github.com/sebastianbergmann/finder-facade/issues"
+            },
             "time": "2013-05-28 06:10:03"
         },
         {
