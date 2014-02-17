@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "e20cbd03df5d13594f23468726739954",
+    "hash": "025635198714bdbdc3e219299135403d",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1399,18 +1399,13 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/sebastianbergmann/phpcpd.git",
-                "reference": "535183642394639ca9b6891f2da1fbc404ff88a0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpcpd/zipball/535183642394639ca9b6891f2da1fbc404ff88a0",
-                "reference": "535183642394639ca9b6891f2da1fbc404ff88a0",
-                "shasum": ""
+                "url": "git://github.com/scrutinizer-ci/phpcpd",
+                "reference": "1b98e94e526c51a045867e378e5b5bf63f61e320"
             },
             "require": {
                 "php": ">=5.3.3",
                 "phpunit/php-timer": ">=1.0.4",
+                "scrutinizer/utils": "dev-master",
                 "sebastian/finder-facade": ">=1.1.0",
                 "sebastian/version": ">=1.0.0",
                 "symfony/console": ">=2.2.0",
@@ -1430,7 +1425,6 @@
                     "src/"
                 ]
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
@@ -1443,7 +1437,10 @@
             ],
             "description": "Copy/Paste Detector (CPD) for PHP code.",
             "homepage": "https://github.com/sebastianbergmann/phpcpd",
-            "time": "2014-02-16 12:44:32"
+            "support": {
+                "issues": "https://github.com/sebastianbergmann/phpcpd/issues"
+            },
+            "time": "2014-02-17 12:00:33"
         },
         {
             "name": "sebastian/version",

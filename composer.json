@@ -5,7 +5,8 @@
 
     "repositories": [
         {"type": "git", "url": "git://github.com/scrutinizer-ci/pdepend"},
-        {"type": "git", "url": "git://github.com/scrutinizer-ci/phpmd"}
+        {"type": "git", "url": "git://github.com/scrutinizer-ci/phpmd"},
+        {"type": "git", "url": "git://github.com/scrutinizer-ci/phpcpd"}
     ],
 
     "bin": ["bin/scrutinizer"],

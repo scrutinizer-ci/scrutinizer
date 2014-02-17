@@ -76,7 +76,7 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterfa
         ;
     }
 
-    private function buildCommand(Project $project, $outputFile)
+    private function buildCommand(Project $project, $outputFile, $filterFile)
     {
         $command = sprintf(
             '%s --log-pmd %s --min-lines %d --min-tokens %d --names %s',
@@ -94,6 +94,10 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterfa
             }
         }
 
+        $filter = $project->getGlobalConfig('filter');
+        file_put_contents($filterFile, json_encode($filter));
+        $command .= ' --filter-file='.escapeshellarg($filterFile);
+
         // Scan the current directory.
         $command .= ' '.$project->getDir();
 
@@ -103,8 +107,9 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterfa
     public function scrutinize(Project $project)
     {
         $outputFile = tempnam(sys_get_temp_dir(), 'phpcpd');
+        $filterFile = tempnam(sys_get_temp_dir(), 'phpcpd-filter');
 
-        $command = $this->buildCommand($project, $outputFile);
+        $command = $this->buildCommand($project, $outputFile, $filterFile);
 
         $this->logger->info('$ '.$command."\n");
         $proc = new Process($command, $project->getDir());
@@ -117,6 +122,7 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterfa
 
         $result = file_get_contents($outputFile);
         unlink($outputFile);
+        unlink($filterFile);
 
         if (empty($result)) {
             if ($proc->getExitCode() !== 0) {
