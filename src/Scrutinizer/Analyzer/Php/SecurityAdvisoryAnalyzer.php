@@ -6,6 +6,7 @@ use Guzzle\Http\Client;
 use Guzzle\Plugin\Backoff\BackoffPlugin;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 use Scrutinizer\Analyzer\AnalyzerInterface;
 use Scrutinizer\Config\ConfigBuilder;
 use Scrutinizer\Model\File;
@@ -27,6 +28,8 @@ class SecurityAdvisoryAnalyzer implements AnalyzerInterface, LoggerAwareInterfac
         $this->client = new Client('https://security.sensiolabs.org');
         $this->client->setDefaultOption('timeout', 5);
         $this->client->addSubscriber(BackoffPlugin::getExponentialBackoff());
+
+        $this->logger = new NullLogger();
     }
 
     /**
