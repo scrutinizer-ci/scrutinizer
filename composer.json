@@ -4,7 +4,6 @@
     "license": "Apache2",
 
     "repositories": [
-        {"type": "git", "url": "git://github.com/schmittjoh/Process"},
         {"type": "git", "url": "git://github.com/scrutinizer-ci/pdepend"},
         {"type": "git", "url": "git://github.com/scrutinizer-ci/phpmd"}
     ],
