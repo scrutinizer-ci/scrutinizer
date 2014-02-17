@@ -26,3 +26,94 @@ If you would like to run a build from scrutinizer-ci.com on your local PC, simpl
 ``.scrutinizer.yml`` file in your root folder.
 
 Learn more about configuration in [the documentation](https://scrutinizer-ci.com/docs).
+
+
+Unit Tests
+==========
+
+In order to run the unit tests, you need to have a variety of libraries and extensions installed.
+
+Create a vendor folder
+----------------------
+
+```
+$ mkdir vendor
+```
+
+Install Composer (https://getcomposer.org)
+------------------------------------------
+
+```
+$ curl -sS https://getcomposer.org/installer | php -- --install-dir=vendor
+$ php vendor/composer.phar install
+```
+
+Install Pear/Pecl (pecl.php.net)
+--------------------------------
+
+```
+$ cd vendor
+$ curl -O http://pear.php.net/go-pear.phar 
+$ sudo php -d detect_unicode=0 go-pear.phar 
+```
+Follow the instructions. A helpful hint for those on Mac OS (http://jason.pureconcepts.net/2012/10/install-pear-pecl-mac-os-x/)
+
+Install Xdebug (xdebug.org)
+---------------------------
+
+```
+$ sudo pecl install xdebug
+```
+
+You will then need to configure your php.ini file. On the mac, it will be located in /etc/php.ini. If it is not there you will need
+to copy the ```/etc/php.ini.default``` file to ```/etc.php```. Add the following lines to the end of the file:
+
+```
+[xdebug]
+zend_extension=/usr/lib/php/extensions/no-debug-non-zts-<specific_to_your_environment>/xdebug.so
+xdebug.file_link_format="txmt://open?url=file://%f&line=%1"
+xdebug.remote_enable = On
+xdebug.remote_autostart = 1
+```
+
+Restart apache
+
+```
+$ sudo apachectl restart
+```
+
+Install Node (NPM) (https://npmjs.org/)
+---------------------------------------
+
+Brew:
+```
+$ brew install node
+```
+
+Mac Ports:
+```
+$ port install npm
+```
+
+
+Install JSHint (www.jshint.com)
+-------------------------------
+
+```
+$ cd vendor
+$ npm install 
+```
+
+Now you will need to create a symlink to run jshint globally.
+
+```
+$ sudo ln -s $PWD/node_modules/jshint/bin/jshint /opt/local/bin/jshint
+```
+
+Run the tests
+-------------
+
+```
+$ phpunit -c phpunit.xml.dist 
+
+```
