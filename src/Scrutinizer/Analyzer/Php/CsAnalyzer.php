@@ -42,7 +42,7 @@ class CsAnalyzer extends AbstractFileAnalyzer
         $builder
             ->globalConfig()
                 ->scalarNode('command')
-                    ->defaultValue('phpcs')
+                    ->defaultValue(__DIR__.'/../../../../vendor/bin/phpcs')
                 ->end()
             ->end()
             ->perFileConfig()

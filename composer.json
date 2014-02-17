@@ -4,7 +4,9 @@
     "license": "Apache2",
 
     "repositories": [
-        {"type": "git", "url": "git://github.com/schmittjoh/Process"}
+        {"type": "git", "url": "git://github.com/schmittjoh/Process"},
+        {"type": "git", "url": "git://github.com/scrutinizer-ci/pdepend"},
+        {"type": "git", "url": "git://github.com/scrutinizer-ci/phpmd"}
     ],
 
     "bin": ["bin/scrutinizer"],
@@ -12,14 +14,14 @@
     "require": {
         "php": ">=5.4",
         "scrutinizer/utils": "dev-master",
-        "symfony/config": "2.*",
-        "symfony/console": "2.*",
+        "symfony/config": "~2.0",
+        "symfony/console": "~2.0",
         "symfony/process": "~2.1@dev",
-        "symfony/finder": "2.1.*",
-        "symfony/yaml": "2.*",
-        "symfony/filesystem": "2.*",
+        "symfony/finder": "~2.1",
+        "symfony/yaml": "~2.0",
+        "symfony/filesystem": "~2.0",
         "symfony/event-dispatcher": "~2.0",
-        "monolog/monolog": "1.2.*",
+        "monolog/monolog": "~1.2.0",
         "psr/log": "1.0.0",
         "phpoption/phpoption": "~1.0@dev",
         "jms/serializer": "dev-master",
@@ -28,6 +30,16 @@
         "guzzle/guzzle": "~3.0",
         "nikic/php-parser": "dev-master"
     },
+
+    "require-dev": {
+        "phpmd/phpmd": "dev-master",
+        "pdepend/pdepend": "dev-master",
+        "squizlabs/php_codesniffer": "dev-master",
+        "fabpot/php-cs-fixer": "dev-master",
+        "sebastian/phpcpd": "dev-master",
+        "phploc/phploc": "dev-master"
+    },
+
     "autoload": {
         "psr-0": {
             "Scrutinizer": "src/" 

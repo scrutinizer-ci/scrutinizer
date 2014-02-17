@@ -54,7 +54,7 @@ tools:
 
 -- PROJECT-METRICS --
 php_loc.lines_of_code: 39
-php_loc.lines_of_comments: 2
+php_loc.lines_of_comments: 1
 php_loc.cyclomatic_complexity: 1
 php_loc.cyclomatic_complexity_in_methods: 1
 php_loc.interfaces: 1
@@ -62,7 +62,7 @@ php_loc.traits: 1
 php_loc.classes: 3
 php_loc.abstract_classes: 1
 php_loc.concrete_classes: 2
-php_loc.functions: 1
+php_loc.functions: 2
 php_loc.anonymous_functions: 1
 php_loc.methods: 6
 php_loc.public_methods: 5
@@ -73,3 +73,24 @@ php_loc.constants: 0
 php_loc.class_constants: 0
 php_loc.global_constants: 0
 php_loc.average_cyclomatic_complexity_per_method: 1.1666666666667
+php_loc.logical_lines_of_code: 9
+php_loc.logical_lines_of_code_in_classes: 7
+php_loc.logical_lines_of_code_in_functions: 2
+php_loc.logical_lines_of_code_in_global_namespace: 0
+php_loc.named_functions: 1
+php_loc.test_classes: 0
+php_loc.test_methods: 0
+php_loc.average_cyclomatic_complexity_per_logical_line_of_code: 0.11111111111111
+php_loc.average_logical_lines_of_code_per_class: 2.3333333333333
+php_loc.average_logical_lines_of_code_per_method: 1.1666666666667
+php_loc.average_logical_lines_of_code_per_function: 1.0
+php_loc.method_calls: 0
+php_loc.static_method_calls: 0
+php_loc.instance_method_calls: 0
+php_loc.attribute_accesses: 0
+php_loc.static_attribute_accesses: 0
+php_loc.instance_attribute_accesses: 0
+php_loc.global_accesses: 0
+php_loc.global_variable_accesses: 0
+php_loc.super_global_variable_accesses: 0
+php_loc.global_constant_accesses: 0

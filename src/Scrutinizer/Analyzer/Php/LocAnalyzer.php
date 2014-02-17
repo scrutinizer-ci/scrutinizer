@@ -168,7 +168,7 @@ class LocAnalyzer implements AnalyzerInterface, LoggerAwareInterface
             ->info('Analyzes the size and structure of a PHP project.')
             ->disableDefaultFilter()
             ->globalConfig()
-                ->scalarNode('command')->defaultValue('phploc')->end()
+                ->scalarNode('command')->defaultValue(__DIR__.'/../../../../vendor/bin/phploc')->end()
                 ->arrayNode('names')
                     ->attribute('help_block', 'A single name pattern per line.')
                     ->defaultValue(array('*.php'))

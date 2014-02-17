@@ -153,7 +153,7 @@ class BaseAnalyzerTest extends \PHPUnit_Framework_TestCase
     {
         $tests = array();
 
-        foreach (Finder::create()->in(__DIR__.'/Php/CodeCoverage')->name('*.test')->files() as $file) {
+        foreach (Finder::create()->in(__DIR__)->name('*.test')->files() as $file) {
             $tests[] = array($file->getRealPath());
         }
 

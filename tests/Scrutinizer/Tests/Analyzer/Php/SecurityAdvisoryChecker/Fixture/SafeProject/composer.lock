@@ -52,11 +52,3 @@
 
     ]
 }
-
--- FILENAME --
-composer.lock
-
--- CONFIG --
-tools:
-    sensiolabs_security_checker: true
-

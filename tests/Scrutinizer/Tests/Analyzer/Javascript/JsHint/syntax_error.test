@@ -14,5 +14,3 @@ Line 2: Expected '(' and instead saw ','.
 Line 2: Expected ')' to match ',' from line 2 and instead saw '('.
 Line 2: Expected an identifier and instead saw ')'.
 Line 2: Missing semicolon.
-Line 2: Unused variable: 'f'
-Line 2: Unused variable: 'd'

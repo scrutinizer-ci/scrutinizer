@@ -45,9 +45,8 @@ class PDependAnalyzer implements AnalyzerInterface, LoggerAwareInterface
     {
         $builder
             ->info('Analyzes the size and structure of a PHP project.')
-            ->disableDefaultFilter()
             ->globalConfig()
-                ->scalarNode('command')->defaultValue('pdepend')->end()
+                ->scalarNode('command')->defaultValue(__DIR__.'/../../../../vendor/bin/pdepend')->end()
                 ->scalarNode('configuration_file')
                     ->attribute('show_in_editor', false)
                     ->attribute('help_inline', 'Path to a pdepend configuration file if available (relative to your project\'s root directory).')
@@ -70,9 +69,10 @@ class PDependAnalyzer implements AnalyzerInterface, LoggerAwareInterface
                 ->end()
                 ->arrayNode('excluded_dirs')
                     ->attribute('label', 'Excluded Directories')
+                    ->info('Deprecated: PDepend now adheres to the global filter settings.')
                     ->attribute('help_block', 'A single directory without path or ending "/" per line.')
+                    ->attribute('show_in_editor', false)
                     ->prototype('scalar')->end()
-                    ->defaultValue(array('vendor'))
                 ->end()
             ->end()
         ;
@@ -99,6 +99,11 @@ class PDependAnalyzer implements AnalyzerInterface, LoggerAwareInterface
             $command .= ' --suffix='.escapeshellarg(implode(',', $suffixes));
         }
 
+        $filter = $project->getGlobalConfig('filter');
+        $filterFile = tempnam(sys_get_temp_dir(), 'pdepend-file-filter');
+        file_put_contents($filterFile, json_encode($filter));
+        $command .= ' --filter-file='.escapeshellarg($filterFile);
+
         $excludedDirs = $project->getGlobalConfig('excluded_dirs');
         if ( ! empty($excludedDirs)) {
             $command .= ' --ignore='.escapeshellarg(implode(',', $excludedDirs));
@@ -114,6 +119,8 @@ class PDependAnalyzer implements AnalyzerInterface, LoggerAwareInterface
 
         $output = file_get_contents($outputFile);
         unlink($outputFile);
+        unlink($filterFile);
+
         if (0 !== $proc->run()) {
             throw new ProcessFailedException($proc);
         }

@@ -37,7 +37,7 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterfa
             ->info('Runs PHP Copy/Paste Detector')
             ->globalConfig()
                 ->scalarNode('command')
-                    ->defaultValue('phpcpd')
+                    ->defaultValue(__DIR__.'/../../../../vendor/bin/phpcpd')
                 ->end()
                 ->arrayNode('excluded_dirs')
                     ->info('A list of excluded directories.')

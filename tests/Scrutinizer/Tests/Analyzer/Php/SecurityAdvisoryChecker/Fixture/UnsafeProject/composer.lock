@@ -67,7 +67,7 @@
         },
         {
             "name": "friendsofsymfony/user-bundle",
-            "version": "v1.2.3",
+            "version": "v1.4.3",
             "target-dir": "FOS/UserBundle",
             "source": {
                 "type": "git",
@@ -639,14 +639,3 @@
 
     ]
 }
-
--- FILENAME --
-composer.lock
-
--- CONFIG --
-tools:
-    sensiolabs_security_checker: true
-
--- COMMENTS --
-Line 69: There is a security advisory for your installed version of friendsofsymfony/user-bundle:
-
