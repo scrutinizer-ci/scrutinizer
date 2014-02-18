@@ -1,12 +1,12 @@
-Scrutinizer
-===========
+# Scrutinizer
+
 Scrutinizer runs static code analysis, and runtime inspectors on your code, gathers their results, and combines them
 in a unified output format.
 
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/scrutinizer-ci/scrutinizer/badges/quality-score.png?s=00b43441f630596431d776a2db52f4b2f532b037)](https://scrutinizer-ci.com/g/scrutinizer-ci/scrutinizer/)
 
-Installation
-------------
+## Installation
+
 You can download a compiled phar file from [scrutinizer-ci.com/scrutinizer.phar](https://scrutinizer-ci.com/scrutinizer.phar).
 
 After downloading, you can simply run scrutinizer with
@@ -17,8 +17,8 @@ php scrutinizer.phar
 
 This will give you a nice output with all available sub-commands. Note that Scrutinizer requires PHP 5.4 or greater.
 
-Configuration
--------------
+## Configuration
+
 Scrutinizer uses a configuration file named ``.scrutinizer.yml`` which it expects in the root folder of your
 project.
 
@@ -28,12 +28,12 @@ If you would like to run a build from scrutinizer-ci.com on your local PC, simpl
 Learn more about configuration in [the documentation](https://scrutinizer-ci.com/docs).
 
 
-Running Unit Tests
-------------------
+## Running Unit Tests
+
 In order to run the unit tests, you need to have a variety of libraries and extensions installed.
 
-Composer
-~~~~~~~~
+### Composer
+
 If you have not already installed PHP's dependency manager, [Composer](https://getcomposer.org), you need to download it
 and make it available either locally or as a global install on your system.
 
@@ -41,16 +41,17 @@ and make it available either locally or as a global install on your system.
 $ curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/bin
 ```
 
-NPM
-~~~
+
+### NPM
+
 Also make sure that you have JavaScript's dependency manager, npm, installed.
 
 You can find more instructions on that here:
 https://www.npmjs.org/doc/README.html
 
 
-Installing Project Dependencies
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Installing Project Dependencies
+
 Simply run composer's install command, this will automatically download all the necessary dependencies and install
 them locally in the directory:
 
@@ -58,16 +59,17 @@ them locally in the directory:
 $ composer install
 ```
 
-Installing PHPUnit
-~~~~~~~~~~~~~~~~~~
+
+### Installing PHPUnit
+
 Scrutinizer uses PHPUnit to run all unit tests. We need some additional system dependencies if you do not already have
 the phpunit executable in your path.
 
 Please follow the installation instructions here:
 http://phpunit.de/manual/current/en/installation.html
 
-Install XDebug
---------------
+### Install XDebug
+
 XDebug is a PHP extension which must be installed on your system to allow us to test code coverage generation for PHP.
 You can install it through pecl:
 
@@ -75,11 +77,10 @@ You can install it through pecl:
 $ sudo pecl install xdebug
 ```
 
-Run the tests
--------------
+### Run the tests
+
 Finally, you can now run the tests, by executing phpunit in the root folder:
 
 ```
 $ phpunit
-
 ```
