@@ -27,6 +27,22 @@ If you would like to run a build from scrutinizer-ci.com on your local PC, simpl
 
 Learn more about configuration in [the documentation](https://scrutinizer-ci.com/docs).
 
+## Adding Support for an Analysis Tool
+
+If you would like to add support for an analysis tool not yet supported by Scrutinizer, you can
+do so in this repository very easily.
+
+This library runs analysis tools, parses their results and converts them to a unified format which
+is used for further processing. Adding support for another analysis tool requires adding an Analyzer
+class which contains the available configuration options and knows how to parse the tool's output format.
+
+As a starting point, you might want to have a look at the JSHint Analyzer which is relatively
+simple and contains all the essential parts:
+https://github.com/scrutinizer-ci/scrutinizer/blob/master/src/Scrutinizer/Analyzer/Javascript/JsHintAnalyzer.php
+
+When you added an analyzer, make sure to register it in the Main class (https://github.com/scrutinizer-ci/scrutinizer/blob/master/src/Scrutinizer/Scrutinizer.php#L37) and please also
+add some unit tests (see below for how to run the tests).
+
 
 ## Running Unit Tests
 
