@@ -1,0 +1,22 @@
+(function() {
+    var f = 'foo';
+    var s = 'bar'
+})();
+
+-- FILENAME --
+native_test.js
+
+-- FILE: .jshintrc --
+{
+  "unused": true,
+  "asi": true
+}
+
+-- CONFIG --
+tools:
+    js_hint:
+        use_native_config: true
+
+-- COMMENTS --
+Line 2: 'f' is defined but never used.
+Line 3: 's' is defined but never used.

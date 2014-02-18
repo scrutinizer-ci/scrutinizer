@@ -1,2 +1,3 @@
 tools:
-    js_hint: ~
+    js_hint:
+        use_native_config: true

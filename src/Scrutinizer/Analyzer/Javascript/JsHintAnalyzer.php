@@ -99,7 +99,7 @@ class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
         unlink($cfgFile);
         unlink($inputFile);
 
-        if ($proc->getExitCode() > 2 || $proc->getOutput() === '') {
+        if ($proc->getExitCode() > 2 || $proc->getOutput() == '') {
             throw new ProcessFailedException($proc);
         }
 
@@ -136,12 +136,23 @@ class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
         while ($path !== $newPath = dirname($path)) {
             $path = $newPath;
 
-            $configFile = $project->getFile('.jshintrc');
+            $configFile = $project->getFile($this->getConfigPath($path));
             if ($configFile->isDefined()) {
-                return $configFile->get()->getContent();
+                return $configFile->map(function(File $file) { return $file->getContent(); })->get();
             }
         }
 
         return '{}';
+    }
+
+    private function getConfigPath($dir)
+    {
+        if ($dir === '.') {
+            $dir = '';
+        } else {
+            $dir .= '/';
+        }
+
+        return $dir.'.jshintrc';
     }
 }
