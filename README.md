@@ -28,92 +28,58 @@ If you would like to run a build from scrutinizer-ci.com on your local PC, simpl
 Learn more about configuration in [the documentation](https://scrutinizer-ci.com/docs).
 
 
-Unit Tests
-==========
-
+Running Unit Tests
+------------------
 In order to run the unit tests, you need to have a variety of libraries and extensions installed.
 
-Create a vendor folder
-----------------------
+Composer
+~~~~~~~~
+If you have not already installed PHP's dependency manager, [Composer](https://getcomposer.org), you need to download it
+and make it available either locally or as a global install on your system.
 
 ```
-$ mkdir vendor
+$ curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/bin
 ```
 
-Install Composer (https://getcomposer.org)
-------------------------------------------
+NPM
+~~~
+Also make sure that you have JavaScript's dependency manager, npm, installed.
+
+You can find more instructions on that here:
+https://www.npmjs.org/doc/README.html
+
+
+Installing Project Dependencies
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Simply run composer's install command, this will automatically download all the necessary dependencies and install
+them locally in the directory:
 
 ```
-$ curl -sS https://getcomposer.org/installer | php -- --install-dir=vendor
-$ php vendor/composer.phar install
+$ composer install
 ```
 
-Install Pear/Pecl (pecl.php.net)
---------------------------------
+Installing PHPUnit
+~~~~~~~~~~~~~~~~~~
+Scrutinizer uses PHPUnit to run all unit tests. We need some additional system dependencies if you do not already have
+the phpunit executable in your path.
 
-```
-$ cd vendor
-$ curl -O http://pear.php.net/go-pear.phar 
-$ sudo php -d detect_unicode=0 go-pear.phar 
-```
-Follow the instructions. A helpful hint for those on Mac OS (http://jason.pureconcepts.net/2012/10/install-pear-pecl-mac-os-x/)
+Please follow the installation instructions here:
+http://phpunit.de/manual/current/en/installation.html
 
-Install Xdebug (xdebug.org)
----------------------------
+Install XDebug
+--------------
+XDebug is a PHP extension which must be installed on your system to allow us to test code coverage generation for PHP.
+You can install it through pecl:
 
 ```
 $ sudo pecl install xdebug
 ```
 
-You will then need to configure your php.ini file. On the mac, it will be located in /etc/php.ini. If it is not there you will need
-to copy the ```/etc/php.ini.default``` file to ```/etc.php```. Add the following lines to the end of the file:
-
-```
-[xdebug]
-zend_extension=/usr/lib/php/extensions/no-debug-non-zts-<specific_to_your_environment>/xdebug.so
-xdebug.file_link_format="txmt://open?url=file://%f&line=%1"
-xdebug.remote_enable = On
-xdebug.remote_autostart = 1
-```
-
-Restart apache
-
-```
-$ sudo apachectl restart
-```
-
-Install Node (NPM) (https://npmjs.org/)
----------------------------------------
-
-Brew:
-```
-$ brew install node
-```
-
-Mac Ports:
-```
-$ port install npm
-```
-
-
-Install JSHint (www.jshint.com)
--------------------------------
-
-```
-$ cd vendor
-$ npm install 
-```
-
-Now you will need to create a symlink to run jshint globally.
-
-```
-$ sudo ln -s $PWD/node_modules/jshint/bin/jshint /opt/local/bin/jshint
-```
-
 Run the tests
 -------------
+Finally, you can now run the tests, by executing phpunit in the root folder:
 
 ```
-$ phpunit -c phpunit.xml.dist 
+$ phpunit
 
 ```

@@ -50,6 +50,7 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
         $builder
             ->globalConfig()
                 ->scalarNode('command')
+                    ->attribute('show_in_editor', false)
                     ->defaultValue(__DIR__.'/../../../../vendor/bin/phpmd')
                 ->end()
             ->end()

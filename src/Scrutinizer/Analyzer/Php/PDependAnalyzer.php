@@ -46,7 +46,10 @@ class PDependAnalyzer implements AnalyzerInterface, LoggerAwareInterface
         $builder
             ->info('Analyzes the size and structure of a PHP project.')
             ->globalConfig()
-                ->scalarNode('command')->defaultValue(__DIR__.'/../../../../vendor/bin/pdepend')->end()
+                ->scalarNode('command')
+                    ->attribute('show_in_editor', false)
+                    ->defaultValue(__DIR__.'/../../../../vendor/bin/pdepend')
+                ->end()
                 ->scalarNode('configuration_file')
                     ->attribute('show_in_editor', false)
                     ->attribute('help_inline', 'Path to a pdepend configuration file if available (relative to your project\'s root directory).')

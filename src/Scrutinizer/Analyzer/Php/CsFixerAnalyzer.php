@@ -49,6 +49,7 @@ class CsFixerAnalyzer extends AbstractFileAnalyzer
         $builder
             ->globalConfig()
                 ->scalarNode('command')
+                    ->attribute('show_in_editor', false)
                     ->defaultValue(__DIR__.'/../../../../vendor/bin/php-cs-fixer')
                 ->end()
             ->end()

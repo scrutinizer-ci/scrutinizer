@@ -45,5 +45,11 @@
         "psr-0": {
             "Scrutinizer": "src/" 
         }
+    },
+
+    "scripts": {
+        "post-install-cmd": [
+            "npm install"
+        ]
     }
 }

@@ -220,7 +220,10 @@ class HhvmAnalyzer implements AnalyzerInterface, LoggerAwareInterface
         $builder
             ->info('Runs HHVM\'s analyses on your project.')
             ->globalConfig()
-                ->scalarNode('command')->defaultValue('hhvm')->end()
+                ->scalarNode('command')
+                    ->attribute('show_in_editor', false)
+                    ->defaultValue('hhvm')
+                ->end()
                 ->arrayNode('extensions')
                     ->prototype('scalar')->end()
                     ->defaultValue(array('php'))

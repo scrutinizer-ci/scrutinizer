@@ -54,6 +54,10 @@ class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
         $builder
             ->info('Runs the JSHint static analysis tool.')
             ->globalConfig()
+                ->scalarNode('command')
+                    ->attribute('show_in_editor', false)
+                    ->defaultValue(__DIR__.'/../../../../node_modules/.bin/jshint')
+                ->end()
                 ->booleanNode('use_native_config')
                     ->info('Whether to use JSHint\'s native config file, .jshintrc.')
                     ->attribute('label', ' ')
@@ -89,7 +93,7 @@ class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
         rename($inputFile, $inputFile = $inputFile.'.js');
         file_put_contents($inputFile, $file->getContent());
 
-        $proc = new Process('jshint --checkstyle-reporter --config '.escapeshellarg($cfgFile).' '.escapeshellarg($inputFile));
+        $proc = new Process($project->getGlobalConfig('command').' --checkstyle-reporter --config '.escapeshellarg($cfgFile).' '.escapeshellarg($inputFile));
         $proc->run();
 
         unlink($cfgFile);
