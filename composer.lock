@@ -1311,11 +1311,11 @@
         },
         {
             "name": "sebastian/finder-facade",
-            "version": "1.1.0",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "git://github.com/scrutinizer-ci/finder-facade",
-                "reference": "173c6034008b50a7283c1e8a9b8320ae62fdcd68"
+                "reference": "8ef33ce2ecc38cb273f3b93c407fe7a9c60dbdb3"
             },
             "require": {
                 "symfony/finder": ">=2.2.0",
@@ -1342,7 +1342,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/finder-facade/issues"
             },
-            "time": "2013-05-28 06:10:03"
+            "time": "2014-02-17 12:07:32"
         },
         {
             "name": "sebastian/git",

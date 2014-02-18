@@ -96,7 +96,7 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterfa
 
         $filter = $project->getGlobalConfig('filter');
         file_put_contents($filterFile, json_encode($filter));
-        $command .= ' --filter-file='.escapeshellarg($filterFile);
+        $command .= ' --filter-file '.escapeshellarg($filterFile);
 
         // Scan the current directory.
         $command .= ' '.$project->getDir();
@@ -125,6 +125,10 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterfa
         unlink($filterFile);
 
         if (empty($result)) {
+            if (false !== strpos($proc->getOutput(), 'No files found to scan')) {
+                return;
+            }
+
             if ($proc->getExitCode() !== 0) {
                 throw new ProcessFailedException($proc);
             }
