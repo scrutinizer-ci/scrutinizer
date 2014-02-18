@@ -4,6 +4,7 @@ Scrutinizer runs static code analysis, and runtime inspectors on your code, gath
 in a unified output format.
 
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/scrutinizer-ci/scrutinizer/badges/quality-score.png?s=00b43441f630596431d776a2db52f4b2f532b037)](https://scrutinizer-ci.com/g/scrutinizer-ci/scrutinizer/)
+[![Build Status](https://travis-ci.org/scrutinizer-ci/scrutinizer.png?branch=master)](https://travis-ci.org/scrutinizer-ci/scrutinizer)
 
 ## Installation
 
