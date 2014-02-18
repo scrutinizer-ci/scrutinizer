@@ -139,13 +139,9 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterfa
         $doc = XmlUtils::safeParse($result);
         $duplications = $this->extractDuplications($project, $doc);
         $combinedDuplications = $this->combineDuplications($duplications);
-        $filter = $project->getGlobalConfig('filter');
 
         foreach ($combinedDuplications as $duplication) {
             foreach ($duplication['locations'] as $location) {
-                if (PathUtils::isFiltered($location['path'], $filter)) {
-                    continue;
-                }
                 if ( ! $project->isAnalyzed($location['path'])) {
                     continue;
                 }
