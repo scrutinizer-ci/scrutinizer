@@ -51,11 +51,12 @@ https://www.npmjs.org/doc/README.html
 
 Installing Project Dependencies
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Simply run composer's install command, this will automatically download all the necessary dependencies and install
+Simply run composer's and npm's install command, this will automatically download all the necessary dependencies and install
 them locally in the directory:
 
 ```
 $ composer install
+$ npm install
 ```
 
 Installing PHPUnit

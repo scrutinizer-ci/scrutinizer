@@ -51,12 +51,14 @@ class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
 
     public function buildConfig(ConfigBuilder $builder)
     {
+        $jshintPath = __DIR__.'/../../../../node_modules/.bin/jshint';
+
         $builder
             ->info('Runs the JSHint static analysis tool.')
             ->globalConfig()
                 ->scalarNode('command')
                     ->attribute('show_in_editor', false)
-                    ->defaultValue(__DIR__.'/../../../../node_modules/.bin/jshint')
+                    ->defaultValue(is_file($jshintPath) ? $jshintPath : 'jshint')
                 ->end()
                 ->booleanNode('use_native_config')
                     ->info('Whether to use JSHint\'s native config file, .jshintrc.')
