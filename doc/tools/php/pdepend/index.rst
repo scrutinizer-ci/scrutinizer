@@ -9,7 +9,4 @@ PHP PDepend
 
 .. include :: php_pdepend_configuration.rst
 
-.. note:: PHP PDepend does not respect the global filter, but you need to pass the excluded directories via the ``excluded_dirs``
-    config option (see below).
-
 .. include :: php_pdepend_configuration_reference.rst
