@@ -2,6 +2,7 @@
 
 namespace Scrutinizer\Model;
 
+use PhpOption\Option;
 use PhpOption\Some;
 use PhpOption\None;
 use Symfony\Component\Finder\Finder;
@@ -209,11 +210,11 @@ class Project
      *
      * @return mixed
      */
-    public function getGlobalConfig($configPath)
+    public function getGlobalConfig($configPath, Option $defaultValue = null)
     {
         $segments = explode('.', $configPath);
 
-        return $this->walkConfig($this->config['tools'][$this->analyzerName], $segments, $this->analyzerName);
+        return $this->walkConfig($this->config['tools'][$this->analyzerName], $segments, $this->analyzerName, $defaultValue);
     }
 
     public function getAnalyzerConfig()
@@ -264,8 +265,12 @@ class Project
         return false;
     }
 
-    private function walkConfig($config, array $segments, $relPath = null)
+    private function walkConfig($config, array $segments, $relPath = null, Option $defaultValue = null)
     {
+        if ($defaultValue === null) {
+            $defaultValue = None::create();
+        }
+
         $fullPath = ($relPath ? $relPath.'.' : '').implode('.', $segments);
 
         $walked = $relPath;
@@ -273,7 +278,7 @@ class Project
             $walked .= $walked ? '.'.$segment : $segment;
 
             if ( ! array_key_exists($segment, $config)) {
-                throw new \InvalidArgumentException(sprintf('There is no config at path "%s"; walked path: "%s".', $fullPath, $walked));
+                return $defaultValue->getOrThrow(new \InvalidArgumentException(sprintf('There is no config at path "%s"; walked path: "%s".', $fullPath, $walked)));
             }
 
             $config = $config[$segment];

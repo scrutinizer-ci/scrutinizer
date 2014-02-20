@@ -2,6 +2,7 @@
 
 namespace Scrutinizer\Analyzer\Php;
 
+use PhpOption\Some;
 use Scrutinizer\Analyzer\AbstractFileAnalyzer;
 use Scrutinizer\Util\XmlUtils;
 use Scrutinizer\Model\Comment;
@@ -51,7 +52,6 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
             ->globalConfig()
                 ->scalarNode('command')
                     ->attribute('show_in_editor', false)
-                    ->defaultValue(__DIR__.'/../../../../vendor/bin/phpmd')
                 ->end()
             ->end()
             ->perFileConfig('array')
@@ -356,7 +356,7 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
 
     public function analyze(Project $project, File $file)
     {
-        $command = $project->getGlobalConfig('command');
+        $command = $project->getGlobalConfig('command', new Some(__DIR__.'/../../../../vendor/bin/phpmd'));
 
         $rulesetFile = tempnam(sys_get_temp_dir(), 'phpmd-ruleset');
         $this->createRulesetFile($project, $file, $rulesetFile);

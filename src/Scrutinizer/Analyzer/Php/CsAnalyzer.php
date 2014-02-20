@@ -2,6 +2,7 @@
 
 namespace Scrutinizer\Analyzer\Php;
 
+use PhpOption\Some;
 use Scrutinizer\Analyzer\AbstractFileAnalyzer;
 use Scrutinizer\Config\ConfigBuilder;
 use Scrutinizer\Model\Comment;
@@ -43,7 +44,6 @@ class CsAnalyzer extends AbstractFileAnalyzer
             ->globalConfig()
                 ->scalarNode('command')
                     ->attribute('show_in_editor', false)
-                    ->defaultValue(__DIR__.'/../../../../vendor/bin/phpcs')
                 ->end()
             ->end()
             ->perFileConfig()
@@ -1200,7 +1200,7 @@ class CsAnalyzer extends AbstractFileAnalyzer
     public function analyze(Project $project, File $file)
     {
         $config = $project->getFileConfig($file);
-        $cmd = $project->getGlobalConfig('command');
+        $cmd = $project->getGlobalConfig('command', new Some(__DIR__.'/../../../../vendor/bin/phpcs'));
 
         $standardsDir = null;
         if ($config['standard'] === 'custom') {

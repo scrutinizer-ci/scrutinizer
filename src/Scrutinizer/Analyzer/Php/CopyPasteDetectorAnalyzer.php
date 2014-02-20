@@ -2,6 +2,7 @@
 
 namespace Scrutinizer\Analyzer\Php;
 
+use PhpOption\Some;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Scrutinizer\Analyzer\AbstractFileAnalyzer;
@@ -38,7 +39,6 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterfa
             ->globalConfig()
                 ->scalarNode('command')
                     ->attribute('show_in_editor', false)
-                    ->defaultValue(__DIR__.'/../../../../vendor/bin/phpcpd')
                 ->end()
                 ->arrayNode('excluded_dirs')
                     ->info('A list of excluded directories.')
@@ -81,7 +81,7 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterfa
     {
         $command = sprintf(
             '%s --log-pmd %s --min-lines %d --min-tokens %d --names %s',
-            $project->getGlobalConfig('command'),
+            $project->getGlobalConfig('command', new Some(__DIR__.'/../../../../vendor/bin/phpcpd')),
             escapeshellarg($outputFile),
             $project->getGlobalConfig('min_lines'),
             $project->getGlobalConfig('min_tokens'),

@@ -2,6 +2,7 @@
 
 namespace Scrutinizer\Analyzer\Php;
 
+use PhpOption\Some;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Scrutinizer\Analyzer\AnalyzerInterface;
@@ -48,7 +49,6 @@ class PDependAnalyzer implements AnalyzerInterface, LoggerAwareInterface
             ->globalConfig()
                 ->scalarNode('command')
                     ->attribute('show_in_editor', false)
-                    ->defaultValue(__DIR__.'/../../../../vendor/bin/pdepend')
                 ->end()
                 ->scalarNode('configuration_file')
                     ->attribute('show_in_editor', false)
@@ -91,7 +91,8 @@ class PDependAnalyzer implements AnalyzerInterface, LoggerAwareInterface
     public function scrutinize(Project $project)
     {
         $outputFile = tempnam(sys_get_temp_dir(), 'pdepend-output');
-        $command = $project->getGlobalConfig('command').' --summary-xml='.escapeshellarg($outputFile);
+        $command = $project->getGlobalConfig('command', new Some(__DIR__.'/../../../../vendor/bin/pdepend'))
+                        .' --summary-xml='.escapeshellarg($outputFile);
 
         if (null !== $configFile = $project->getGlobalConfig('configuration_file')) {
             $command .= ' --configuration='.escapeshellarg($configFile);

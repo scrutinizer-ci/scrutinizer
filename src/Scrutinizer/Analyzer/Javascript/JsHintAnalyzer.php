@@ -2,6 +2,7 @@
 
 namespace Scrutinizer\Analyzer\Javascript;
 
+use PhpOption\Some;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Scrutinizer\Util\XmlUtils;
@@ -51,14 +52,11 @@ class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
 
     public function buildConfig(ConfigBuilder $builder)
     {
-        $jshintPath = __DIR__.'/../../../../node_modules/.bin/jshint';
-
         $builder
             ->info('Runs the JSHint static analysis tool.')
             ->globalConfig()
                 ->scalarNode('command')
                     ->attribute('show_in_editor', false)
-                    ->defaultValue(is_file($jshintPath) ? $jshintPath : 'jshint')
                 ->end()
                 ->booleanNode('use_native_config')
                     ->info('Whether to use JSHint\'s native config file, .jshintrc.')
@@ -80,6 +78,16 @@ class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
         ;
     }
 
+    private function getJsHintPath()
+    {
+        $localPath = __DIR__.'/../../../../node_modules/.bin/jshint';
+        if (is_file($localPath)) {
+            return $localPath;
+        }
+
+        return 'jshint';
+    }
+
     public function analyze(Project $project, File $file)
     {
         if ($project->getGlobalConfig('use_native_config')) {
@@ -95,7 +103,8 @@ class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
         rename($inputFile, $inputFile = $inputFile.'.js');
         file_put_contents($inputFile, $file->getContent());
 
-        $proc = new Process($project->getGlobalConfig('command').' --checkstyle-reporter --config '.escapeshellarg($cfgFile).' '.escapeshellarg($inputFile));
+        $proc = new Process($project->getGlobalConfig('command', new Some($this->getJsHintPath()))
+                                .' --checkstyle-reporter --config '.escapeshellarg($cfgFile).' '.escapeshellarg($inputFile));
         $proc->run();
 
         unlink($cfgFile);
