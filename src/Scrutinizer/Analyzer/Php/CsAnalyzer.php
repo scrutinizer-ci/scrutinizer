@@ -37,7 +37,7 @@ class CsAnalyzer extends AbstractFileAnalyzer
 
     public function buildConfigInternal(ConfigBuilder $builder)
     {
-        $availableStandards = array('custom', 'PEAR', 'PHPCS', 'PSR1', 'PSR2', 'Squiz', 'Zend', 'WordPress', 'Drupal');
+        $availableStandards = array('custom', 'PEAR', 'PHPCS', 'PSR1', 'PSR2', 'Squiz', 'Zend', 'WordPress', 'Drupal', 'TYPO3CMS', 'TYPO3Flow');
 
         $builder
             ->globalConfig()
@@ -80,6 +80,8 @@ class CsAnalyzer extends AbstractFileAnalyzer
                             'Zend' => 'Zend Standard',
                             'WordPress' => 'WordPress Standard',
                             'Drupal' => 'Drupal7 Standard',
+                            'TYPO3CMS' => 'Typo3 CMS Standard',
+                            'TYPO3Flow' => 'Typo3 Flow Standard',
                         ))
                         ->values($availableStandards)
                         ->defaultValue('custom')
