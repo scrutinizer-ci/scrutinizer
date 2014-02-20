@@ -3,12 +3,10 @@ filter:
 
 tools:
     # Copy/Paste Detector
-    php_cpd:
-        excluded_dirs: [vendor, tests, app, bin, library]
+    php_cpd: true
 
     # Metrics
-    php_pdepend:
-        excluded_dirs: [vendor, tests, app, bin, library]
+    php_pdepend: true
 
     # Some Metrics + Bug Detection/Auto-Fixes
     php_analyzer: true
