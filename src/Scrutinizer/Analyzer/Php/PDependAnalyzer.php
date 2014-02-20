@@ -125,7 +125,7 @@ class PDependAnalyzer implements AnalyzerInterface, LoggerAwareInterface
         unlink($outputFile);
         unlink($filterFile);
 
-        if (0 !== $proc->run()) {
+        if (0 !== $proc->getExitCode()) {
             throw new ProcessFailedException($proc);
         }
 
