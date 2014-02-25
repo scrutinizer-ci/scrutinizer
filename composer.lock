@@ -1190,7 +1190,7 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/scrutinizer-ci/phpmd",
-                "reference": "8ed880d6dbaebbef795f41e0676a1c1322c7478f"
+                "reference": "ad86bb4d98b626dd2d50f04684c68bdc537f0972"
             },
             "require": {
                 "pdepend/pdepend": "dev-master",
@@ -1213,7 +1213,7 @@
                 "BSD-3-Clause"
             ],
             "description": "Official version of PHPMD handled with Composer.",
-            "time": "2014-02-17 09:55:30"
+            "time": "2014-02-25 17:40:25"
         },
         {
             "name": "phpunit/php-timer",
