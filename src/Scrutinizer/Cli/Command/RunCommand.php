@@ -50,7 +50,10 @@ class RunCommand extends Command
             $paths = explode("\n", file_get_contents($pathFile));
         }
 
-        $project = (new Scrutinizer(new OutputLogger($output, $input->getOption('verbose'))))->scrutinize($dir, $paths);
+        $logger = new OutputLogger($output, $input->getOption('verbose'));
+        $project = (new Scrutinizer($logger))->scrutinize($dir, $paths);
+        $logger->flushErrors();
+
         $outputFile = $input->getOption('output-file');
 
         switch ($input->getOption('format')) {

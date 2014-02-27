@@ -135,7 +135,14 @@ class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
                 }
             }
 
-            $file->addComment((integer) $attrs->line, new Comment($this->getName(), (string) $attrs->source, $message, $params));
+            $line = (integer) $attrs->line;
+            if ($line === 0) {
+                $this->logger->error(sprintf('JSHint config error when analyzing "%s": %s', $file->getPath(), $message));
+
+                continue;
+            }
+
+            $file->addComment($line, new Comment($this->getName(), (string) $attrs->source, $message, $params));
         }
     }
 

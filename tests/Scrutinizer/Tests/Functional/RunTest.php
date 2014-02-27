@@ -13,7 +13,7 @@ class RunTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame(0, $proc->getExitCode(), $proc->getOutput().$proc->getErrorOutput());
 
-        $expectedOutputArray = Array (
+        $expectedOutputArray = array(
           "Running analyzer \"js_hint\"...",
           "\n\r    Files 1/1 [............................................................] 100%\n",
           "some_file.js",
@@ -26,6 +26,25 @@ class RunTest extends \PHPUnit_Framework_TestCase
         );
 
         $expectedOutput = implode("\n", $expectedOutputArray);
+        $this->assertEquals($expectedOutput, $proc->getOutput());
+    }
+
+    public function testRunWithJsHintConfigError()
+    {
+        $proc = $this->runCmd('run', array(__DIR__.'/Fixture/JsProjectWithJsHintConfigError'));
+
+        $expectedOutput = <<<OUTPUT
+Running analyzer "js_hint"...
+
+\r    Files 1/1 [............................................................] 100%
+
+Errors:
+ - JSHint config error when analyzing "some_file.js": Bad option: 'camelCase'.
+
+Scanned Files: 2, Comments: 0
+
+OUTPUT;
+
         $this->assertEquals($expectedOutput, $proc->getOutput());
     }
 
