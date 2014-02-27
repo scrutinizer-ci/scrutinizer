@@ -60,8 +60,13 @@ PHP
     :glob:
     :titlesonly:
 
-    tools/php/*/index
-
+    tools/php/code-sniffer/index
+    tools/php/copy-paste-detector/index
+    tools/php/cs-fixer/index
+    tools/php/mess-detector/index
+    tools/php/pdepend/index
+    tools/php/php-analyzer/index
+    tools/php/security-advisory-checker/index
 
 Configuration
 -------------
