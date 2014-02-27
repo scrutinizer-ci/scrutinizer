@@ -670,12 +670,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/scrutinizer-ci/utils.git",
-                "reference": "98cc347a0a25c19e776511889c4c46c1a66cb2f9"
+                "reference": "0701bb15e1c49db1b5c76dab72087763a2a21c96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scrutinizer-ci/utils/zipball/98cc347a0a25c19e776511889c4c46c1a66cb2f9",
-                "reference": "98cc347a0a25c19e776511889c4c46c1a66cb2f9",
+                "url": "https://api.github.com/repos/scrutinizer-ci/utils/zipball/0701bb15e1c49db1b5c76dab72087763a2a21c96",
+                "reference": "0701bb15e1c49db1b5c76dab72087763a2a21c96",
                 "shasum": ""
             },
             "require": {
@@ -690,7 +690,7 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
-            "time": "2013-12-04 09:42:34"
+            "time": "2014-02-27 09:04:31"
         },
         {
             "name": "symfony/config",
