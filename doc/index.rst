@@ -31,6 +31,13 @@ just `open an issue <https://github.com/scrutinizer-ci/scrutinizer/issues/new>`_
     code_rating_system
     api/index
 
+.. toctree ::
+    :hidden:
+    :glob:
+
+    tools/php/index
+    tools/javascript/index
+
 General Analyses
 ~~~~~~~~~~~~~~~~
 
@@ -56,17 +63,13 @@ Javascript
 PHP
 ~~~
 
-.. toctree ::
-    :glob:
-    :titlesonly:
-
-    tools/php/code-sniffer/index
-    tools/php/copy-paste-detector/index
-    tools/php/cs-fixer/index
-    tools/php/mess-detector/index
-    tools/php/pdepend/index
-    tools/php/php-analyzer/index
-    tools/php/security-advisory-checker/index
+- :doc:`tools/php/code-sniffer/index`
+- :doc:`tools/php/copy-paste-detector/index`
+- :doc:`tools/php/cs-fixer/index`
+- :doc:`tools/php/mess-detector/index`
+- :doc:`tools/php/pdepend/index`
+- :doc:`tools/php/php-analyzer/index`
+- :doc:`tools/php/security-advisory-checker/index`
 
 Configuration
 -------------
