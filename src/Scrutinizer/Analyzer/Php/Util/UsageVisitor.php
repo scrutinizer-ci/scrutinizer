@@ -2,6 +2,8 @@
 
 namespace Scrutinizer\Analyzer\Php\Util;
 
+use PhpParser\Node;
+
 /**
  * Checks whether one of the given classes is used in the test.
  *
@@ -27,13 +29,13 @@ class UsageVisitor extends \PHPParser_NodeVisitorAbstract
         return $this->affected;
     }
 
-    public function enterNode(\PHPParser_Node $node)
+    public function enterNode(Node $node)
     {
         if ($this->affected) {
             return;
         }
 
-        if ($node instanceof \PHPParser_Node_Name) {
+        if ($node instanceof Node\Name) {
             $className = implode("\\", $node->parts);
 
             if (in_array($className, $this->classes, true)) {

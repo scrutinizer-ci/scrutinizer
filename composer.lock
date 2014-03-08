@@ -1107,7 +1107,7 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/scrutinizer-ci/pdepend",
-                "reference": "3b2136df5791b43d5ccb08a2bd22dc87c717bdc7"
+                "reference": "10d0a0fcb1d97b03dec41858642c39f5baa7330f"
             },
             "require": {
                 "php": ">=5.3.7",
@@ -1123,6 +1123,11 @@
                 "src/bin/pdepend"
             ],
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.0-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
                     "PDepend\\": "src/main/php/"
@@ -1132,7 +1137,7 @@
                 "BSD-3-Clause"
             ],
             "description": "Official version of pdepend to be handled with Composer",
-            "time": "2014-02-25 10:57:15"
+            "time": "2014-03-07 21:59:15"
         },
         {
             "name": "phploc/phploc",
