@@ -92,7 +92,7 @@ class PDependAnalyzer implements AnalyzerInterface, LoggerAwareInterface
     {
         $outputFile = tempnam(sys_get_temp_dir(), 'pdepend-output');
         $command = $project->getGlobalConfig('command', new Some(__DIR__.'/../../../../vendor/bin/pdepend'))
-                        .' --summary-xml='.escapeshellarg($outputFile);
+                        .' --without-package-annotations --summary-xml='.escapeshellarg($outputFile);
 
         if (null !== $configFile = $project->getGlobalConfig('configuration_file')) {
             $command .= ' --configuration='.escapeshellarg($configFile);

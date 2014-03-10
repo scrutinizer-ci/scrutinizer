@@ -2,6 +2,7 @@
 
 namespace Scrutinizer\Event\Php;
 
+use PhpParser\Error;
 use Scrutinizer\Analyzer\Php\Util\ElementResult;
 use Scrutinizer\Analyzer\Php\Util\FindElementsVisitor;
 use Scrutinizer\Event\ProjectEvent;
@@ -38,7 +39,7 @@ class LocationCompletionSubscriber implements EventSubscriberInterface
             $project->getFile($location->getFilename())->forAll(function(File $file) use ($element, $location) {
                 try {
                     $nodes = $this->getElementNodes($file);
-                } catch (\PHPParser_Error $parseError) {
+                } catch (Error $parseError) {
                     return;
                 }
 

@@ -156,42 +156,6 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterfa
                     }
 
                     $file->setLineAttribute($location['line'], 'duplication', $duplication);
-
-                    switch (count($otherLocations)) {
-                        case 0:
-                            throw new \LogicException('Should never be reached.');
-
-                        case 1:
-                            $file->addComment($location['line'], new Comment(
-                                $this->getName(),
-                                'php_cpd.duplication',
-                                'This and the next {duplicateLines} lines are the same as lines {otherStartingLine} to {otherEndingLine} in {otherPath}.',
-                                array(
-                                    'duplicateLines' => $duplication['lines'],
-                                    'otherPath' => $otherLocations[0]['path'],
-                                    'otherStartingLine' => $otherLocations[0]['line'],
-                                    'otherEndingLine' => $otherLocations[0]['line'] + $duplication['lines'],
-                                )
-                            ));
-                            break;
-
-                        default:
-                            $locations = implode(", ", array_map(function(array $location) {
-                                return $location['path'].' (line: '.$location['line'].')';
-                            }, $otherLocations));
-
-                            $file->addComment($location['line'], new Comment(
-                                $this->getName(),
-                                'php_cpd.multiple_duplications',
-                                'This and the next {duplicateLines} lines are duplicated in {nbDuplications} other locations: {locations}',
-                                array(
-                                    'duplicateLines' => $duplication['lines'],
-                                    'nbDuplications' => count($otherLocations),
-                                    'locations' => $locations,
-                                )
-                            ));
-                            break;
-                    }
                 });
             }
         }

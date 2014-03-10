@@ -2,6 +2,8 @@
 
 namespace Scrutinizer\Analyzer\Php\Util;
 
+use PhpParser\Node;
+
 class FindElementsVisitor extends \PHPParser_NodeVisitorAbstract
 {
     private $classes = array();
@@ -24,11 +26,11 @@ class FindElementsVisitor extends \PHPParser_NodeVisitorAbstract
         return new ElementResult($this->classNodes, $this->functionNodes);
     }
 
-    public function enterNode(\PHPParser_Node $node)
+    public function enterNode(Node $node)
     {
-        if ($node instanceof \PHPParser_Node_Stmt_Class
-                || $node instanceof \PHPParser_Node_Stmt_Trait
-                || $node instanceof \PHPParser_Node_Stmt_Interface) {
+        if ($node instanceof Node\Stmt\Class_
+                || $node instanceof Node\Stmt\Trait_
+                || $node instanceof Node\Stmt\Interface_) {
             $className = implode("\\", $node->namespacedName->parts);
             if (false === strpos($className, '\\')) {
                 $className = '+global\\'.$className;
@@ -40,7 +42,7 @@ class FindElementsVisitor extends \PHPParser_NodeVisitorAbstract
             return;
         }
 
-        if ($node instanceof \PHPParser_Node_Stmt_Function) {
+        if ($node instanceof Node\Stmt\Function_) {
             $functionName = implode("\\", $node->namespacedName->parts);
             $this->functions[] = $functionName;
             $this->functionNodes[$functionName] = $node;

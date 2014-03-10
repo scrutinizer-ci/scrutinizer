@@ -152,6 +152,3 @@ tools:
 
 -- LINE-ATTRIBUTES --
 Line 5: {"duplication":{"lines":39,"locations":{"0":{"path":"src\/A.php","line":5},"1":{"path":"src\/B.php","line":5},"2":{"path":"src\/C.php","line":5}}}}
-
--- COMMENTS --
-Line 5: This and the next 39 lines are duplicated in 2 other locations: src/B.php (line: 5), src/C.php (line: 5)

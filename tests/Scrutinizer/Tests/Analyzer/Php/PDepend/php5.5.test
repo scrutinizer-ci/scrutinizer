@@ -18,21 +18,32 @@ tools:
 pdepend.average_hierarchy_height: 0.0
 pdepend.average_number_of_derived_classes: 0.0
 pdepend.calls: 0
-pdepend.cyclomatic_complexity_number: 0
-pdepend.extended_cyclomatic_complexity_number: 0
+pdepend.cyclomatic_complexity_number: 1
+pdepend.extended_cyclomatic_complexity_number: 1
 pdepend.comment_lines_of_code: 0
 pdepend.number_of_abstract_classes: 0
 pdepend.number_of_concrete_classes: 0
-pdepend.executable_lines_of_code: 0
+pdepend.executable_lines_of_code: 4
 pdepend.number_of_referenced_classes: 0
 pdepend.number_of_leaf_classes: 0
-pdepend.logical_lines_of_code: 0
-pdepend.lines_of_code: 0
+pdepend.logical_lines_of_code: 2
+pdepend.lines_of_code: 5
 pdepend.maximum_depth_of_inheritance_tree: 0
-pdepend.non_comment_lines_of_code: 0
+pdepend.non_comment_lines_of_code: 5
 pdepend.number_of_classes: 0
-pdepend.number_of_functions: 0
+pdepend.number_of_functions: 1
 pdepend.number_of_interfaces: 0
 pdepend.number_of_methods: 0
-pdepend.number_of_packages: 0
+pdepend.number_of_packages: 1
 pdepend.roots: 0
+
+-- CODE-ELEMENTS --
+package(+global):
+    metrics:
+        pdepend.code_rank: 0.0
+        pdepend.number_of_classes: 0
+        pdepend.number_of_functions: 1
+        pdepend.number_of_interfaces: 0
+        pdepend.number_of_methods: 0
+        pdepend.reverse_code_rank: 0.0
+
