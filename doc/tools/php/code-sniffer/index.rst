@@ -7,10 +7,10 @@ PHP Code Sniffer
 
 .. include :: php_code_sniffer_configuration.rst
 
-Using a Custom Ruleset
-----------------------
-If you already have made a custom ruleset file, you can use that with Scrutinizer too. A basic set-up might look
-like the following:
+Installing a Custom Standard
+----------------------------
+Scrutinizer has support for commonly used :doc:`PHP Code Sniffer Standards <standards>` built-in. However, if you would
+like to install a custom standard, Scrutinizer supports that too. A basic set-up looks like the following:
 
 .. code-block :: yml
 
@@ -22,5 +22,9 @@ like the following:
             config:
                 ruleset: ../your-coding-standard/some-standard.xml
 
-
 .. include :: php_code_sniffer_configuration_reference.rst
+
+.. toctree ::
+    :hidden:
+
+    standards.rst
