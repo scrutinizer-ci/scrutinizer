@@ -30,6 +30,7 @@ just `open an issue <https://github.com/scrutinizer-ci/scrutinizer/issues/new>`_
     configuration
     code_rating_system
     api/index
+    refactoring/index
 
 .. toctree ::
     :hidden:
