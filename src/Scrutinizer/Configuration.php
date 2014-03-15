@@ -151,6 +151,12 @@ class Configuration
                         })
                     ->end()
                 ->end()
+
+                ->arrayNode('build_failure_conditions')
+                    ->useAttributeAsKey('build_failure_condition')
+                    ->performNoDeepMerging()
+                    ->prototype('scalar')->end()
+                ->end()
             ->end()
         ;
 
