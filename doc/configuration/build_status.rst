@@ -5,18 +5,19 @@ By default, Scrutinizer will neither mark the build passed nor failed. You can c
 failure conditions in your configuration.
 
 .. tip ::
-    Scrutinizer supports several :doc:`configuration locations </configuration#locations>`. In this example, we
+    Scrutinizer supports several :doc:`configuration locations </configuration>`. In this example, we
     assume that you are using a .scrutinizer.yml file.
 
 We use a easy to read DSL for defining failure conditions, let's take a look at a few examples:
 
-.. code-block :: yml
+.. code-block :: yaml
 
     # .scrutinizer.yml
 
     build_failure_conditions:
-        - 'elements.rating(<= D).exists'               # No classes/methods with a rating of D or worse allowed
-        - 'elements.new.rating(<= D).exists'           # No new classes/methods with a rating of D or worse allowed (useful for legacy code)
+        - 'elements.rating(<= D).exists'               # No classes/methods with a rating of D or worse
+        - 'elements.new.rating(<= D).exists'           # No new classes/methods with a rating of D or worse
+                                                       # allowed (useful for legacy code)
 
         - 'issues.label("coding-style").exists'        # No coding style issues allowed
         - 'issues.new.label("coding-style").exists'    # No new coding style issues allowed
@@ -37,7 +38,7 @@ Reference
 Condition Scopes
 ~~~~~~~~~~~~~~~~
 The condition scope is the first part of each condition. In the above examples, we saw the scopes ``elements`` and
-``issues``; here is a full reference of the remaining ones:
+``issues``; here is a full reference of all available scopes:
 
 :elements:   All code elements including f.e. classes, functions, methods, etc.
 :classes:    All classes.

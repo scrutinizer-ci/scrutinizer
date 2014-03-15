@@ -20,24 +20,3 @@ set-up a base configuration, you can select it on the settings page of your repo
 
     tools:
         # Overwrite selected settings, but keep everything else as in the base configuration.
-
-
-Tool Configuration Structure
-----------------------------
-Most tools allow you to specify a global configuration which is applicable to your entire project, and also to override
-this global config for selected sub-paths. The general structure looks like this:
-
-.. code-block :: yaml
-
-    tools:
-        tool-name:
-            config:
-                # Global Configuration goes here
-
-            path_configs:
-                -
-                    paths: [some-dir/*]
-                    config:
-                        # Configuration for all files in some-dir/ goes here
-
-In the different :doc:`language sections </index>`, you find all the specific options which are available for each tool.

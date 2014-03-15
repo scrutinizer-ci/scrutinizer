@@ -7,12 +7,12 @@ All configuration for Scrutinizer is written in Yaml. Scrutinizer looks in sever
 (in this order):
 
 1. Configuration submitted when manually scheduling
-2. ``.scrutinizer.yml`` file in your repository **most flexibility**
-3. Repository Configuration **for beginners**
+2. ``.scrutinizer.yml`` file in your repository (**most flexibility**)
+3. Repository Configuration (**for beginners**)
 4. Global Configuration
 
-Scrutinizer uses an intelligent configuration cascade where you can set-up a single configuration for multiple projects
-and overwrite certain settings for specific projects (see the :doc:`configuration/cascade` chapter).
+Scrutinizer uses an configuration cascade where you can set-up a single configuration for multiple projects
+and overwrite certain settings for one or another project (see the :doc:`configuration/cascade` chapter).
 
 
 Getting Started with Default Configuration
@@ -40,7 +40,9 @@ Further Reading
 ---------------
 
 .. toctree ::
+    :maxdepth: 1
 
     configuration/filter
     configuration/cascade
+    configuration/tool_config_structure
     configuration/build_status
