@@ -6,7 +6,8 @@ failure conditions in your configuration.
 
 .. tip ::
     Scrutinizer supports several :doc:`configuration locations </configuration>`. In this example, we
-    assume that you are using a .scrutinizer.yml file.
+    assume that you are using a .scrutinizer.yml file, however the features work with other configuration
+    locations equally well.
 
 We use a easy to read DSL for defining failure conditions, let's take a look at a few examples:
 
