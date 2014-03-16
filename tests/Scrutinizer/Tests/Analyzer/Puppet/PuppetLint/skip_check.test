@@ -1,0 +1,16 @@
+case $::operatingsystem {
+  centos: {
+    $version = '1.2.3'
+  }
+  solaris: {
+    $version = '3.2.1'
+  }
+}
+
+-- FILENAME --
+no_default_case.pp
+
+-- CONFIG --
+tools:
+    puppet_lint:
+        flags: "--no-case_without_default-check"

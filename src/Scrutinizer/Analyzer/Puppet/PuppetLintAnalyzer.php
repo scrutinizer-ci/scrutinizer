@@ -48,6 +48,9 @@ class PuppetLintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
                 ->scalarNode('command')
                     ->attribute('show_in_editor', false)
                 ->end()
+                ->scalarNode('flags')
+                    ->info('Define checks which you would like to skip separated by spaces, e.g. "--no-case_without_default-check --no-other-check".')
+                ->end()
             ->end()
         ;
     }
@@ -73,35 +76,38 @@ class PuppetLintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
      */
     public function scrutinize(Project $project)
     {
-        $command = $project->getGlobalConfig('command', new Some(__DIR__.'/../../../../vendor/bin/puppet-lint'))
-                        .' --log-format \'"%{path}","%{linenumber}","%{kind}","%{check}","%{message}"\' '
-                        .$project->getDir();
+        $command = $project->getGlobalConfig('command', new Some(__DIR__.'/../../../../vendor/bin/puppet-lint'));
+        $command .= ' --log-format \'%{path},%{linenumber},%{kind},%{check},%{message}\' ';
+        $command .= $project->getGlobalConfig('flags', new Some('')).' ';
+        $command .= $project->getDir();
 
         $this->logger->info('$ '.$command."\n");
         $proc = new Process($command.' '.$project->getDir());
         $proc->setTimeout(600);
         $proc->setIdleTimeout(180);
         $proc->setPty(true);
-        $exitcode = $proc->run();
-        if ($exitcode > 1) {
+
+        if ($proc->run() > 1) {
             throw new ProcessFailedException($proc);
         }
 
         $output = $proc->getOutput();
-        $violations = explode(PHP_EOL, $output);
 
+        $violations = explode(PHP_EOL, $output);
         foreach ($violations as $violation) {
-            $segments = str_getcsv($violation);
+            $segments = explode(",", $violation, 5);
             if (count($segments) !== 5) {
                 continue;
             }
-            list($path, $linenumber, $kind, $check, $message) = $segments;
-            $path = str_replace($project->getDir(), "", $path);
-            $project->getFile($path)->map(function(File $file) use ($linenumber, $kind, $check, $message) {
-               $file->addComment($linenumber, new Comment(
-               $this->getName(),
-               $this->getName().'.'.$check, $message, [''])
-               );
+
+            list($path, $line, $kind, $check, $message) = $segments;
+            $relativePath = substr($path, strlen($project->getDir()) + 1);
+
+            $project->getFile($relativePath)->map(function(File $file) use ($line, $kind, $check, $message) {
+                $file->addComment($line, new Comment(
+                    $this->getName(),
+                    $this->getName().'.'.$check, $message)
+                );
             });
         }
     }

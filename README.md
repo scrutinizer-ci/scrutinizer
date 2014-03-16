@@ -69,10 +69,11 @@ https://www.npmjs.org/doc/README.html
 
 ### Bundler
 
-Als make sure that you have Ruby bundler installed.
+Also make sure that you have Ruby bundler installed.
 
 You can find more instructions on that here:
 http://bundler.io/
+
 
 ### Installing Project Dependencies
 

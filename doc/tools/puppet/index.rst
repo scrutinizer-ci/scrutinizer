@@ -1,7 +1,9 @@
-Puppet Lint
-=================
+Puppet
+======
 
-    puppet-lint checks your Puppet manifests conform the PuppetLabs style guide.
+.. toctree ::
+    :glob:
+    :titlesonly:
 
-    --- http://puppet-lint.com/
+    */index
 

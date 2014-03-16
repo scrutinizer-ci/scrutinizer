@@ -6,7 +6,7 @@ class bla {
 
 
 -- FILENAME --
-/syntaxerror/manifests/init.pp
+syntaxerror/manifests/init.pp
 
 -- CONFIG --
 tools:

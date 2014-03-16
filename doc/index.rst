@@ -36,8 +36,9 @@ just `open an issue <https://github.com/scrutinizer-ci/scrutinizer/issues/new>`_
     :hidden:
     :glob:
 
-    tools/php/index
     tools/javascript/index
+    tools/php/index
+    tools/puppet/index
 
 General Analyses
 ~~~~~~~~~~~~~~~~
@@ -53,17 +54,11 @@ General Analyses
 
 Javascript
 ~~~~~~~~~~
-
-.. toctree ::
-    :glob:
-    :titlesonly:
-
-    tools/javascript/*/index
+- :doc:`tools/javascript/jshint/index`
 
 
 PHP
 ~~~
-
 - :doc:`tools/php/code-sniffer/index`
 - :doc:`tools/php/copy-paste-detector/index`
 - :doc:`tools/php/cs-fixer/index`
@@ -71,6 +66,11 @@ PHP
 - :doc:`tools/php/pdepend/index`
 - :doc:`tools/php/php-analyzer/index`
 - :doc:`tools/php/security-advisory-checker/index`
+
+
+Puppet
+~~~~~~
+- :doc:`tools/puppet/puppet-lint/index`
 
 Configuration
 -------------
