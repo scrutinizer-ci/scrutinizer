@@ -30,8 +30,8 @@ We use a easy to read DSL for defining failure conditions, let's take a look at 
         - 'project.metric("scrutinizer.test_coverage", < 0.60)' # Code Coverage drops below 60%
 
 If one of your failure conditions is satisfied, Scrutinizer will set the build status to failed (and passed otherwise).
-In case, you are using GitHub, the status will automatically through their status API (and merged with your continuous
-integration service if available).
+In case, you are using GitHub, the status will automatically be set through the commit status API (and merged with your
+continuous integration service if available).
 
 Reference
 ---------
