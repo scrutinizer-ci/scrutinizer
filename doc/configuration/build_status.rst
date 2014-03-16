@@ -17,14 +17,14 @@ We use a easy to read DSL for defining failure conditions, let's take a look at 
 
     build_failure_conditions:
         - 'elements.rating(<= D).exists'               # No classes/methods with a rating of D or worse
-        - 'elements.new.rating(<= D).exists'           # No new classes/methods with a rating of D or worse
+        - 'elements.rating(<= D).new.exists'           # No new classes/methods with a rating of D or worse
                                                        # allowed (useful for legacy code)
 
         - 'issues.label("coding-style").exists'        # No coding style issues allowed
-        - 'issues.new.label("coding-style").exists'    # No new coding style issues allowed
+        - 'issues.label("coding-style").new.exists'    # No new coding style issues allowed
 
-        - 'issues.new.label("coding-style").count > 5' # More than 5 new coding style issues.
-        - 'issues.new.severity(>= MAJOR).exists'       # New issues of major or higher severity
+        - 'issues.label("coding-style").new.count > 5' # More than 5 new coding style issues.
+        - 'issues.severity(>= MAJOR).new.exists'       # New issues of major or higher severity
 
         - 'project.metric("scrutinizer.quality", < 6)' # Code Quality Rating drops below 6
         - 'project.metric("scrutinizer.test_coverage", < 0.60)' # Code Coverage drops below 60%
