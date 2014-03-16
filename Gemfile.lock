@@ -1,0 +1,10 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    puppet-lint (0.3.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  puppet-lint (~> 0.3.2)
