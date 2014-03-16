@@ -39,6 +39,7 @@ class Scrutinizer
         $this->logger = $logger ?: new NullLogger();
         $this->dispatcher = new EventDispatcher();
 
+        $this->registerAnalyzer(new Analyzer\Puppet\PuppetLintAnalyzer());
         $this->registerAnalyzer(new Analyzer\Javascript\JsHintAnalyzer());
         $this->registerAnalyzer(new Analyzer\Php\MessDetectorAnalyzer());
         $this->registerAnalyzer(new Analyzer\Php\CsFixerAnalyzer());

@@ -67,14 +67,22 @@ You can find more instructions on that here:
 https://www.npmjs.org/doc/README.html
 
 
+### Bundler
+
+Als make sure that you have Ruby bundler installed.
+
+You can find more instructions on that here:
+http://bundler.io/
+
 ### Installing Project Dependencies
 
-Simply run composer's and npm's install command, this will automatically download all the necessary dependencies and install
+Simply run composer's, npm's and bundler's install commands, this will automatically download all the necessary dependencies and install
 them locally in the directory:
 
 ```
 $ composer install
 $ npm install
+$ bundle install --deployment
 ```
 
 
