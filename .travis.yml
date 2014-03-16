@@ -8,6 +8,7 @@ before_script:
     - composer self-update
     - composer install
     - npm install
+    - bundle install --deployment
 
 script: phpunit --coverage-clover=coverage.clover
 
