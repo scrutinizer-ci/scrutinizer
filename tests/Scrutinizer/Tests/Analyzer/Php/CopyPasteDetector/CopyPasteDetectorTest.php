@@ -44,8 +44,8 @@ class CopyPasteDetectorTest extends \PHPUNit_Framework_TestCase
                                             ),
                                         1 =>
                                             array (
-                                                'path' => 'media.php',
-                                                'line' => 27,
+                                                'path' => 'file.php',
+                                                'line' => 18,
                                             ),
                                     ),
                             ),
@@ -78,6 +78,15 @@ class CopyPasteDetectorTest extends \PHPUNit_Framework_TestCase
                                     ),
                             ),
                     ),
+                18 => array(
+                    'duplication' => array(
+                        'lines' => 39,
+                        'locations' => array(
+                            array('path' => 'category.php', 'line' => 24),
+                            array('path' => 'file.php', 'line' => 18),
+                        )
+                    )
+                )
             ),
             $file->getLineAttributes()
         );
@@ -86,26 +95,6 @@ class CopyPasteDetectorTest extends \PHPUNit_Framework_TestCase
         $media = $project->getFile('media.php')->get();
         $this->assertEquals(
             array (
-                27 =>
-                    array (
-                        'duplication' =>
-                            array (
-                                'lines' => 39,
-                                'locations' =>
-                                    array (
-                                        0 =>
-                                            array (
-                                                'path' => 'category.php',
-                                                'line' => 24,
-                                            ),
-                                        1 =>
-                                            array (
-                                                'path' => 'media.php',
-                                                'line' => 27,
-                                            ),
-                                    ),
-                            ),
-                    ),
                 25 =>
                     array (
                         'duplication' =>
