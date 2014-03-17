@@ -185,7 +185,7 @@ class FlayAnalyzer implements AnalyzerInterface, LoggerAwareInterface
 
     private function parseMass($line)
     {
-        if (preg_match('/mass\s*=\s*([0-9]+)/', $line, $match)) {
+        if (preg_match('/mass(?:\*[0-9]+)?\s*=\s*([0-9]+)/', $line, $match)) {
             return (integer) $match[1];
         }
 

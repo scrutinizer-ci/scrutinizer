@@ -1,0 +1,45 @@
+##
+# I am a dog.
+
+class Dog
+  def x
+    "A"; "B"; "C";
+  end
+end
+
+##
+# I
+# am
+# a
+# cat.
+
+class Cat
+  def y
+    "A"; "B"; "C";
+  end
+end
+
+##
+# I
+# am
+# a
+# duck.
+
+class Duck
+  def z
+    "A"; "B"; "C";
+  end
+end
+
+-- FILENAME --
+test.rb
+
+-- CONFIG --
+tools:
+    ruby_flay:
+        mass: 1
+
+-- LINE-ATTRIBUTES --
+Line 1: {"duplication":{"mass":18,"locations":{"0":{"path":"test.rb","line":1,"length":10},"1":{"path":"test.rb","line":10,"length":13},"2":{"path":"test.rb","line":22,"length":13}}}}
+Line 10: {"duplication":{"mass":18,"locations":{"0":{"path":"test.rb","line":1,"length":10},"1":{"path":"test.rb","line":10,"length":13},"2":{"path":"test.rb","line":22,"length":13}}}}
+Line 22: {"duplication":{"mass":18,"locations":{"0":{"path":"test.rb","line":1,"length":10},"1":{"path":"test.rb","line":10,"length":13},"2":{"path":"test.rb","line":22,"length":13}}}}
