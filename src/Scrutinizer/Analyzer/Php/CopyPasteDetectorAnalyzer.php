@@ -148,13 +148,6 @@ class CopyPasteDetectorAnalyzer implements AnalyzerInterface, LoggerAwareInterfa
                 }
 
                 $project->getFile($location['path'])->forAll(function(File $file) use ($duplication, $location) {
-                    $otherLocations = array();
-                    foreach ($duplication['locations'] as $otherLocation) {
-                        if ( ! $this->equalsLocation($location, $otherLocation)) {
-                            $otherLocations[] = $otherLocation;
-                        }
-                    }
-
                     $file->setLineAttribute($location['line'], 'duplication', $duplication);
                 });
             }

@@ -1,0 +1,10 @@
+<?php
+
+asdfgaskldjfklajsdfkljklasjdf
+
+-- FILENAME --
+test.rb
+
+-- CONFIG --
+tools:
+    ruby_flay: true

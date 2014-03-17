@@ -77,6 +77,7 @@ Ruby
 ~~~~
 - :doc:`tools/ruby/rubocop/index`
 - :doc:`tools/ruby/rails-best-practices/index`
+- :doc:`tools/ruby/flay/index`
 
 Configuration
 -------------

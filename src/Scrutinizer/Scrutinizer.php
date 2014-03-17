@@ -53,6 +53,7 @@ class Scrutinizer
         $this->registerAnalyzer(new Analyzer\Php\HhvmAnalyzer());
         $this->registerAnalyzer(new Analyzer\Ruby\RailsBestPracticesAnalyzer());
         $this->registerAnalyzer(new Analyzer\Ruby\RubocopAnalyzer());
+        $this->registerAnalyzer(new Analyzer\Ruby\FlayAnalyzer());
         $this->registerAnalyzer(new Analyzer\ExternalCodeCoverageAnalyzer());
         $this->registerAnalyzer(new Analyzer\CustomAnalyzer());
 
