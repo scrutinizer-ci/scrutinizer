@@ -38,7 +38,8 @@
         "squizlabs/php_codesniffer": "dev-master",
         "fabpot/php-cs-fixer": "dev-master",
         "sebastian/phpcpd": "dev-master",
-        "phploc/phploc": "dev-master"
+        "phploc/phploc": "dev-master",
+        "phpunit/phpunit": "~4.0.0"
     },
 
     "autoload": {

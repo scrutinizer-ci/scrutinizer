@@ -65,7 +65,6 @@ tools:
     php_code_coverage: true
 
 -- LINE ATTRIBUTES --
-Line 7: {"coverage_count":1}
 Line 9: {"coverage_count":1}
 Line 10: {"coverage_count":1}
 Line 11: {"coverage_count":1}
@@ -80,10 +79,10 @@ Line 13: {"coverage_count":1}
 'php_code_coverage.covered_methods': 1
 'php_code_coverage.conditionals': 0
 'php_code_coverage.covered_conditionals': 0
-'php_code_coverage.statements': 4
-'php_code_coverage.covered_statements': 4
-'php_code_coverage.elements': 5
-'php_code_coverage.covered_elements': 5
+'php_code_coverage.statements': 3
+'php_code_coverage.covered_statements': 3
+'php_code_coverage.elements': 4
+'php_code_coverage.covered_elements': 4
 
 -- CODE-ELEMENTS --
 package(Moo):
@@ -97,26 +96,12 @@ class(Moo\FooBar):
         end_line: 15
 
     metrics:
-        'php_code_coverage.methods': 1
-        'php_code_coverage.covered_methods': 1
+        'php_code_coverage.methods': 0
+        'php_code_coverage.covered_methods': 0
         'php_code_coverage.conditionals': 0
         'php_code_coverage.covered_conditionals': 0
-        'php_code_coverage.statements': 7
-        'php_code_coverage.covered_statements': 7
-        'php_code_coverage.elements': 9
-        'php_code_coverage.covered_elements': 9
+        'php_code_coverage.statements': 2
+        'php_code_coverage.covered_statements': 2
+        'php_code_coverage.elements': 3
+        'php_code_coverage.covered_elements': 3
         'php_code_coverage.coverage': 1
-
-    children:
-        - operation(Moo\FooBar::foo)
-
-
-operation(Moo\FooBar::foo):
-    metrics:
-        'php_code_coverage.change_risk_anti_pattern': 2
-        'php_code_coverage.count': 1
-
-    location:
-        filename: src/Foo.php
-        start_line: 7
-        end_line: 14
