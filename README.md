@@ -83,7 +83,7 @@ them locally in the directory:
 ```
 $ composer install
 $ npm install
-$ bundle install --deployment
+$ bundle install
 ```
 
 

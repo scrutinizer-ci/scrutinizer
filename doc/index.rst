@@ -39,6 +39,7 @@ just `open an issue <https://github.com/scrutinizer-ci/scrutinizer/issues/new>`_
     tools/javascript/index
     tools/php/index
     tools/puppet/index
+    tools/ruby/index
 
 General Analyses
 ~~~~~~~~~~~~~~~~
@@ -71,6 +72,10 @@ PHP
 Puppet
 ~~~~~~
 - :doc:`tools/puppet/puppet-lint/index`
+
+Ruby
+~~~~
+- :doc:`tools/ruby/rubocop/index`
 
 Configuration
 -------------

@@ -1,0 +1,11 @@
+# encoding: utf-8
+class SomeClass
+end
+
+-- FILENAME --
+some_class.rb
+
+-- CONFIG --
+tools:
+    rubocop:
+        lint_only: true
