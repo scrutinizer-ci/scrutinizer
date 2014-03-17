@@ -1,0 +1,10 @@
+<?php
+
+class Foo { }
+
+-- FILENAME --
+Foo.php
+
+-- CONFIG --
+tools:
+    rails_best_practices: true

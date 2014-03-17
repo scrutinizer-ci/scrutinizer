@@ -12,12 +12,13 @@ use Scrutinizer\Model\Comment;
 use Scrutinizer\Model\File;
 use Scrutinizer\Model\Project;
 use Scrutinizer\Process\Process;
+use Scrutinizer\Util\PathUtils;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 /**
  * Runs rubocop on your code.
  *
- * @doc-path /tools/ruby/rubocop/
+ * @doc-path tools/ruby/rubocop/
  * @display-name Rubocop
  */
 class RubocopAnalyzer implements AnalyzerInterface, LoggerAwareInterface
@@ -121,7 +122,12 @@ class RubocopAnalyzer implements AnalyzerInterface, LoggerAwareInterface
             throw new \RuntimeException('Could not parse JSON output: '.json_last_error());
         }
 
+        $filter = $project->getGlobalConfig('filter');
         foreach ($output['files'] as $fileDetails) {
+            if (PathUtils::isFiltered($fileDetails['path'], $filter)) {
+                continue;
+            }
+
             $project->getFile($fileDetails['path'])
                 ->forAll(function(File $file) use ($fileDetails, $analysisDir) {
                     $hasCorrections = false;

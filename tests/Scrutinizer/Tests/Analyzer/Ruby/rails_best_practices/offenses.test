@@ -1,0 +1,14 @@
+class User < ActiveRecord::Base
+  default_scope -> { order('created_at desc') }
+end
+
+-- FILENAME --
+app/models/user.rb
+
+-- CONFIG --
+tools:
+    rails_best_practices: true
+
+-- COMMENTS --
+Line 1: protect mass assignment
+Line 2: default_scope is evil

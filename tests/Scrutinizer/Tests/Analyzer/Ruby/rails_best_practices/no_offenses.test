@@ -1,0 +1,10 @@
+class SomeClass
+end
+
+-- FILENAME --
+some_class.rb
+
+-- CONFIG --
+tools:
+    rails_best_practices: true
+
