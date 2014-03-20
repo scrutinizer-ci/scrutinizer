@@ -1,0 +1,29 @@
+class { 'dhcp':
+  dnsupdatekey => "/etc/bind/keys.d/$::ddnskeyname",
+  foobarbaz    => "novariables",
+  misaligned => 'bla',
+  puppet27     => 'kees',
+  trailing     => 'whitespace'
+}
+
+-- FILENAME --
+dhcp/manifests/init.pp
+
+-- FIXED CONTENT --
+class { 'dhcp':
+  dnsupdatekey => "/etc/bind/keys.d/${::ddnskeyname}",
+  foobarbaz    => 'novariables',
+  misaligned   => 'bla',
+  puppet27     => 'kees',
+  trailing     => 'whitespace'
+}
+
+
+-- CONFIG --
+tools:
+    puppet_lint: true
+
+-- COMMENTS --
+Line 3: double quoted string containing no variables
+Line 2: variable not enclosed in {}
+Line 4: indentation of => is not properly aligned
