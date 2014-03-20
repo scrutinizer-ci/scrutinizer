@@ -77,7 +77,7 @@ class PuppetLintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
     public function scrutinize(Project $project)
     {
         $command = $project->getGlobalConfig('command', new Some(__DIR__.'/../../../../vendor/bin/puppet-lint'));
-        $command .= ' --log-format \'%{path},%{linenumber},%{kind},%{check},%{message}\' ';
+        $command .= ' -f --log-format \'%{path},%{linenumber},%{kind},%{check},%{message}\' ';
         $command .= $project->getGlobalConfig('flags', new Some('')).' ';
         $command .= $project->getDir();
 
