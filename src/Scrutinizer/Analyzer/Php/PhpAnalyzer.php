@@ -28,6 +28,34 @@ class PhpAnalyzer extends AbstractFileAnalyzer
 
     protected function buildConfigInternal(ConfigBuilder $builder)
     {
+        $this->addGeneralConfig($builder);
+        $this->addPassConfigs($builder);
+    }
+
+    private function addGeneralConfig(ConfigBuilder $builder)
+    {
+        $builder->globalConfig()
+            ->arrayNode('dependency_paths')
+                ->info('A list of path patterns if you have embedded dependencies.')
+                ->validate()->always(function($v) {
+                    $normalized = array();
+                    foreach ($v as $pattern) {
+                        if (substr($pattern, -1) === '/') {
+                            $normalized[] = $pattern.'*';
+                            continue;
+                        }
+                        $normalized[] = $pattern;
+                    }
+
+                    return $normalized;
+                })->end()
+                ->prototype('scalar')->end()
+            ->end()
+        ;
+    }
+
+    private function addPassConfigs(ConfigBuilder $builder)
+    {
         if ( ! class_exists('Scrutinizer\PhpAnalyzer\Analyzer')) {
             return;
         }
