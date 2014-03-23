@@ -5,6 +5,9 @@ PHP Copy/Paste Detector
 
     --- https://github.com/sebastianbergmann/phpcpd
 
+.. note ::
+    We recommend to use :doc:`/tools/php/code-similarity-analyzer/index` instead as it is robust against code modifications
+    and provides better targets for refactoring.
 
 .. include :: php_cpd_configuration.rst
 

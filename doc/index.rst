@@ -61,7 +61,7 @@ Javascript
 PHP
 ~~~
 - :doc:`tools/php/code-sniffer/index`
-- :doc:`tools/php/copy-paste-detector/index`
+- :doc:`tools/php/code-similarity-analyzer/index`
 - :doc:`tools/php/cs-fixer/index`
 - :doc:`tools/php/mess-detector/index`
 - :doc:`tools/php/pdepend/index`
