@@ -2,8 +2,8 @@ filter:
     excluded_paths: [vendor/*, tests/*, app/*, bin/*, library/*]
 
 tools:
-    # Copy/Paste Detector
-    php_cpd: true
+    # Similar Code Detector
+    php_sim: true
 
     # Metrics
     php_pdepend: true
