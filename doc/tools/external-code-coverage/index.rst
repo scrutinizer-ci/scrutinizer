@@ -34,6 +34,10 @@ Changes in Third-Party Configuration
 In addition to modifying your Scrutinizer configuration, you also need to change the build configuration of your
 external service to generate code coverage and then upload that code coverage information to Scrutinizer.
 
+.. tip ::
+    Make sure to always run the upload command even if your tests failed. In the latter case, the inspection
+    will automatically be canceled on Scrutinizer.
+
 PHP
 ^^^
 
