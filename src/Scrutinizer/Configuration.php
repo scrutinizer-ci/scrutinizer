@@ -71,6 +71,10 @@ class Configuration
                     }
                 }
 
+                if ($v['tools']['php_cpd']['enabled'] && $v['tools']['php_sim']['enabled']) {
+                    throw new \Exception('PHP Copy/Paste Detector and PHP Similarity Analyzer cannot be used both at the same time.');
+                }
+
                 return $v;
             })->end()
             ->children()
