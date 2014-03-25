@@ -40,10 +40,10 @@ class RailsBestPracticesAnalyzer implements AnalyzerInterface, LoggerAwareInterf
                 ->scalarNode('command')
                     ->attribute('show_in_editor', false)
                 ->end()
-                ->scalarNode('include_vendors')->defaultFalse()->end()
-                ->scalarNode('include_specs')->defaultFalse()->end()
-                ->scalarNode('include_tests')->defaultFalse()->end()
-                ->scalarNode('include_features')->defaultFalse()->end()
+                ->booleanNode('include_vendors')->defaultFalse()->end()
+                ->booleanNode('include_specs')->defaultFalse()->end()
+                ->booleanNode('include_tests')->defaultFalse()->end()
+                ->booleanNode('include_features')->defaultFalse()->end()
             ->end()
         ;
     }
