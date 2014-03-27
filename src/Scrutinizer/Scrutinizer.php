@@ -97,28 +97,24 @@ class Scrutinizer
         }
         $dir = realpath($dir);
 
-        $rawConfig = array();
-        if (is_file($dir.'/.scrutinizer.yml')) {
-            $rawConfig = Yaml::parse(file_get_contents($dir.'/.scrutinizer.yml')) ?: array();
-        }
-
-        $config = $this->getConfiguration()->process($rawConfig);
+        $config = $this->parseConfig($dir);
 
         if ( ! empty($config['before_commands'])) {
-            $profile->check('commands.before.start');
-            $this->logger->info('Executing before commands'."\n");
-            foreach ($config['before_commands'] as $cmd) {
-                $this->logger->info(sprintf('Running "%s"...'."\n", $cmd));
-                $proc = new LoggableProcess($cmd, $dir);
-                $proc->setTimeout(900);
-                $proc->setIdleTimeout(300);
-                $proc->setPty(true);
-                $proc->setLogger($this->logger);
-                $proc->run();
-            }
-            $profile->check('commands.before.end');
+            $this->runCommands($profile, $dir, $config['before_commands'], 'before');
         }
 
+        $project = $this->runAnalyses($dir, $config, $paths, $profile);
+        $this->dispatcher->dispatch(self::EVENT_POST_ANALYSIS, new ProjectEvent($project));
+
+        if ( ! empty($config['after_commands'])) {
+            $this->runCommands($profile, $dir, $config['after_commands'], 'after');
+        }
+
+        return $project;
+    }
+
+    private function runAnalyses($dir, array $config, array $paths, Profile $profile)
+    {
         $project = new Project($dir, $config, $paths);
         foreach ($this->analyzers as $analyzer) {
             if ( ! $project->isAnalyzerEnabled($analyzer->getName())) {
@@ -136,23 +132,33 @@ class Scrutinizer
             $profile->afterAnalysis($analyzer);
         }
 
-        $this->dispatcher->dispatch(self::EVENT_POST_ANALYSIS, new ProjectEvent($project));
-
-        if ( ! empty($config['after_commands'])) {
-            $profile->check('commands.after.start');
-            $this->logger->info('Executing after commands'."\n");
-            foreach ($config['after_commands'] as $cmd) {
-                $this->logger->info(sprintf('Running "%s"...'."\n", $cmd));
-                $proc = new LoggableProcess($cmd, $dir);
-                $proc->setTimeout(900);
-                $proc->setIdleTimeout(300);
-                $proc->setPty(true);
-                $proc->setLogger($this->logger);
-                $proc->run();
-            }
-            $profile->check('commands.after.end');
-        }
-
         return $project;
+    }
+
+    private function parseConfig($dir)
+    {
+        $rawConfig = array();
+        if (is_file($dir.'/.scrutinizer.yml')) {
+            $rawConfig = Yaml::parse(file_get_contents($dir.'/.scrutinizer.yml')) ?: array();
+        }
+        $config = $this->getConfiguration()->process($rawConfig);
+
+        return $config;
+    }
+
+    private function runCommands(Profile $profile, $dir, array $commands, $type)
+    {
+        $profile->check('commands.'.$type.'.start');
+        $this->logger->info('Executing '.$type.' commands'."\n");
+        foreach ($commands as $cmd) {
+            $this->logger->info(sprintf('Running "%s"...'."\n", $cmd));
+            $proc = new LoggableProcess($cmd, $dir);
+            $proc->setTimeout(900);
+            $proc->setIdleTimeout(300);
+            $proc->setPty(true);
+            $proc->setLogger($this->logger);
+            $proc->run();
+        }
+        $profile->check('commands.'.$type.'.end');
     }
 }
