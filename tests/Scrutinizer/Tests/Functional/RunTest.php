@@ -7,6 +7,23 @@ use Symfony\Component\Process\Process;
 
 class RunTest extends \PHPUnit_Framework_TestCase
 {
+    public function testProfiling()
+    {
+        $outputFile = tempnam(sys_get_temp_dir(), 'profile');
+        $proc = $this->runCmd('run', array(__DIR__.'/Fixture/JsProject', '--profiler-output-file='.$outputFile));
+        $profilerOutput = json_decode(file_get_contents($outputFile), true);
+        unlink($outputFile);
+
+        $this->assertInternalType('array', $profilerOutput);
+        $this->assertEquals(
+            array(
+                'start', 'pass.js_hint.start', 'pass.js_hint.end', 'pass.custom_commands.start', 'pass.custom_commands.end',
+                'output.start', 'output.end', 'stop'
+            ),
+            array_keys($profilerOutput)
+        );
+    }
+
     public function testRun()
     {
         $proc = $this->runCmd('run', array(__DIR__.'/Fixture/JsProject'));

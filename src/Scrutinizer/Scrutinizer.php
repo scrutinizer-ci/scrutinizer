@@ -9,6 +9,7 @@ use Scrutinizer\Analyzer\LoggerAwareInterface;
 use Scrutinizer\Analyzer;
 use Scrutinizer\Event\ProjectEvent;
 use Scrutinizer\Logger\LoggableProcess;
+use Scrutinizer\Model\Profile;
 use Scrutinizer\Model\Project;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -85,8 +86,12 @@ class Scrutinizer
         return new Configuration($this->analyzers, $configRegistry);
     }
 
-    public function scrutinize($dir, array $paths = array())
+    public function scrutinize($dir, array $paths = array(), Profile $profile = null)
     {
+        if ($profile === null) {
+            $profile = new Profile();
+        }
+
         if ( ! is_dir($dir)) {
             throw new \InvalidArgumentException(sprintf('The directory "%s" does not exist.', $dir));
         }
@@ -100,6 +105,7 @@ class Scrutinizer
         $config = $this->getConfiguration()->process($rawConfig);
 
         if ( ! empty($config['before_commands'])) {
+            $profile->check('commands.before.start');
             $this->logger->info('Executing before commands'."\n");
             foreach ($config['before_commands'] as $cmd) {
                 $this->logger->info(sprintf('Running "%s"...'."\n", $cmd));
@@ -110,6 +116,7 @@ class Scrutinizer
                 $proc->setLogger($this->logger);
                 $proc->run();
             }
+            $profile->check('commands.before.end');
         }
 
         $project = new Project($dir, $config, $paths);
@@ -123,12 +130,16 @@ class Scrutinizer
             }
 
             $project->setAnalyzerName($analyzer->getName());
+
+            $profile->beforeAnalysis($analyzer);
             $analyzer->scrutinize($project);
+            $profile->afterAnalysis($analyzer);
         }
 
         $this->dispatcher->dispatch(self::EVENT_POST_ANALYSIS, new ProjectEvent($project));
 
         if ( ! empty($config['after_commands'])) {
+            $profile->check('commands.after.start');
             $this->logger->info('Executing after commands'."\n");
             foreach ($config['after_commands'] as $cmd) {
                 $this->logger->info(sprintf('Running "%s"...'."\n", $cmd));
@@ -139,6 +150,7 @@ class Scrutinizer
                 $proc->setLogger($this->logger);
                 $proc->run();
             }
+            $profile->check('commands.after.end');
         }
 
         return $project;
