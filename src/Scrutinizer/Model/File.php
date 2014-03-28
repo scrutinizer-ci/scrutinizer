@@ -15,6 +15,9 @@ class File
     /** @Serializer\Exclude */
     private $content;
 
+    /** @Serializer\Exclude */
+    private $hash;
+
     private $comments = array();
     private $metrics = array();
 
@@ -26,6 +29,12 @@ class File
     {
         $this->path = $path;
         $this->content = $content;
+        $this->hash = sha1($path.$content);
+    }
+
+    public function getHash()
+    {
+        return $this->hash;
     }
 
     /**

@@ -2,11 +2,84 @@
 
 namespace Scrutinizer\Tests\Functional;
 
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 class RunTest extends \PHPUnit_Framework_TestCase
 {
+    public function testJsonFormat()
+    {
+        $outputFile = tempnam(sys_get_temp_dir(), 'output-file');
+        $this->runCmd('run', array(__DIR__.'/Fixture/JsProject', '--output-file='.$outputFile, '--format=json'));
+
+        $content = file_get_contents($outputFile);
+        unlink($outputFile);
+
+       $this->assertEquals(<<<'OUTPUT'
+{
+    "files": [
+        {
+            "path": "some_file.js",
+            "comments": {
+                "1": [
+                    {
+                        "id": "jshint.W098",
+                        "message": "'foo' is defined but never used.",
+                        "params": {
+                            "a": "foo"
+                        },
+                        "tool": "js_hint"
+                    }
+                ],
+                "2": [
+                    {
+                        "id": "jshint.W098",
+                        "message": "'x' is defined but never used.",
+                        "params": {
+                            "a": "x"
+                        },
+                        "tool": "js_hint"
+                    }
+                ]
+            },
+            "metrics": [
+
+            ],
+            "line_attributes": [
+
+            ]
+        }
+    ],
+    "metrics": [
+
+    ],
+    "code_elements": [
+
+    ]
+}
+OUTPUT
+            ,
+            $content
+        );
+    }
+
+    public function testCache()
+    {
+        $cacheDir = tempnam(sys_get_temp_dir(), 'cache-dir');
+        unlink($cacheDir);
+        mkdir($cacheDir, 0777, true);
+
+        $this->runCmd('run', array(__DIR__.'/Fixture/JsProject', '--cache-dir='.$cacheDir));
+        $count = count(Finder::create()->in($cacheDir)->files());
+
+        $fs = new Filesystem();
+        $fs->remove($cacheDir);
+
+        $this->assertEquals(1, $count);
+    }
+
     public function testProfiling()
     {
         $outputFile = tempnam(sys_get_temp_dir(), 'profile');

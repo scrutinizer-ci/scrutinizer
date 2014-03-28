@@ -4,6 +4,8 @@ namespace Scrutinizer\Analyzer\Php;
 
 use PhpOption\Some;
 use Scrutinizer\Analyzer\AbstractFileAnalyzer;
+use Scrutinizer\Cache\CacheAwareInterface;
+use Scrutinizer\Cache\CacheAwareTrait;
 use Scrutinizer\Util\XmlUtils;
 use Scrutinizer\Model\Comment;
 use Scrutinizer\Model\File;
@@ -19,8 +21,10 @@ use Symfony\Component\Process\Process;
  * @doc-path tools/php/mess-detector/
  * @display-name PHP Mess Detector
  */
-class MessDetectorAnalyzer extends AbstractFileAnalyzer
+class MessDetectorAnalyzer extends AbstractFileAnalyzer implements CacheAwareInterface
 {
+    use CacheAwareTrait;
+
     private $tmpCwdDir;
 
     public function getName()
@@ -356,6 +360,16 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
 
     public function analyze(Project $project, File $file)
     {
+        $this->cache->withCache(
+            $file,
+            'result',
+            function() use ($project, $file) { return $this->runMessDetector($project, $file); },
+            function($result) use ($file) { $this->parseOutput($file, $result); }
+        );
+    }
+
+    private function runMessDetector(Project $project, File $file)
+    {
         $command = $project->getGlobalConfig('command', new Some(__DIR__.'/../../../../vendor/bin/phpmd'));
 
         $rulesetFile = tempnam(sys_get_temp_dir(), 'phpmd-ruleset');
@@ -377,6 +391,12 @@ class MessDetectorAnalyzer extends AbstractFileAnalyzer
 
         $output = $proc->getOutput();
         $output = str_replace($inputFile, $file->getPath(), $output);
+
+        return $output;
+    }
+
+    private function parseOutput(File $file, $output)
+    {
         $doc = XmlUtils::safeParse($output);
 
         // <error filename="syntax_error.php" msg="Unexpected end of token stream in file: syntax_error.php." />

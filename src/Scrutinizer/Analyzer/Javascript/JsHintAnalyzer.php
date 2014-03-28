@@ -5,6 +5,8 @@ namespace Scrutinizer\Analyzer\Javascript;
 use PhpOption\Some;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Scrutinizer\Cache\CacheAwareInterface;
+use Scrutinizer\Cache\CacheAwareTrait;
 use Scrutinizer\Util\XmlUtils;
 use Monolog\Logger;
 use Scrutinizer\Util\NameGenerator;
@@ -26,9 +28,9 @@ use Scrutinizer\Model\File;
  * @display-name JSHint
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
+class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface, CacheAwareInterface
 {
-    use LoggerAwareTrait;
+    use LoggerAwareTrait, CacheAwareTrait;
 
     private $names;
 
@@ -90,12 +92,29 @@ class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
 
     public function analyze(Project $project, File $file)
     {
+        $config = $this->parseConfig($project, $file);
+
+        $this->cache
+            ->withCache(
+                $file,
+                'result.'.substr(sha1($config), 0, 6),
+                function() use ($project, $file, $config) { return $this->runJsHint($project, $file, $config); },
+                function($result) use ($file) { $this->parseOutput($file, $result); }
+            )
+        ;
+    }
+
+    private function parseConfig(Project $project, File $file)
+    {
         if ($project->getGlobalConfig('use_native_config')) {
-            $config = $this->findNativeConfig($project, $file);
-        } else {
-            $config = json_encode($project->getFileConfig($file), JSON_FORCE_OBJECT);
+            return $this->findNativeConfig($project, $file);
         }
 
+        return json_encode($project->getFileConfig($file), JSON_FORCE_OBJECT);
+    }
+
+    private function runJsHint(Project $project, File $file, $config)
+    {
         $cfgFile = tempnam(sys_get_temp_dir(), 'jshint');
         file_put_contents($cfgFile, $config);
 
@@ -114,7 +133,12 @@ class JsHintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
             throw new ProcessFailedException($proc);
         }
 
-        $xml = XmlUtils::safeParse($proc->getOutput());
+        return $proc->getOutput();
+    }
+
+    private function parseOutput(File $file, $output)
+    {
+        $xml = XmlUtils::safeParse($output);
 
         foreach ($xml->xpath('//error') as $error) {
             // <error line="42" column="36" severity="error"

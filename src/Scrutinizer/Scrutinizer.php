@@ -7,6 +7,10 @@ use Psr\Log\NullLogger;
 use Scrutinizer\Analyzer\AnalyzerInterface;
 use Scrutinizer\Analyzer\LoggerAwareInterface;
 use Scrutinizer\Analyzer;
+use Scrutinizer\Cache\AnalyzerScopedCache;
+use Scrutinizer\Cache\CacheAwareInterface;
+use Scrutinizer\Cache\FileCacheInterface;
+use Scrutinizer\Cache\NullCache;
 use Scrutinizer\Event\ProjectEvent;
 use Scrutinizer\Logger\LoggableProcess;
 use Scrutinizer\Model\Profile;
@@ -30,14 +34,16 @@ class Scrutinizer
     const EVENT_POST_ANALYSIS = 'post_analysis';
 
     private $logger;
+    private $cache;
 
     /** @var AnalyzerInterface[] */
     private $analyzers = array();
     private $dispatcher;
 
-    public function __construct(LoggerInterface $logger = null)
+    public function __construct(LoggerInterface $logger = null, FileCacheInterface $cache = null)
     {
         $this->logger = $logger ?: new NullLogger();
+        $this->cache = $cache ?: new NullCache();
         $this->dispatcher = new EventDispatcher();
 
         $this->registerAnalyzer(new Analyzer\Puppet\PuppetLintAnalyzer());
@@ -126,6 +132,9 @@ class Scrutinizer
             }
 
             $project->setAnalyzerName($analyzer->getName());
+            if ($analyzer instanceof CacheAwareInterface) {
+                $analyzer->setCache(new AnalyzerScopedCache($this->cache, $analyzer, $project->getAnalyzerConfig()));
+            }
 
             $profile->beforeAnalysis($analyzer);
             $analyzer->scrutinize($project);

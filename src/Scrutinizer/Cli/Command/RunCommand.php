@@ -6,6 +6,7 @@ use JMS\Serializer\JsonSerializationVisitor;
 use JMS\Serializer\Naming\CamelCaseNamingStrategy;
 use JMS\Serializer\Naming\SerializedNameAnnotationStrategy;
 use JMS\Serializer\SerializerBuilder;
+use Scrutinizer\Cache\FilesystemCache;
 use Scrutinizer\Cli\Command\OutputFormatter\JsonFormatter;
 use Scrutinizer\Cli\OutputHandler;
 use Monolog\Handler\FingersCrossedHandler;
@@ -27,12 +28,13 @@ class RunCommand extends Command
     {
         $this
             ->setName('run')
-            ->setDescription('Runs the scrutinizer.')
+            ->setDescription('Runs Scrutinizer')
             ->addArgument('directory', InputArgument::REQUIRED, 'The directory that should be scrutinized.')
             ->addOption('format', 'f', InputOption::VALUE_REQUIRED, 'The output format (defaults to plain).', 'plain')
             ->addOption('output-file', null, InputOption::VALUE_REQUIRED, 'The file where to write the output (defaults to stdout).')
             ->addOption('profiler-output-file', null, InputOption::VALUE_REQUIRED, 'The file where to write the profiler output.')
             ->addOption('path-file', null, InputOption::VALUE_REQUIRED, 'A file with paths that should be analyzed (by default all paths)')
+            ->addOption('cache-dir', null, InputOption::VALUE_REQUIRED, 'A directory to use for caching.')
         ;
     }
 
@@ -57,7 +59,12 @@ class RunCommand extends Command
         $profile->start();
 
         $logger = new OutputLogger($output, $input->getOption('verbose'));
-        $project = (new Scrutinizer($logger))->scrutinize($dir, $paths, $profile);
+        $cache = null;
+        if ($input->getOption('cache-dir')) {
+            $cache = new FilesystemCache($input->getOption('cache-dir'));
+        }
+
+        $project = (new Scrutinizer($logger, $cache))->scrutinize($dir, $paths, $profile);
         $logger->flushErrors();
 
         $outputFile = $input->getOption('output-file');
@@ -87,16 +94,20 @@ class RunCommand extends Command
 
     private function outputJson(OutputInterface $output, Project $project, $outputFile)
     {
-        $formatter = new JsonFormatter();
-        $output = $formatter->format($project);
+        $visitor = new JsonSerializationVisitor(new SerializedNameAnnotationStrategy(new CamelCaseNamingStrategy()));
+        $visitor->setOptions(JSON_PRETTY_PRINT);
+
+        $serializer = SerializerBuilder::create()
+            ->setSerializationVisitor('json', $visitor)
+            ->build();
 
         if ( ! empty($outputFile)) {
-            file_put_contents($outputFile, $output);
+            file_put_contents($outputFile, $serializer->serialize($project, 'json'));
 
             return;
         }
 
-        $output->write($output);
+        $output->write($serializer->serialize($project, 'json'));
     }
 
     private function outputPlain(OutputInterface $output, Project $project, $outputFile)
