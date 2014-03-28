@@ -32,7 +32,7 @@ class RunTest extends \PHPUnit_Framework_TestCase
 
         $expectedOutputArray = array(
           "Running analyzer \"js_hint\"...",
-          "\n\r    Files 1/1 [............................................................] 100%\n",
+          ".\n",
           "some_file.js",
           "============",
           "Line 1: 'foo' is defined but never used.",
@@ -52,8 +52,7 @@ class RunTest extends \PHPUnit_Framework_TestCase
 
         $expectedOutput = <<<OUTPUT
 Running analyzer "js_hint"...
-
-\r    Files 1/1 [............................................................] 100%
+.
 
 Errors:
  - JSHint config error when analyzing "some_file.js": Bad option: 'camelCase'.

@@ -3,6 +3,7 @@
 namespace Scrutinizer\Analyzer;
 
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Scrutinizer\Cli\OutputLogger;
 use Scrutinizer\Model\File;
 use Scrutinizer\Model\Project;
@@ -40,6 +41,7 @@ class FileTraversal
         $this->project = $project;
         $this->analyzer = $analyzer;
         $this->method = $method;
+        $this->logger = new NullLogger();
     }
 
     public function setLogger(LoggerInterface $logger)
@@ -64,8 +66,9 @@ class FileTraversal
 
         $files = $this->locateFiles();
         $progressOutput = $this->getProgressOutput();
-        $progressOutput->writeln('');
-        $progress = $this->createProgress($files, $progressOutput);
+
+        $i = 0;
+        $total = count($files);
         foreach ($files as $finderFile) {
             /** @var $finderFile SplFileInfo */
 
@@ -85,9 +88,23 @@ class FileTraversal
                 }
             });
 
-            $progress->advance();
+            $this->advance($i, $total, $progressOutput);
         }
+
         $progressOutput->writeln("\n");
+    }
+
+    private function advance(&$i, $total, OutputInterface $output)
+    {
+        if ($i % 10 === 0) {
+            $output->write('.');
+        }
+
+        $i += 1;
+
+        if ($i % 800 === 0) {
+            $output->writeln(" ".str_pad($i, strlen($total), ' ', STR_PAD_LEFT).'/'.$total);
+        }
     }
 
     private function getProgressOutput()
@@ -101,17 +118,5 @@ class FileTraversal
         $files = iterator_to_array($finder);
 
         return $files;
-    }
-
-    private function createProgress(array $files, OutputInterface $output)
-    {
-        $progress = new ProgressHelper();
-        $progress->setFormat('    Files %current%/%max% [%bar%] %percent%%');
-        $progress->setBarCharacter('.');
-        $progress->setEmptyBarCharacter(' ');
-        $progress->setBarWidth(60);
-        $progress->start($output, count($files));
-
-        return $progress;
     }
 }
