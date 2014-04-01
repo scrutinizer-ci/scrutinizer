@@ -10,6 +10,17 @@ case $::operatingsystem {
 -- FILENAME --
 no_default_case.pp
 
+-- FIXED CONTENT --
+case $::operatingsystem {
+  centos: {
+    $version = '1.2.3'
+  }
+  solaris: {
+    $version = '3.2.1'
+  }
+}
+
+
 -- CONFIG --
 tools:
     puppet_lint: true

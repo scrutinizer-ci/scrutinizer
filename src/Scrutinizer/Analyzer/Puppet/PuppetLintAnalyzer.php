@@ -76,13 +76,15 @@ class PuppetLintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
      */
     public function scrutinize(Project $project)
     {
+        $analysisDir = $this->prepareProjectForAnalysis($project);
+
         $command = $project->getGlobalConfig('command', new Some(__DIR__.'/../../../../vendor/bin/puppet-lint'));
         $command .= ' -f --log-format \'%{path},%{linenumber},%{kind},%{check},%{message}\' ';
         $command .= $project->getGlobalConfig('flags', new Some('')).' ';
-        $command .= $project->getDir();
+        $command .= $analysisDir;
 
         $this->logger->info('$ '.$command."\n");
-        $proc = new Process($command.' '.$project->getDir());
+        $proc = new Process($command.' '.$analysisDir);
         $proc->setTimeout(600);
         $proc->setIdleTimeout(180);
         $proc->setPty(true);
@@ -101,14 +103,37 @@ class PuppetLintAnalyzer implements AnalyzerInterface, LoggerAwareInterface
             }
 
             list($path, $line, $kind, $check, $message) = $segments;
-            $relativePath = substr($path, strlen($project->getDir()) + 1);
+            $relativePath = substr($path, strlen($analysisDir) + 1);
 
-            $project->getFile($relativePath)->map(function(File $file) use ($line, $kind, $check, $message) {
+            $project->getFile($relativePath)->map(function(File $file) use ($analysisDir, $line, $kind, $check, $message) {
                 $file->addComment($line, new Comment(
                     $this->getName(),
                     $this->getName().'.'.$check, $message)
                 );
+
+                $file->getOrCreateFixedFile()->setContent(file_get_contents($analysisDir.'/'.$file->getPath()));
             });
+
         }
+
+        $this->cleanUpAfterAnalysis($analysisDir);
+
+    }
+
+    private function cleanUpAfterAnalysis($analysisDir)
+    {
+        $proc = new Process('rm -rf '.$analysisDir);
+        $proc->run();
+    }
+
+    private function prepareProjectForAnalysis(Project $project)
+    {
+        $analysisDir = tempnam(sys_get_temp_dir(), 'puppet-lint-project');
+        unlink($analysisDir);
+
+        $proc = new Process('cp -R '.$project->getDir().' '.$analysisDir);
+        $proc->mustRun();
+
+        return $analysisDir;
     }
 }
