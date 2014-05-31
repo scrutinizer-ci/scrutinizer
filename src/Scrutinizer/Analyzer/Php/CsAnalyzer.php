@@ -1226,7 +1226,9 @@ class CsAnalyzer extends AbstractFileAnalyzer
         $outputFile = tempnam(sys_get_temp_dir(), 'phpcs');
         $cmd .= ' --report-checkstyle='.escapeshellarg($outputFile);
 
-        $inputFile = tempnam(sys_get_temp_dir(), 'phpcs');
+        $tempFolder = sys_get_temp_dir() . '/' . uniqid('phpcs', true);
+        $inputFile = $tempFolder . '/' . $file->getPath();
+        mkdir(dirname($inputFile), 0777, true);
         file_put_contents($inputFile, $file->getContent());
         $cmd .= ' '.escapeshellarg($inputFile);
 
@@ -1238,6 +1240,7 @@ class CsAnalyzer extends AbstractFileAnalyzer
 
         unlink($outputFile);
         unlink($inputFile);
+        shell_exec('rm -Rf ' . $tempFolder);
         if (null !== $standardsDir) {
             unlink($standardsDir.'/ruleset.xml');
             rmdir($standardsDir);
